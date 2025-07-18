@@ -6,11 +6,11 @@ function Landing() {
   return (
     <div className="min-h-[100vh] flex flex-col justify-between">
       <Header></Header>
-      <main className="text-center px-4 lg:py-6">
-        <h1 className="text-xl font-bold my-8 lg:text-3xl">
+      <main className="flex flex-col items-center text-center px-4 pb-12 lg:py-6">
+        <h1>
           Learn Faster with <span className="text-purple-500">Flashify</span>
         </h1>
-        <p className="lg:text-lg text-gray-800">
+        <p>
           Master new skills with flashcards and quizzes. Short sessions,
           consistent practice, real results.
         </p>
@@ -32,7 +32,7 @@ function Landing() {
 
         <Link
           to="/sign-up"
-          className=" my-8 text-white text-xl lg:text-2xl font-bold bg-purple-500 py-2.5 px-12 rounded-3xl shadow-lg opacity-88 hover:cursor-pointer hover:opacity-100 transition-opacity"
+          className="  text-white text-xl lg:text-2xl font-bold bg-purple-500 py-2.5  px-12 rounded-3xl shadow-lg opacity-88 hover:cursor-pointer hover:opacity-100 transition-opacity my-8 mt-16"
         >
           Get Started
         </Link>

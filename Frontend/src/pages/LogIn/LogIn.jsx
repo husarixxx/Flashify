@@ -7,7 +7,7 @@ import { FaFacebook } from "react-icons/fa6";
 
 import { useState } from "react";
 
-function SignUp() {
+function LogIn() {
   const [inputs, setInputs] = useState([
     {
       id: crypto.randomUUID(),
@@ -37,10 +37,8 @@ function SignUp() {
     <div className="min-h-[100vh] flex flex-col justify-between">
       <Header></Header>
       <div className="flex flex-col items-center justify-center ">
-        <h1 className="text-center my-18">
-          Sign Up for <span className="text-purple-600">Flashify</span>
-        </h1>
-        <Form inputs={inputs} submitText="Sign Up"></Form>
+        <h1 className="text-center my-18">Log In</h1>
+        <Form inputs={inputs} submitText="Log In"></Form>
         <p className="text-center my-8 text-gray-600">or</p>
         <ContinueBtn
           icon={<FaGoogle size={24} />}
@@ -56,4 +54,4 @@ function SignUp() {
   );
 }
 
-export default SignUp;
+export default LogIn;

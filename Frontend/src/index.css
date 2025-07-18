@@ -1,1 +1,10 @@
 @import "tailwindcss";
+
+@layer base {
+  h1 {
+    @apply text-xl sm:text-2xl font-bold my-8 lg:text-3xl;
+  }
+  p {
+    @apply lg:text-lg text-gray-800;
+  }
+}
