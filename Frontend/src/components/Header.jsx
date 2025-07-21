@@ -4,13 +4,13 @@ function Header({ icons, user }) {
     <header className="flex justify-between p-4 shadow-xl">
       <Link to="/" className="flex items-center">
         <img
-          className="w-[100px] lg:w-[160px]"
+          className="w-[80px] sm:w-[100px] md:w-[120px] lg:w-[150px]"
           src="./src/assets/flashify.png"
           alt=""
         />
       </Link>
       {icons && (
-        <div className="flex justify-around grow gap-2 max-w-[650px]">
+        <div className="flex justify-around grow gap-2 max-w-[720px]">
           {icons.map((icon, index) => (
             <Link
               to={icon.path}
@@ -18,7 +18,7 @@ function Header({ icons, user }) {
               className="flex items-center gap-2"
             >
               {icon.icon}
-              <p className="hidden md:block">{icon.text}</p>
+              <p className="hidden sm:block">{icon.text}</p>
             </Link>
           ))}
         </div>
