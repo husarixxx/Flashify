@@ -3,26 +3,11 @@ import Footer from "../../components/Footer";
 import { TbCards } from "react-icons/tb";
 import { MdOutlineQuiz } from "react-icons/md";
 import { TbNotes } from "react-icons/tb";
-import { IoIosStats } from "react-icons/io";
-import { FaRegUserCircle } from "react-icons/fa";
-import { LiaLayerGroupSolid } from "react-icons/lia";
 import Streak from "../../components/Streak";
 import Container from "../../components/Container";
 import { FaRegClock } from "react-icons/fa6";
 
 function Home() {
-  const icons = [
-    { icon: <TbCards size={23} />, text: "Flashcards", path: "/flashcards" },
-    { icon: <MdOutlineQuiz size={23} />, text: "Quizzes", path: "/quizzes" },
-    { icon: <TbNotes size={23} />, text: "Notes", path: "/notes" },
-    { icon: <IoIosStats size={23} />, text: "Stats", path: "/stats" },
-    {
-      icon: <LiaLayerGroupSolid size={23} />,
-      text: "Subjects",
-      path: "/subjects",
-    },
-  ];
-
   const streak = {
     streakNumber: 21,
     days: [
@@ -34,11 +19,6 @@ function Home() {
       { dayNumber: 22, isStreak: false, weekDay: "Sat" },
       { dayNumber: 23, isStreak: false, weekDay: "Sun" },
     ],
-  };
-
-  const user = {
-    img: <FaRegUserCircle size={25} />,
-    username: "username",
   };
 
   const recentylyUsed = [
@@ -58,7 +38,7 @@ function Home() {
   };
   return (
     <div className="min-h-[100vh] flex flex-col justify-between">
-      <Header icons={icons} user={user}></Header>
+      <Header loggedIn={true}></Header>
 
       <div className="md:flex items-start md:mx-auto">
         <div>
