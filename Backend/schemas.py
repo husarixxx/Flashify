@@ -9,4 +9,4 @@ class UserResponse(BaseModel):
     username: EmailStr
 
     class Config:
-        orm_mode = True
+        from_attributes = True
