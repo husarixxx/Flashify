@@ -15,10 +15,12 @@ function Header({ icons, user }) {
             <Link
               to={icon.path}
               key={index}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 hover:text-purple-800 group "
             >
               {icon.icon}
-              <p className="hidden sm:block">{icon.text}</p>
+              <p className="hidden sm:block group-hover:text-purple-600">
+                {icon.text}
+              </p>
             </Link>
           ))}
         </div>
