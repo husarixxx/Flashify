@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import Container from "./Container";
 function Subjects({ subject, types }) {
   return (
-    <Link>
+    <Link to={`/home/flashcards/${subject}`}>
       <Container styles="relative group md:w-[250px] hover:text-white ">
         <div className="relative z-10">
           <h3 className="">{subject}</h3>

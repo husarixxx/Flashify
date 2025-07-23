@@ -1,6 +1,8 @@
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import Flashcard from "./Flashcard";
+import MainButton from "../../components/MainButton";
+import SecondButton from "../../components/SecondButton";
 
 import { useParams } from "react-router-dom";
 
@@ -24,13 +26,36 @@ function FlashcardsSet() {
   return (
     <div className="min-h-[100vh] flex flex-col justify-between">
       <Header loggedIn={true} logo="../../src/assets/flashify.png"></Header>
-      <div className="p-4 md:mx-auto">
+      <div className="p-4 mx-auto">
         <h1 className="my-4">{subject}</h1>
         <div className="relative">
-          <Flashcard
-            definition={flashcards[0].definition}
-            explanation={flashcards[0].explanation}
-          ></Flashcard>
+          <div className="relative z-3 top-0 left-0 h-[200px] w-[80vw]  sm:h-[300px] sm:w-[540px] lg:h-[350px] lg:w-[800px]">
+            <Flashcard
+              definition={flashcards[0].definition}
+              explanation={flashcards[0].explanation}
+              turnOff={true}
+            ></Flashcard>
+          </div>
+          <div className="absolute z-2 top-[15px] left-[-15px] sm:top-[20px] sm:left-[-20px] h-[200px] w-[80vw]  sm:h-[300px] sm:w-[540px] lg:h-[350px] lg:w-[800px]">
+            <Flashcard
+              definition={flashcards[1].definition}
+              explanation={flashcards[1].explanation}
+              turnOff={true}
+            ></Flashcard>
+          </div>
+          {flashcards[2] && (
+            <div className="absolute z-1 top-[30px] left-[-30px] sm:top-[40px] sm:left-[-40px] h-[200px] w-[80vw]  sm:h-[300px] sm:w-[540px] lg:h-[350px] lg:w-[800px]">
+              <Flashcard
+                definition={flashcards[2].definition}
+                explanation={flashcards[2].explanation}
+                turnOff={true}
+              ></Flashcard>
+            </div>
+          )}
+        </div>
+        <div className="w-full flex flex-col justify-center gap-5 mt-[70px] md:mt-[100px] max-w-[300px] mx-auto">
+          <SecondButton text={"Edit"} styles="  " />
+          <MainButton text={"Learn"} styles="   " />
         </div>
       </div>
       <Footer></Footer>
