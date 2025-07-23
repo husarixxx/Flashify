@@ -4,7 +4,13 @@
   h1 {
     @apply text-xl sm:text-2xl font-bold my-8 lg:text-3xl;
   }
+  h2 {
+    @apply text-base sm:text-lg font-bold my-5 lg:text-xl;
+  }
+  h3 {
+    @apply font-bold my-2 lg:text-lg;
+  }
   p {
-    @apply lg:text-lg text-gray-700;
+    @apply text-sm lg:text-base text-gray-700;
   }
 }

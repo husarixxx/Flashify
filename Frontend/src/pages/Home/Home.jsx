@@ -59,9 +59,9 @@ function Home() {
                   ) : (
                     <MdOutlineQuiz size={23} />
                   )}
-                  <h3 className="">{card.title}</h3>
+                  <h3>{card.title}</h3>
                 </div>
-                <p className="ml-8 mt-2 text-sm">{card.type}</p>
+                <p className="ml-8 ">{card.type}</p>
               </Container>
             ))}
           </div>
@@ -79,9 +79,9 @@ function Home() {
                   ) : (
                     <MdOutlineQuiz size={23} />
                   )}
-                  <h3 className="">{card.title}</h3>
+                  <h3>{card.title}</h3>
                 </div>
-                <p className="flex items-center gap-2 mt-2 text-sm">
+                <p className="flex items-center gap-2 mt-2 ">
                   <FaRegClock size={21} />
                   {`Time spend: ${card.time}`}
                 </p>
@@ -96,7 +96,7 @@ function Home() {
                 <FaRegClock size={20} />
                 <h3>{timeSpentThisWeek.time}</h3>
               </div>
-              <p className="flex items-center gap-2 mt-2 text-sm">
+              <p className="flex items-center gap-2 mt-2 ">
                 {timeSpentThisWeek.text}
               </p>
             </Container>

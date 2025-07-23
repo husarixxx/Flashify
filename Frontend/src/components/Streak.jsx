@@ -5,7 +5,7 @@ function Streak({ streakNumber, days }) {
       <div className="flex items-center ml-2">
         <img
           className="w-[30px] h-[45px] lg:w-[40px] lg:h-[60px]"
-          src="./public/flashlight.png"
+          src="../public/flashlight.png"
           alt="Logo"
         />
         <h1 className="text-2xl lg:text-4xl text-purple-600 my-5">

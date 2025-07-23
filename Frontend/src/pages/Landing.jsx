@@ -32,7 +32,7 @@ function Landing() {
 
         <Link
           to="/sign-up"
-          className="  text-white text-xl lg:text-2xl font-bold bg-purple-500 py-2.5  px-12 rounded-3xl shadow-lg opacity-88 hover:cursor-pointer hover:opacity-100 transition-opacity my-8 mt-16"
+          className="  text-white text-lg lg:text-xl font-bold bg-purple-500 py-2.5  px-12 rounded-3xl shadow-lg opacity-88 hover:cursor-pointer hover:opacity-100 transition-opacity my-8 mt-16"
         >
           Get Started
         </Link>
