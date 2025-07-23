@@ -16,7 +16,11 @@ function Header({
   logo = "./src/assets/flashify.png",
 }) {
   const icons = [
-    { icon: <TbCards size={23} />, text: "Flashcards", path: "/flashcards" },
+    {
+      icon: <TbCards size={23} />,
+      text: "Flashcards",
+      path: "/home/flashcards",
+    },
     { icon: <MdOutlineQuiz size={23} />, text: "Quizzes", path: "/quizzes" },
     { icon: <TbNotes size={23} />, text: "Notes", path: "/notes" },
     { icon: <IoIosStats size={23} />, text: "Stats", path: "/stats" },

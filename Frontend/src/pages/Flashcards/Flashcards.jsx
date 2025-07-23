@@ -1,11 +1,9 @@
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
-import Container from "../../components/Container";
 import Subject from "../../components/Subject";
 
 // delete after creating backend
 import mySubjects from "../../exampleData";
-import { Link } from "react-router-dom";
 
 function Flashcards() {
   const flashcardsSubjects = Object.entries(mySubjects).map(

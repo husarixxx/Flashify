@@ -7,6 +7,8 @@ import SignUp from "./pages/SignUp/SignUp";
 import LogIn from "./pages/LogIn/LogIn";
 import Home from "./pages/Home/Home";
 import Flashcards from "./pages/Flashcards/Flashcards";
+import FlashcardsSet from "./pages/Flashcards/FlashcardsSet";
+
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
@@ -16,6 +18,7 @@ createRoot(document.getElementById("root")).render(
         <Route path="/log-in" element={<LogIn />} />
         <Route path="/home" element={<Home />} />
         <Route path="/home/flashcards" element={<Flashcards />} />
+        <Route path="/home/flashcards/:subject" element={<FlashcardsSet />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>
