@@ -2,24 +2,19 @@ import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import Flashcard from "./Flashcard";
 import MainButton from "../../components/MainButton";
-import SecondButton from "../../components/SecondButton";
-import { Link } from "react-router-dom";
+
+import Swiping from "./Swiping";
 
 import { useParams, useLocation } from "react-router-dom";
 
 import mySubjects from "../../exampleData";
 import { useState } from "react";
 
-function FlashcardsSet() {
+function FlashcardsLearn() {
   const [isLearning, setIsLearning] = useState(false);
-
-  const switchTolearn = (e) => {
-    setIsLearning(!isLearning);
-  };
 
   let params = useParams();
   const path = useLocation();
-  console.log(path);
 
   const subject = params.subject;
   const subjectFiltered = Object.entries(mySubjects).filter(
@@ -30,22 +25,25 @@ function FlashcardsSet() {
   const flashcards = subjectFiltered.map(
     ([subject, data]) => data.flashcards
   )[0];
-  console.log(subjectFiltered);
-  console.log(flashcards);
 
   return (
-    <div className="min-h-[100vh] flex flex-col justify-between">
-      <Header loggedIn={true} logo="../../src/assets/flashify.png"></Header>
+    <div className="min-h-[100vh] flex flex-col justify-between overflow-hidden">
+      <Header loggedIn={true} logo="../../../src/assets/flashify.png"></Header>
       <div className="p-4 mx-auto">
         <h1 className="my-4">{subject}</h1>
-        <div className="relative">
-          <div className="relative z-3 top-0 left-0 h-[200px] w-[80vw]  sm:h-[300px] sm:w-[540px] lg:h-[350px] lg:w-[800px]">
-            <Flashcard
-              definition={flashcards[0].definition}
-              explanation={flashcards[0].explanation}
-              turnOff={true}
-            ></Flashcard>
-          </div>
+        <div className="relative ">
+          <Swiping>
+            {({ isMoved }) => (
+              <div className="relative z-3 top-0 left-0 h-[200px] w-[80vw]  sm:h-[300px] sm:w-[540px] lg:h-[350px] lg:w-[800px]">
+                <Flashcard
+                  definition={flashcards[0].definition}
+                  explanation={flashcards[0].explanation}
+                  isMoved={isMoved}
+                ></Flashcard>
+              </div>
+            )}
+          </Swiping>
+
           <div className="absolute z-2 top-[15px] left-[-15px] sm:top-[20px] sm:left-[-20px] h-[200px] w-[80vw]  sm:h-[300px] sm:w-[540px] lg:h-[350px] lg:w-[800px]">
             <Flashcard
               definition={flashcards[1].definition}
@@ -65,10 +63,7 @@ function FlashcardsSet() {
         </div>
 
         <div className="w-full flex flex-col justify-center gap-5 mt-[70px] md:mt-[100px] max-w-[300px] mx-auto">
-          <SecondButton text={"Edit"} />
-          <Link to={`${path.pathname}/learn`} className="">
-            <MainButton text={"Learn"} styles={"w-full"} />
-          </Link>
+          <MainButton text={"Reshuffle"} />
         </div>
       </div>
       <Footer></Footer>
@@ -76,4 +71,4 @@ function FlashcardsSet() {
   );
 }
 
-export default FlashcardsSet;
+export default FlashcardsLearn;
