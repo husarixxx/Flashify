@@ -14,9 +14,10 @@ function Swiping({ children, isDragging, setIsDragging }) {
 
   useEffect(() => {
     function handleMouseMove(e) {
+      const x = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
       if (!isDragging) return;
 
-      const delta = e.clientX - startX;
+      const delta = x - startX;
 
       setAngle(
         Math.max(
@@ -34,8 +35,8 @@ function Swiping({ children, isDragging, setIsDragging }) {
         )
       );
       setTopPos(Math.ceil(Math.abs((currentX - startX) / 4)));
-      setCurrentX(e.clientX);
-      setCurrentX(e.clientX);
+      setCurrentX(x);
+      setCurrentX(x);
 
       if (Math.abs(delta) > 50) {
         setIsMoved(true);
@@ -61,18 +62,23 @@ function Swiping({ children, isDragging, setIsDragging }) {
     if (isDragging) {
       document.addEventListener("mousemove", handleMouseMove);
       document.addEventListener("mouseup", handleMouseUp);
+      document.addEventListener("touchmove", handleMouseMove);
+      document.addEventListener("touchend", handleMouseUp);
     }
 
     return () => {
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
+      document.removeEventListener("touchmove", handleMouseMove);
+      document.removeEventListener("touchend", handleMouseUp);
     };
   }, [isDragging, startX, currentX]);
 
   function mouseDownHandle(e) {
+    const x = e.touches ? e.touches[0].clientX : e.clientX;
     setAngle(0);
-    setStartX(e.clientX);
-    setCurrentX(e.clientX);
+    setStartX(x);
+    setCurrentX(x);
     setTimeout(() => {
       setIsDragging(true);
     }, 0);
@@ -81,6 +87,7 @@ function Swiping({ children, isDragging, setIsDragging }) {
   return (
     <div
       onMouseDown={mouseDownHandle}
+      onTouchStart={mouseDownHandle}
       className={`relative h-[200px] w-[80vw]  sm:h-[300px] sm:w-[540px] lg:h-[350px] lg:w-[800px] z-5 bg-transparent   `}
       style={{
         left: `${currentX - startX}px`,

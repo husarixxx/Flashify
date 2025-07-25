@@ -15,6 +15,7 @@ function FlashcardsLearn() {
   const { swipe, setSwipe } = useFlashcard();
   const [index, setIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  const [flipped, setFlipped] = useState(false);
 
   function updateIndex(flashcards) {
     if (index + 1 > flashcards.length - 1) setIndex(0);
@@ -35,6 +36,7 @@ function FlashcardsLearn() {
 
   useEffect(() => {
     if (swipe.left || swipe.right) {
+      setFlipped(false);
       setTimeout(() => {
         updateIndex(flashcards);
         setSwipe({ left: false, right: false });
@@ -59,6 +61,8 @@ function FlashcardsLearn() {
                   definition={flashcards[index].definition}
                   explanation={flashcards[index].explanation}
                   isDragging={isDragging}
+                  flipped={flipped}
+                  setFlipped={setFlipped}
                 ></Flashcard>
               </div>
             }
