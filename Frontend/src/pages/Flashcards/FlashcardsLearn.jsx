@@ -5,16 +5,23 @@ import MainButton from "../../components/MainButton";
 
 import Swiping from "./Swiping";
 
+import { useFlashcard } from "../../context/FlashcardContext";
 import { useParams, useLocation } from "react-router-dom";
 
 import mySubjects from "../../exampleData";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function FlashcardsLearn() {
-  const [isLearning, setIsLearning] = useState(false);
+  const { swipe, setSwipe } = useFlashcard();
+  const [index, setIndex] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+
+  function updateIndex(flashcards) {
+    if (index + 1 > flashcards.length - 1) setIndex(0);
+    else setIndex(index + 1);
+  }
 
   let params = useParams();
-  const path = useLocation();
 
   const subject = params.subject;
   const subjectFiltered = Object.entries(mySubjects).filter(
@@ -26,36 +33,99 @@ function FlashcardsLearn() {
     ([subject, data]) => data.flashcards
   )[0];
 
+  useEffect(() => {
+    if (swipe.left || swipe.right) {
+      setTimeout(() => {
+        updateIndex(flashcards);
+        setSwipe({ left: false, right: false });
+      }, 900);
+    }
+  }, [flashcards, swipe]);
+
   return (
     <div className="min-h-[100vh] flex flex-col justify-between overflow-hidden">
       <Header loggedIn={true} logo="../../../src/assets/flashify.png"></Header>
       <div className="p-4 mx-auto">
         <h1 className="my-4">{subject}</h1>
         <div className="relative ">
-          <Swiping>
-            {({ isMoved }) => (
-              <div className="relative z-3 top-0 left-0 h-[200px] w-[80vw]  sm:h-[300px] sm:w-[540px] lg:h-[350px] lg:w-[800px]">
+          <Swiping isDragging={isDragging} setIsDragging={setIsDragging}>
+            {
+              <div
+                className={`relative z-3 top-0 left-0 h-[200px] w-[80vw]  sm:h-[300px] sm:w-[540px] lg:h-[350px] lg:w-[800px]" ${
+                  swipe.left || swipe.right ? "hidden" : ""
+                }`}
+              >
                 <Flashcard
-                  definition={flashcards[0].definition}
-                  explanation={flashcards[0].explanation}
-                  isMoved={isMoved}
+                  definition={flashcards[index].definition}
+                  explanation={flashcards[index].explanation}
+                  isDragging={isDragging}
                 ></Flashcard>
               </div>
-            )}
+            }
           </Swiping>
 
-          <div className="absolute z-2 top-[15px] left-[-15px] sm:top-[20px] sm:left-[-20px] h-[200px] w-[80vw]  sm:h-[300px] sm:w-[540px] lg:h-[350px] lg:w-[800px]">
+          <div
+            className={`absolute z-2 top-[15px] left-[-15px] sm:top-[20px] sm:left-[-20px] h-[200px] w-[80vw]  sm:h-[300px] sm:w-[540px] lg:h-[350px] lg:w-[800px] ${
+              swipe.left || swipe.right
+                ? "translate-x-[15px] translate-y-[-15px] sm:translate-x-[20px] sm:translate-y-[-20px] transition-transform duration-500 "
+                : ""
+            }`}
+          >
             <Flashcard
-              definition={flashcards[1].definition}
-              explanation={flashcards[1].explanation}
+              definition={
+                flashcards[index + 1 > flashcards.length - 1 ? 0 : index + 1]
+                  .definition
+              }
+              explanation={
+                flashcards[index + 1 > flashcards.length - 1 ? 0 : index + 1]
+                  .explanation
+              }
               turnOff={true}
+              styles={` ${
+                !isDragging && !swipe.left && !swipe.right
+                  ? "text-transparent"
+                  : ""
+              }`}
             ></Flashcard>
           </div>
           {flashcards[2] && (
-            <div className="absolute z-1 top-[30px] left-[-30px] sm:top-[40px] sm:left-[-40px] h-[200px] w-[80vw]  sm:h-[300px] sm:w-[540px] lg:h-[350px] lg:w-[800px]">
+            <div
+              className={`absolute z-1 top-[30px] left-[-30px] sm:top-[40px] sm:left-[-40px] h-[200px] w-[80vw]  sm:h-[300px] sm:w-[540px] lg:h-[350px] lg:w-[800px] ${
+                swipe.left || swipe.right
+                  ? "translate-x-[15px] translate-y-[-15px] sm:translate-x-[20px] sm:translate-y-[-20px] transition-transform duration-500 "
+                  : ""
+              }`}
+            >
               <Flashcard
-                definition={flashcards[2].definition}
-                explanation={flashcards[2].explanation}
+                definition={
+                  flashcards[index + 2 > flashcards.length - 1 ? 1 : index + 2]
+                    .definition
+                }
+                explanation={
+                  flashcards[index + 2 > flashcards.length - 1 ? 1 : index + 2]
+                    .explanation
+                }
+                turnOff={true}
+              ></Flashcard>
+            </div>
+          )}
+          {flashcards[2] && (
+            <div
+              className={`absolute z-0 top-[30px] left-[-30px] sm:top-[40px] sm:left-[-40px] h-[200px] w-[80vw]  sm:h-[300px] sm:w-[540px] lg:h-[350px] lg:w-[800px] opacity-0 ${
+                swipe.left || swipe.right
+                  ? "opacity-100 transition-opacity duration-800"
+                  : ""
+              }`}
+            >
+              <Flashcard
+                definition={
+                  flashcards[index + 2 > flashcards.length - 1 ? 1 : index + 2]
+                    .definition
+                }
+                explanation={
+                  flashcards[index + 2 > flashcards.length - 1 ? 1 : index + 2]
+                    .explanation
+                }
                 turnOff={true}
               ></Flashcard>
             </div>

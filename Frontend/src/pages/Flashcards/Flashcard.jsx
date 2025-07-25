@@ -1,21 +1,35 @@
 import { useState } from "react";
 
-function Flashcard({ definition, explanation, turnOff = false, isMoved }) {
+function Flashcard({
+  definition,
+  explanation,
+  turnOff = false,
+  isDragging,
+  styles,
+}) {
   const [flipped, setFlipped] = useState(false);
+  const [startX, setStartX] = useState(0);
+
+  function onMouseDownHandle(e) {
+    setStartX(e.clientX);
+  }
+  function onMouseUpHandle(e) {
+    if (turnOff) return;
+    if (Math.abs(e.clientX - startX) < 50) setFlipped(!flipped);
+  }
   return (
-    <button className="h-[200px] w-[100%] sm:h-[300px] sm:w-[540px] lg:h-[350px] lg:w-[800px]  text-white   perspective-distant transition-all duration-900 ease-in">
+    <button className="h-[200px] w-[100%] sm:h-[300px] sm:w-[540px] lg:h-[350px] lg:w-[800px]  text-white   perspective-distant  ">
       <div
-        className={`relative w-full h-full transition-transform transform-3d
+        className={`relative w-full h-full transition-transform duration-800 transform-3d
 
    ${flipped ? "rotate-y-180  " : ""}`}
-        onClick={(e) => {
-          !turnOff && isMoved ? setFlipped(!flipped) : e.stopPropagation();
-        }}
+        onMouseDown={onMouseDownHandle}
+        onMouseUp={onMouseUpHandle}
       >
         <div
-          className={`p-4 absolute z-2 w-full h-full flex items-center justify-center bg-purple-600 rounded-2xl shadow-xl text-center backface-hidden`}
+          className={`p-4 absolute z-2 w-full h-full flex items-center justify-center bg-purple-600 rounded-2xl shadow-xl text-center backface-hidden bg-opacity-100`}
         >
-          <h2>{definition}</h2>
+          <h2 className={`${styles} `}>{definition}</h2>
         </div>
         <div className="absolute z-1 w-full h-full rotate-y-180  flex items-center justify-center bg-purple-600 rounded-2xl shadow-xl  text-center backface-hidden">
           <p className="text-white">{explanation}</p>

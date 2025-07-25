@@ -1,13 +1,16 @@
 import { useState, useEffect } from "react";
+import { useFlashcard } from "../../context/FlashcardContext";
 
-function Swiping({ children }) {
+function Swiping({ children, isDragging, setIsDragging }) {
   const [startX, setStartX] = useState(0);
   const [currentX, setCurrentX] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
+
   const [isMoved, setIsMoved] = useState(false);
   const [angle, setAngle] = useState(0);
   const [topPos, setTopPos] = useState(0);
   const [opacity, setOpacity] = useState(100);
+
+  const { swipe, setSwipe } = useFlashcard();
 
   useEffect(() => {
     function handleMouseMove(e) {
@@ -41,13 +44,18 @@ function Swiping({ children }) {
       }
     }
 
-    function handleMouseUp() {
+    function handleMouseUp(e) {
+      e.preventDefault();
       if (!isDragging) return;
+      if (opacity === 0) {
+        if (currentX - startX > 0) setSwipe({ left: false, right: true });
+        else setSwipe({ left: true, right: false });
+      }
       setIsDragging(false);
       setAngle(0);
       setTopPos(0);
       setOpacity(1);
-      setCurrentX(startX); // reset po puszczeniu
+      setCurrentX(startX);
     }
 
     if (isDragging) {
@@ -73,7 +81,7 @@ function Swiping({ children }) {
   return (
     <div
       onMouseDown={mouseDownHandle}
-      className="relative z-5 overflow-hidden bg-hidden rounded-xl shadow-xl"
+      className={`relative h-[200px] w-[80vw]  sm:h-[300px] sm:w-[540px] lg:h-[350px] lg:w-[800px] z-5 bg-transparent   `}
       style={{
         left: `${currentX - startX}px`,
         top: `${topPos}px`,
@@ -81,7 +89,7 @@ function Swiping({ children }) {
         opacity: `${opacity}`,
       }}
     >
-      {children(isMoved)}
+      {children}
     </div>
   );
 }

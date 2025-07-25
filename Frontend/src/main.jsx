@@ -9,6 +9,7 @@ import Home from "./pages/Home/Home";
 import Flashcards from "./pages/Flashcards/Flashcards";
 import FlashcardsSet from "./pages/Flashcards/FlashcardsSet";
 import FlashcardsLearn from "./pages/Flashcards/FlashcardsLearn";
+import { FlashcardProvider } from "./context/FlashcardContext";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -20,9 +21,14 @@ createRoot(document.getElementById("root")).render(
         <Route path="/home" element={<Home />} />
         <Route path="/home/flashcards" element={<Flashcards />} />
         <Route path="/home/flashcards/:subject" element={<FlashcardsSet />} />
+
         <Route
           path="/home/flashcards/:subject/learn"
-          element={<FlashcardsLearn />}
+          element={
+            <FlashcardProvider>
+              <FlashcardsLearn />
+            </FlashcardProvider>
+          }
         />
       </Routes>
     </BrowserRouter>
