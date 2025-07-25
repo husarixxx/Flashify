@@ -17,11 +17,6 @@ function FlashcardsLearn() {
   const [isDragging, setIsDragging] = useState(false);
   const [flipped, setFlipped] = useState(false);
 
-  function updateIndex(flashcards) {
-    if (index + 1 > flashcards.length - 1) setIndex(0);
-    else setIndex(index + 1);
-  }
-
   let params = useParams();
 
   const subject = params.subject;
@@ -35,14 +30,27 @@ function FlashcardsLearn() {
   )[0];
 
   useEffect(() => {
+    function updateIndex(swipe) {
+      console.log(index);
+      console.log(flashcards);
+
+      if (swipe.right) {
+        if (index >= flashcards.length) setIndex(0);
+        flashcards.splice(index, 1);
+      } else if (swipe.left) {
+        if (index + 1 > flashcards.length - 1) setIndex(0);
+        else setIndex(index + 1);
+      }
+    }
+
     if (swipe.left || swipe.right) {
       setFlipped(false);
       setTimeout(() => {
-        updateIndex(flashcards);
+        updateIndex(swipe);
         setSwipe({ left: false, right: false });
       }, 900);
     }
-  }, [flashcards, swipe]);
+  }, [flashcards, swipe, setSwipe, index]);
 
   return (
     <div className="min-h-[100vh] flex flex-col justify-between overflow-hidden">
@@ -68,31 +76,33 @@ function FlashcardsLearn() {
             }
           </Swiping>
 
-          <div
-            className={`absolute z-2 top-[15px] left-[-15px] sm:top-[20px] sm:left-[-20px] h-[200px] w-[80vw]  sm:h-[300px] sm:w-[540px] lg:h-[350px] lg:w-[800px] ${
-              swipe.left || swipe.right
-                ? "translate-x-[15px] translate-y-[-15px] sm:translate-x-[20px] sm:translate-y-[-20px] transition-transform duration-500 "
-                : ""
-            }`}
-          >
-            <Flashcard
-              definition={
-                flashcards[index + 1 > flashcards.length - 1 ? 0 : index + 1]
-                  .definition
-              }
-              explanation={
-                flashcards[index + 1 > flashcards.length - 1 ? 0 : index + 1]
-                  .explanation
-              }
-              turnOff={true}
-              styles={` ${
-                !isDragging && !swipe.left && !swipe.right
-                  ? "text-transparent"
+          {flashcards.length > 1 && (
+            <div
+              className={`absolute z-2 top-[15px] left-[-15px] sm:top-[20px] sm:left-[-20px] h-[200px] w-[80vw]  sm:h-[300px] sm:w-[540px] lg:h-[350px] lg:w-[800px] ${
+                swipe.left || swipe.right
+                  ? "translate-x-[15px] translate-y-[-15px] sm:translate-x-[20px] sm:translate-y-[-20px] transition-transform duration-500 "
                   : ""
               }`}
-            ></Flashcard>
-          </div>
-          {flashcards[2] && (
+            >
+              <Flashcard
+                definition={
+                  flashcards[index + 1 > flashcards.length - 1 ? 0 : index + 1]
+                    .definition
+                }
+                explanation={
+                  flashcards[index + 1 > flashcards.length - 1 ? 0 : index + 1]
+                    .explanation
+                }
+                turnOff={true}
+                styles={` ${
+                  !isDragging && !swipe.left && !swipe.right
+                    ? "text-transparent"
+                    : ""
+                }`}
+              ></Flashcard>
+            </div>
+          )}
+          {flashcards.length > 2 && (
             <div
               className={`absolute z-1 top-[30px] left-[-30px] sm:top-[40px] sm:left-[-40px] h-[200px] w-[80vw]  sm:h-[300px] sm:w-[540px] lg:h-[350px] lg:w-[800px] ${
                 swipe.left || swipe.right
@@ -113,23 +123,25 @@ function FlashcardsLearn() {
               ></Flashcard>
             </div>
           )}
-          {flashcards[2] && (
+          {flashcards.length - 1 > 0 && (
             <div
               className={`absolute z-0 top-[30px] left-[-30px] sm:top-[40px] sm:left-[-40px] h-[200px] w-[80vw]  sm:h-[300px] sm:w-[540px] lg:h-[350px] lg:w-[800px] opacity-0 ${
                 swipe.left || swipe.right
                   ? "opacity-100 transition-opacity duration-800"
                   : ""
+              }  ${
+                (flashcards.length < 3 && swipe.left) ||
+                (flashcards.length - 1 < 3 && swipe.right)
+                  ? (flashcards.length < 2 && swipe.left) ||
+                    (flashcards.length - 1 < 2 && swipe.right)
+                    ? "translate-x-[30px] translate-y-[-30px] sm:translate-x-[40px] sm:translate-y-[-40px]"
+                    : "translate-x-[15px] translate-y-[-15px] sm:translate-x-[20px] sm:translate-y-[-20px]"
+                  : ""
               }`}
             >
               <Flashcard
-                definition={
-                  flashcards[index + 2 > flashcards.length - 1 ? 1 : index + 2]
-                    .definition
-                }
-                explanation={
-                  flashcards[index + 2 > flashcards.length - 1 ? 1 : index + 2]
-                    .explanation
-                }
+                definition={flashcards[0].definition}
+                explanation={flashcards[0].explanation}
                 turnOff={true}
               ></Flashcard>
             </div>
