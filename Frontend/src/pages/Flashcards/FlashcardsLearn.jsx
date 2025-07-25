@@ -35,7 +35,9 @@ function FlashcardsLearn() {
       console.log(flashcards);
 
       if (swipe.right) {
-        if (index >= flashcards.length) setIndex(0);
+        if (index + 1 >= flashcards.length) {
+          setIndex(0);
+        }
         flashcards.splice(index, 1);
       } else if (swipe.left) {
         if (index + 1 > flashcards.length - 1) setIndex(0);
@@ -66,8 +68,16 @@ function FlashcardsLearn() {
                 }`}
               >
                 <Flashcard
-                  definition={flashcards[index].definition}
-                  explanation={flashcards[index].explanation}
+                  definition={
+                    flashcards.length > index
+                      ? flashcards[index].definition
+                      : ""
+                  }
+                  explanation={
+                    flashcards.length > index
+                      ? flashcards[index].explanation
+                      : ""
+                  }
                   isDragging={isDragging}
                   flipped={flipped}
                   setFlipped={setFlipped}
@@ -123,19 +133,19 @@ function FlashcardsLearn() {
               ></Flashcard>
             </div>
           )}
-          {flashcards.length - 1 > 0 && (
+          {flashcards.length > 0 && (
             <div
-              className={`absolute z-0 top-[30px] left-[-30px] sm:top-[40px] sm:left-[-40px] h-[200px] w-[80vw]  sm:h-[300px] sm:w-[540px] lg:h-[350px] lg:w-[800px] opacity-0 ${
+              className={`absolute z-0 top-[30px] left-[-30px] sm:top-[40px] sm:left-[-40px] h-[200px] w-[80vw]  sm:h-[300px] sm:w-[540px] lg:h-[350px] lg:w-[800px] opacity-0  ${
                 swipe.left || swipe.right
-                  ? "opacity-100 transition-opacity duration-800"
+                  ? "opacity-100 transition-opacity duration-800 "
                   : ""
               }  ${
                 (flashcards.length < 3 && swipe.left) ||
                 (flashcards.length - 1 < 3 && swipe.right)
                   ? (flashcards.length < 2 && swipe.left) ||
                     (flashcards.length - 1 < 2 && swipe.right)
-                    ? "translate-x-[30px] translate-y-[-30px] sm:translate-x-[40px] sm:translate-y-[-40px]"
-                    : "translate-x-[15px] translate-y-[-15px] sm:translate-x-[20px] sm:translate-y-[-20px]"
+                    ? "translate-x-[30px] translate-y-[-30px] sm:translate-x-[40px] sm:translate-y-[-40px] overflow-hidden"
+                    : "translate-x-[15px] translate-y-[-15px] sm:translate-x-[20px] sm:translate-y-[-20px] overflow-hidden"
                   : ""
               }`}
             >
