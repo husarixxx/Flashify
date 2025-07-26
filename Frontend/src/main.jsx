@@ -9,6 +9,7 @@ import Home from "./pages/Home/Home";
 import Flashcards from "./pages/Flashcards/Flashcards";
 import FlashcardsSet from "./pages/Flashcards/FlashcardsSet";
 import FlashcardsLearn from "./pages/Flashcards/FlashcardsLearn";
+import FlashcardsEdit from "./pages/Flashcards/FlashcardsEdit";
 import { FlashcardProvider } from "./context/FlashcardContext";
 
 createRoot(document.getElementById("root")).render(
@@ -29,6 +30,10 @@ createRoot(document.getElementById("root")).render(
               <FlashcardsLearn />
             </FlashcardProvider>
           }
+        />
+        <Route
+          path="/home/flashcards/:subject/edit"
+          element={<FlashcardsEdit />}
         />
       </Routes>
     </BrowserRouter>

@@ -17,6 +17,11 @@ const mySubjects = {
         explanation: "to improve the quality, amount, or strength of something",
         tags: ["verbs", "C1"],
       },
+      {
+        definition: "to dane",
+        explanation: "to move like beast",
+        tags: ["verbs", "C1"],
+      },
     ],
     quizzes: [
       {

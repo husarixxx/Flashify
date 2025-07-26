@@ -3,9 +3,9 @@ import Container from "./Container";
 function Subjects({ subject, types }) {
   return (
     <Link to={`/home/flashcards/${subject}`}>
-      <Container styles="relative group md:w-[250px] hover:text-white ">
+      <Container styles="relative group md:w-[250px] hover:text-white group ">
         <div className="relative z-10">
-          <h3 className="">{subject}</h3>
+          <h3 className="group-hover:text-white">{subject}</h3>
 
           {types.map((type) => (
             <p key={crypto.randomUUID()} className="group-hover:text-white ">

@@ -23,7 +23,7 @@ function Flashcard({
   return (
     <button className="h-[200px] w-[100%] sm:h-[300px] sm:w-[540px] lg:h-[350px] lg:w-[800px]  text-white   perspective-distant  select-none">
       <div
-        className={`relative w-full h-full transition-transform duration-800 transform-3d
+        className={`relative w-full h-full transition-transform duration-800 transform-3d hover:cursor-pointer
 
    ${flipped ? "rotate-y-180  " : ""}`}
         onMouseDown={onMouseDownHandle}
@@ -32,11 +32,11 @@ function Flashcard({
         onTouchEnd={onMouseUpHandle}
       >
         <div
-          className={`p-4 absolute z-2 w-full h-full flex items-center justify-center bg-purple-600 rounded-2xl shadow-xl text-center backface-hidden bg-opacity-100`}
+          className={`p-4 absolute z-2 w-full h-full flex items-center justify-center bg-gradient-to-r from-purple-600  to-purple-500 rounded-2xl shadow-xl text-center backface-hidden bg-opacity-100`}
         >
           <h2 className={`${styles} `}>{definition}</h2>
         </div>
-        <div className="absolute z-1 w-full h-full rotate-y-180  flex items-center justify-center bg-purple-600 rounded-2xl shadow-xl  text-center backface-hidden">
+        <div className="absolute z-1 w-full h-full rotate-y-180  flex items-center justify-center bg-gradient-to-r from-purple-600  to-purple-500 rounded-2xl shadow-xl  text-center backface-hidden">
           <p className="text-white">{explanation}</p>
         </div>
       </div>
