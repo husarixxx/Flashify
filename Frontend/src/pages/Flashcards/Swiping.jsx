@@ -9,6 +9,7 @@ function Swiping({ children, isDragging, setIsDragging }) {
   const [angle, setAngle] = useState(0);
   const [topPos, setTopPos] = useState(0);
   const [opacity, setOpacity] = useState(100);
+  const [animateBack, setAnimateBack] = useState();
 
   const { swipe, setSwipe } = useFlashcard();
 
@@ -51,12 +52,26 @@ function Swiping({ children, isDragging, setIsDragging }) {
       if (opacity === 0) {
         if (currentX - startX > 0) setSwipe({ left: false, right: true });
         else setSwipe({ left: true, right: false });
+        setIsDragging(false);
+        setAngle(0);
+        setTopPos(0);
+        setOpacity(1);
+        setCurrentX(startX);
+        setAnimateBack(false);
+      } else {
+        setAnimateBack(true);
+
+        setTimeout(() => {
+          setIsDragging(false);
+          setAngle(0);
+          setTopPos(0);
+          setOpacity(1);
+          setCurrentX(startX);
+        }, 0);
+        setTimeout(() => {
+          setAnimateBack(false);
+        }, 500);
       }
-      setIsDragging(false);
-      setAngle(0);
-      setTopPos(0);
-      setOpacity(1);
-      setCurrentX(startX);
     }
 
     if (isDragging) {
@@ -88,7 +103,9 @@ function Swiping({ children, isDragging, setIsDragging }) {
     <div
       onMouseDown={mouseDownHandle}
       onTouchStart={mouseDownHandle}
-      className={`relative h-[200px] w-[80vw]  sm:h-[300px] sm:w-[540px] lg:h-[350px] lg:w-[800px] z-5 bg-transparent   `}
+      className={`relative h-[200px] w-[80vw]  sm:h-[300px] sm:w-[540px] lg:h-[350px] lg:w-[800px] z-5 bg-transparent   ${
+        animateBack ? "transition-all duration-500 ease-out" : ""
+      }`}
       style={{
         left: `${currentX - startX}px`,
         top: `${topPos}px`,

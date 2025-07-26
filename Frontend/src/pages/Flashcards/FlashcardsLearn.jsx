@@ -2,8 +2,10 @@ import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import Flashcard from "./Flashcard";
 import MainButton from "../../components/MainButton";
-
+import Container from "../../components/Container";
 import Swiping from "./Swiping";
+
+import shuffleArray from "../../utils/shuffleArray";
 
 import { useFlashcard } from "../../context/FlashcardContext";
 import { useParams, useLocation } from "react-router-dom";
@@ -35,13 +37,9 @@ function FlashcardsLearn() {
   }, [dataFlashcards]);
   useEffect(() => {
     function updateIndex(swipe) {
-      console.log(index);
-      console.log(flashcards);
-
       if (swipe.right) {
         setFlashcards((prev) => {
           const newCards = prev.filter((flashcard, idx) => index !== idx);
-          console.log(newCards);
           if (index + 1 >= flashcards.length) {
             setIndex(0);
           }
@@ -58,7 +56,7 @@ function FlashcardsLearn() {
       setTimeout(() => {
         updateIndex(swipe);
         setSwipe({ left: false, right: false });
-      }, 900);
+      }, 400);
     }
   }, [flashcards, setFlashcards, swipe, setSwipe, index]);
 
@@ -67,7 +65,12 @@ function FlashcardsLearn() {
       <Header loggedIn={true} logo="../../../src/assets/flashify.png"></Header>
       <div className="p-4 mx-auto">
         <h1 className="my-4">{subject}</h1>
-        {flashcards && (
+        {flashcards.length === 0 && (
+          <h2 className="text-2xl lg:text-3xl">
+            "That's it! You’ve mastered this set. Want to go another round?"
+          </h2>
+        )}
+        {flashcards && flashcards.length > 0 && (
           <div className="relative ">
             <Swiping isDragging={isDragging} setIsDragging={setIsDragging}>
               {
@@ -149,8 +152,9 @@ function FlashcardsLearn() {
             {flashcards.length > 0 && (
               <div
                 className={`absolute z-0 top-[30px] left-[-30px] sm:top-[40px] sm:left-[-40px] h-[200px] w-[80vw]  sm:h-[300px] sm:w-[540px] lg:h-[350px] lg:w-[800px] opacity-0  ${
-                  swipe.left || swipe.right
-                    ? "opacity-100 transition-opacity duration-800 "
+                  (swipe.left || swipe.right) &&
+                  !(flashcards.length - 1 < 1 && !swipe.left)
+                    ? "opacity-100 transition-opacity duration-1000 "
                     : ""
                 }  ${
                   (flashcards.length < 3 && swipe.left) ||
@@ -172,9 +176,24 @@ function FlashcardsLearn() {
           </div>
         )}
 
-        <div className="w-full flex flex-col justify-center gap-5 mt-[70px] md:mt-[100px] max-w-[300px] mx-auto">
-          <MainButton text={"Reshuffle"} />
-        </div>
+        {flashcards.length > 0 && (
+          <div className="w-full flex flex-col justify-center gap-5 mt-[70px] md:mt-[100px] max-w-[300px] mx-auto">
+            <MainButton
+              text={"Reshuffle"}
+              onClick={() => setFlashcards(shuffleArray(flashcards))}
+            />
+          </div>
+        )}
+        {flashcards.length === 0 && (
+          <div className="w-full flex flex-col justify-center gap-5 mt-[70px] md:mt-[100px] max-w-[300px] mx-auto">
+            <MainButton
+              text={"Learn again"}
+              onClick={() => {
+                setFlashcards(dataFlashcards);
+              }}
+            />
+          </div>
+        )}
       </div>
       <Footer></Footer>
     </div>
