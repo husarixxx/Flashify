@@ -6,6 +6,7 @@ import { TbNotes } from "react-icons/tb";
 import { IoIosStats } from "react-icons/io";
 import { FaRegUserCircle } from "react-icons/fa";
 import { LiaLayerGroupSolid } from "react-icons/lia";
+import { useLocation } from "react-router-dom";
 
 function Header({
   loggedIn = false,
@@ -20,16 +21,37 @@ function Header({
       icon: <TbCards size={23} />,
       text: "Flashcards",
       path: "/home/flashcards",
+      regex: /flashcards/,
     },
-    { icon: <MdOutlineQuiz size={23} />, text: "Quizzes", path: "/quizzes" },
-    { icon: <TbNotes size={23} />, text: "Notes", path: "/notes" },
-    { icon: <IoIosStats size={23} />, text: "Stats", path: "/stats" },
+    {
+      icon: <MdOutlineQuiz size={23} />,
+      text: "Quizzes",
+      path: "/quizzes",
+      regex: /quizzes/,
+    },
+    {
+      icon: <TbNotes size={23} />,
+      text: "Notes",
+      path: "/notes",
+      regex: /notes/,
+    },
+    {
+      icon: <IoIosStats size={23} />,
+      text: "Stats",
+      path: "/stats",
+      regex: /stats/,
+    },
     {
       icon: <LiaLayerGroupSolid size={23} />,
       text: "Subjects",
       path: "/subjects",
+      regex: /subject/,
     },
   ];
+
+  const path = useLocation();
+  const flashcardRegex = /flashcards/;
+  const isInFlashcards = flashcardRegex.test(path.pathname);
 
   return (
     <header className="flex justify-between gap-1 p-4 shadow-xl">
@@ -47,10 +69,18 @@ function Header({
               <Link
                 to={icon.path}
                 key={index}
-                className="flex items-center gap-2 hover:text-purple-800 group "
+                className={` p-1 flex items-center gap-2 hover:text-purple-600 group transition-colors ${
+                  icon.regex.test(path.pathname)
+                    ? "text-purple-600 border-b-2"
+                    : ""
+                }`}
               >
                 {icon.icon}
-                <p className="hidden sm:block group-hover:text-purple-600">
+                <p
+                  className={`hidden sm:block group-hover:text-purple-600 ${
+                    icon.regex.test(path.pathname) ? "text-purple-600" : ""
+                  }`}
+                >
                   {icon.text}
                 </p>
               </Link>
