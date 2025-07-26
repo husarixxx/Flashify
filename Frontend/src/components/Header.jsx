@@ -72,7 +72,7 @@ function Header({
                 className={` p-1 flex items-center gap-2 hover:text-purple-600 group transition-colors ${
                   icon.regex.test(path.pathname)
                     ? "text-purple-600 border-b-2"
-                    : ""
+                    : "relative group"
                 }`}
               >
                 {icon.icon}
@@ -83,6 +83,7 @@ function Header({
                 >
                   {icon.text}
                 </p>
+                <span className="absolute w-[100%] origin-left scale-0 group-hover:scale-100 bg-purple-700  bottom-0 left-0 h-[2px] transition-transform duration-300 ease-out"></span>
               </Link>
             ))}
         </div>
