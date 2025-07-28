@@ -1,5 +1,3 @@
-
-from pydantic import BaseModel, Field
 from fastapi import FastAPI,HTTPException,Depends
 from fastapi.security import OAuth2PasswordRequestForm
 import models,schemas, utils
@@ -10,7 +8,10 @@ from login import create_access_token
 
 
 
-# TODO : dzialajaca mechanika kont
+# TODO : dzialajaca mechanika google i facebook (logowanie i rejestracja)
+# TODO : zabrac sie za Ai
+# TODO : druga baza danych połaczona z Ai jeden do wielu z userem
+# TODO : Sprawdzic jak to lepiej odsyłac dane
 
 
 app = FastAPI(
@@ -31,7 +32,6 @@ db_deppendency = Annotated[Session, Depends(get_db)]
 
 @app.post("/register",response_model= schemas.UserResponse)
 async def register(user : schemas.UserCreate, db : db_deppendency):
-    #test czy istnieje gość w bazie
     existing_user = db.query(models.Users).filter(
         (models.Users.username == user.username) | 
         (models.Users.email == user.email)
