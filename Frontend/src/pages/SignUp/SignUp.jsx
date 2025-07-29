@@ -8,6 +8,8 @@ import MainButton from "../../components/MainButton";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
+import validator from "validator";
+
 function SignUp() {
   const [success, setSucces] = useState("");
   const [error, setError] = useState("");
@@ -47,11 +49,28 @@ function SignUp() {
     );
   }
 
+  function assignError(error) {
+    const errorLower = error.toLowerCase();
+    if (errorLower.includes("username"))
+      setInputs((prevInputs) =>
+        prevInputs.map((input) => {
+          return input.label === "Username"
+            ? { ...input, error: error }
+            : input;
+        })
+      );
+    else if (errorLower.includes("email"))
+      setInputs((prevInputs) =>
+        prevInputs.map((input) => {
+          return input.label === "Email" ? { ...input, error: error } : input;
+        })
+      );
+  }
+
   async function handleOnSubmit(e) {
     e.preventDefault();
 
-    const usernameRegex = /^[\w-]{5,20}$/;
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const usernameRegex = /^[\w-]{8,20}$/;
     const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
 
     const updatedUsernameInputs = inputs.map((input) => {
@@ -60,15 +79,15 @@ function SignUp() {
           ? { ...input, error: "" }
           : {
               ...input,
-              error: "Username must be between 5 and 20 characters.",
+              error: "Username must be between 8 and 20 characters.",
             };
       } else return input;
     });
     const updatedEmailInputs = updatedUsernameInputs.map((input) => {
       if (input.label === "Email") {
-        return emailRegex.test(input.value)
+        return validator.isEmail(input.value)
           ? { ...input, error: "" }
-          : { ...input, error: "Invalid email" };
+          : { ...input, error: "You have enter valid email" };
       } else return input;
     });
     const updatedPasswordInputs = updatedEmailInputs.map((input) => {
@@ -89,11 +108,10 @@ function SignUp() {
       acc[key] = input.error ? "" : input.value;
       return acc;
     }, {});
-    console.log(formData);
 
     if (
-      formData.email !== "" &&
       formData.username !== "" &&
+      formData.email !== "" &&
       formData.password !== ""
     ) {
       try {
@@ -106,9 +124,11 @@ function SignUp() {
         });
 
         if (response.ok) {
-          setSucces("Account created!");
+          setSucces("Account created succesfuly!");
         } else {
-          setError("Something went wrong. Try again");
+          const dataResponse = await response.json();
+          assignError(dataResponse.detail);
+          setError(dataResponse.detail || "Something went wrong. Try again");
         }
       } catch (err) {
         setError("Server connection error");
@@ -143,7 +163,7 @@ function SignUp() {
         <div className="flex flex-col items-center justify-center p-4">
           <h1 className="text-center ">{success}</h1>
           <Link to={"../log-in"}>
-            <MainButton text={"Log In"} styles={"px-10 lg:px-16 py-2.5 my-8"} />
+            <MainButton text={"Log In"} styles={"px-15 lg:px-20 py-3 my-8"} />
           </Link>
         </div>
       )}

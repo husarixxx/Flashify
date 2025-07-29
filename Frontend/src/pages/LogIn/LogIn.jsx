@@ -14,6 +14,7 @@ function LogIn() {
       type: "text",
       value: "",
       label: "Username",
+      error: "",
       onChange: handleOnChange,
     },
     {
@@ -21,34 +22,109 @@ function LogIn() {
       type: "password",
       value: "",
       label: "Password",
+      error: "",
       onChange: handleOnChange,
     },
   ]);
 
+  const [succes, setSucces] = useState("");
+  const [error, setError] = useState("");
+
   function handleOnChange(e, id) {
-    setInputs(
-      inputs.map((input) => {
+    setInputs((prevInputs) =>
+      prevInputs.map((input) => {
         return input.id === id ? { ...input, value: e.target.value } : input;
       })
     );
   }
 
+  async function handleOnSubmit(e) {
+    e.preventDefault();
+
+    const usernameRegex = /^[\w-]{8,20}$/;
+    const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+
+    const updatedUsernameInputs = inputs.map((input) => {
+      if (input.label === "Username") {
+        return usernameRegex.test(input.value)
+          ? { ...input, error: "" }
+          : {
+              ...input,
+              error: "Username must be between 8 and 20 characters.",
+            };
+      } else return input;
+    });
+
+    const updatedPasswordInputs = updatedUsernameInputs.map((input) => {
+      if (input.label === "Password") {
+        return passwordRegex.test(input.value)
+          ? { ...input, error: "" }
+          : {
+              ...input,
+              error:
+                "Password must include at least 1 uppercase letter, 1 number, and be 8+ characters long.",
+            };
+      } else return input;
+    });
+    setInputs(updatedPasswordInputs);
+
+    const formData = updatedPasswordInputs.reduce((acc, input) => {
+      const key = input.label.toLowerCase();
+      acc[key] = input.error ? "" : input.value;
+      return acc;
+    }, {});
+
+    if (formData.username !== "" && formData.password !== "") {
+      console.log(formData);
+      try {
+        console.log(JSON.stringify(formData));
+        const response = await fetch("http://127.0.0.1:8000/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        });
+
+        if (response.ok) {
+          setSucces("Logged in!");
+        } else {
+          const dataResponse = await response.json();
+          console.log(dataResponse);
+          setError(dataResponse.detail || "Something went wrong. Try again");
+        }
+      } catch (err) {
+        setError("Server connection error");
+        console.log(err);
+      }
+    }
+  }
+
   return (
     <div className="min-h-[100vh] flex flex-col justify-between">
       <Header></Header>
-      <div className="flex flex-col items-center justify-center ">
-        <h1 className="text-center my-18">Log In</h1>
-        <Form inputs={inputs} submitText="Log In"></Form>
-        <p className="text-center my-8 text-gray-600">or</p>
-        <ContinueBtn
-          icon={<FaGoogle size={24} />}
-          text="Continue with Google"
-        ></ContinueBtn>
-        <ContinueBtn
-          icon={<FaFacebook size={24} />}
-          text="Continue with Facebook"
-        ></ContinueBtn>
-      </div>
+      {error ? (
+        <div>{error}</div>
+      ) : (
+        <div className="flex flex-col items-center justify-center ">
+          <h1 className="text-center my-18">Log In</h1>
+          <Form
+            inputs={inputs}
+            submitText="Log In"
+            onSubmit={handleOnSubmit}
+          ></Form>
+          <p className="text-center my-8 text-gray-600">or</p>
+          <ContinueBtn
+            icon={<FaGoogle size={24} />}
+            text="Continue with Google"
+          ></ContinueBtn>
+          <ContinueBtn
+            icon={<FaFacebook size={24} />}
+            text="Continue with Facebook"
+          ></ContinueBtn>
+        </div>
+      )}
+
       <Footer></Footer>
     </div>
   );
