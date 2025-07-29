@@ -9,11 +9,9 @@ from login import create_access_token
 
 
 
-# TODO : dzialajaca mechanika google i facebook (logowanie i rejestracja)
-# TODO : zabrac sie za Ai (czesciowo zrobione)
-# TODO : druga baza danych połaczona z Ai 
-# TODO : doczytac o gemini AI w ramach nauki własnej
-# TODO : Skonfigurowac porty (cross...)!!! wazne
+# TODO : Working Google and Facebook mechanics (Login and Register)
+# TODO : take care of Ai (for scientific purposes )
+# TODO : second table connected with Ai
 
 app = FastAPI(
     title="Flashify API"
@@ -24,8 +22,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5174"],
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"]
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization"]
 )
 
 models.Base.metadata.create_all(bind=engine)
