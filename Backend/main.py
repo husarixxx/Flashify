@@ -63,12 +63,12 @@ async def register(user : schemas.UserCreate, db : db_deppendency):
     return new_user
 
 @app.post("/login" ,response_model= schemas.Token)
-async def login(db : db_deppendency, form_data: OAuth2PasswordRequestForm = Depends()):
+async def login(db : db_deppendency, credentials : schemas.UserLogin = None):
     user = db.query(models.Users).filter(
-        (models.Users.username == form_data.username) 
+        (models.Users.username == credentials.username) 
     ).first()
 
-    if not user or not utils.verify_password(form_data.password, user.hashed_password):
+    if not user or not utils.verify_password(credentials.password, user.hashed_password):
         raise HTTPException(status_code=401, detail="Invalid password or username")
     
     access_token = create_access_token(data = {"sub" : user.username})
