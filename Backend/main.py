@@ -9,10 +9,9 @@ from login import create_access_token
 
 
 # TODO : dzialajaca mechanika google i facebook (logowanie i rejestracja)
-# TODO : zabrac sie za Ai
-# TODO : druga baza danych połaczona z Ai jeden do wielu z userem
-# TODO : Sprawdzic jak to lepiej odsyłac dane
-
+# TODO : zabrac sie za Ai (czesciowo zrobione)
+# TODO : druga baza danych połaczona z Ai 
+# TODO : Skonfigurowac porty (cross...)!!! wazne
 
 app = FastAPI(
     title="Flashify API"
