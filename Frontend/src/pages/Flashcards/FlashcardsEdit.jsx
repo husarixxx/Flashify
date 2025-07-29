@@ -34,6 +34,11 @@ function FlashcardsEdit() {
   const path = useLocation();
 
   const [flashcards, setFlashcards] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+
+  function modalClose() {
+    setIsEditOpen(false);
+  }
 
   const subject = params.subject;
   const subjectFiltered = Object.entries(mySubjects).filter(
@@ -57,7 +62,9 @@ function FlashcardsEdit() {
   }, [flashcards, dataFlashcards]);
 
   return (
-    <div className="min-h-[100vh] flex flex-col justify-between overflow-hidden">
+    <div
+      className={`min-h-[100vh] flex flex-col justify-between overflow-hidden `}
+    >
       <Header loggedIn={true} logo="../../../src/assets/flashify.png"></Header>
       <div className="p-4 mx-auto mt-10">
         <h1 className="my-4">{subject}</h1>
@@ -83,9 +90,19 @@ function FlashcardsEdit() {
         </div>
       </div>
 
-      <Modal heading={"Edit Flashcard"}>
-        <Form inputs={editInputs} submitText={"Edit"} />
-      </Modal>
+      {isEditOpen && (
+        <Modal
+          heading={
+            <>
+              Edit
+              <span className="text-purple-500"> Flashcard</span>
+            </>
+          }
+          modalClose={modalClose}
+        >
+          <Form inputs={editInputs} submitText={"Edit"} />
+        </Modal>
+      )}
       <Footer></Footer>
     </div>
   );
