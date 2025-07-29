@@ -6,6 +6,7 @@ import { FaGoogle } from "react-icons/fa6";
 import { FaFacebook } from "react-icons/fa6";
 
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function LogIn() {
   const [inputs, setInputs] = useState([
@@ -27,13 +28,20 @@ function LogIn() {
     },
   ]);
 
-  const [succes, setSucces] = useState("");
   const [error, setError] = useState("");
+  const navigateLogin = useNavigate();
 
   function handleOnChange(e, id) {
     setInputs((prevInputs) =>
       prevInputs.map((input) => {
         return input.id === id ? { ...input, value: e.target.value } : input;
+      })
+    );
+  }
+  function assignError(error) {
+    setInputs((prevInputs) =>
+      prevInputs.map((input) => {
+        return { ...input, error: error };
       })
     );
   }
@@ -75,9 +83,7 @@ function LogIn() {
     }, {});
 
     if (formData.username !== "" && formData.password !== "") {
-      console.log(formData);
       try {
-        console.log(JSON.stringify(formData));
         const response = await fetch("http://127.0.0.1:8000/login", {
           method: "POST",
           headers: {
@@ -87,15 +93,14 @@ function LogIn() {
         });
 
         if (response.ok) {
-          setSucces("Logged in!");
+          navigateLogin("/home");
         } else {
           const dataResponse = await response.json();
-          console.log(dataResponse);
+          assignError(dataResponse.detail);
           setError(dataResponse.detail || "Something went wrong. Try again");
         }
       } catch (err) {
         setError("Server connection error");
-        console.log(err);
       }
     }
   }
@@ -103,9 +108,7 @@ function LogIn() {
   return (
     <div className="min-h-[100vh] flex flex-col justify-between">
       <Header></Header>
-      {error ? (
-        <div>{error}</div>
-      ) : (
+      {
         <div className="flex flex-col items-center justify-center ">
           <h1 className="text-center my-18">Log In</h1>
           <Form
@@ -123,7 +126,7 @@ function LogIn() {
             text="Continue with Facebook"
           ></ContinueBtn>
         </div>
-      )}
+      }
 
       <Footer></Footer>
     </div>

@@ -29,8 +29,6 @@ function FlashcardsSet() {
   const flashcards = subjectFiltered.map(
     ([subject, data]) => data.flashcards
   )[0];
-  console.log(subjectFiltered);
-  console.log(flashcards);
 
   return (
     <div className="min-h-[100vh] flex flex-col justify-between">

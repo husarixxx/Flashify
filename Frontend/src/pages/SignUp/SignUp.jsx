@@ -128,7 +128,6 @@ function SignUp() {
         } else {
           const dataResponse = await response.json();
           assignError(dataResponse.detail);
-          setError(dataResponse.detail || "Something went wrong. Try again");
         }
       } catch (err) {
         setError("Server connection error");
