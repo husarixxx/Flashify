@@ -1,5 +1,6 @@
 from fastapi import FastAPI,HTTPException,Depends
 from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.middleware.cors import CORSMiddleware
 import models,schemas, utils
 from database import engine, Sessionlocal
 from typing import Annotated
@@ -11,10 +12,20 @@ from login import create_access_token
 # TODO : dzialajaca mechanika google i facebook (logowanie i rejestracja)
 # TODO : zabrac sie za Ai (czesciowo zrobione)
 # TODO : druga baza danych połaczona z Ai 
+# TODO : doczytac o gemini AI w ramach nauki własnej
 # TODO : Skonfigurowac porty (cross...)!!! wazne
 
 app = FastAPI(
     title="Flashify API"
+)
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5174"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
 )
 
 models.Base.metadata.create_all(bind=engine)
