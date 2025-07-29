@@ -3,3 +3,4 @@
 /Backend/__pycache__/
 *.py[cod]
 /Backend/db/*.db
+/Backend/.env
