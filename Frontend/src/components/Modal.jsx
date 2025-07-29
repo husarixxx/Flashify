@@ -1,0 +1,30 @@
+import { createPortal } from "react-dom";
+import { IoMdClose } from "react-icons/io";
+import MainButton from "./MainButton";
+import Form from "./Form";
+
+function Modal({ children, heading, modalHandle, modalSubmitText }) {
+  return createPortal(
+    <div className="bg-black/70 w-[100vw] h-[100vh] absolute top-0 flex justify-center items-center ">
+      <div className="bg-white px-5 pt-1 pb-6 rounded-xl">
+        <div className="flex justify-between items-center gap-5">
+          <h2>{heading}</h2>
+          <button>
+            <IoMdClose size={28} />
+          </button>
+        </div>
+        {children}{" "}
+        {modalSubmitText && (
+          <MainButton
+            text={modalSubmitText}
+            onClick={modalHandle}
+            styles={"w-full"}
+          />
+        )}
+      </div>
+    </div>,
+    document.body
+  );
+}
+
+export default Modal;

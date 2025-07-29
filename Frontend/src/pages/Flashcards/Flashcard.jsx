@@ -4,7 +4,6 @@ function Flashcard({
   definition,
   explanation,
   turnOff = false,
-  isDragging,
   styles,
   flipped,
   setFlipped,

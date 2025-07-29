@@ -1,25 +1,38 @@
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
-import Flashcard from "./Flashcard";
 import MainButton from "../../components/MainButton";
-import Container from "../../components/Container";
-import Swiping from "./Swiping";
 import { useEffect, useState } from "react";
-import shuffleArray from "../../utils/shuffleArray";
-import { data, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import { useParams, useLocation } from "react-router-dom";
 import FlashcardEdit from "./FlashcardEdit";
+import Modal from "../../components/Modal";
 
 import mySubjects from "../../exampleData";
 import SecondButton from "../../components/SecondButton";
+import Form from "../../components/Form";
 
 function FlashcardsEdit() {
+  const [editInputs, setEditInputs] = useState([
+    {
+      id: crypto.randomUUID(),
+      type: "text",
+      value: "",
+      label: "Definition",
+      onChange: handleOnChange,
+    },
+    {
+      id: crypto.randomUUID(),
+      type: "text",
+      value: "",
+      label: "Explanation",
+      onChange: handleOnChange,
+    },
+  ]);
+
   let params = useParams();
   const path = useLocation();
 
-  const [index, setIndex] = useState(0);
-  const [flipped, setFlipped] = useState(false);
   const [flashcards, setFlashcards] = useState(false);
 
   const subject = params.subject;
@@ -32,9 +45,16 @@ function FlashcardsEdit() {
     ([subject, data]) => data.flashcards
   )[0];
 
+  function handleOnChange(e, id) {
+    setEditInputs((prevInputs) =>
+      prevInputs.map((input) => {
+        return input.id === id ? { ...input, value: e.target.value } : input;
+      })
+    );
+  }
   useEffect(() => {
     setFlashcards(dataFlashcards);
-  }, [flashcards]);
+  }, [flashcards, dataFlashcards]);
 
   return (
     <div className="min-h-[100vh] flex flex-col justify-between overflow-hidden">
@@ -62,6 +82,10 @@ function FlashcardsEdit() {
           </Link>
         </div>
       </div>
+
+      <Modal heading={"Edit Flashcard"}>
+        <Form inputs={editInputs} submitText={"Edit"} />
+      </Modal>
       <Footer></Footer>
     </div>
   );
