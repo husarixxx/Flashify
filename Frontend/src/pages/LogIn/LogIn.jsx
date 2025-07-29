@@ -11,9 +11,9 @@ function LogIn() {
   const [inputs, setInputs] = useState([
     {
       id: crypto.randomUUID(),
-      type: "email",
+      type: "text",
       value: "",
-      label: "Email",
+      label: "Username",
       onChange: handleOnChange,
     },
     {
