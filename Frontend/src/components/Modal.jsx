@@ -11,7 +11,9 @@ function Modal({
   modalSubmitText,
 }) {
   return createPortal(
-    <div className="bg-black/70 w-[100vw] h-[100vh] fixed top-0 flex justify-center items-center ">
+    <div
+      className={`bg-black/70 w-[100vw] h-[100vh] fixed top-0 flex justify-center items-center animate-render z-999`}
+    >
       <div className="bg-white px-5 pt-1 pb-6 rounded-xl">
         <div className="flex justify-between items-center gap-5">
           <h2>{heading}</h2>
