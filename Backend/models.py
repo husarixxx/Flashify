@@ -10,7 +10,7 @@ class Users(Base):
     email = Column(String, unique=True)
     hashed_password = Column(String, nullable=False)
 
-    flashcards = relationship("Flashcard", back_populates="user", cascade="all, delete")
+    flashcards = relationship("Flashcard", back_populates="user", cascade="all, delete-orphan")
 
 class Flashcard(Base):
     __tablename__ = 'flashcards'

@@ -49,8 +49,3 @@ def generate_flashcards(topic : str, num_of_flashcards  : int  = 5) -> list[dict
         return []    
 
 
-
-flashcards = generate_flashcards(input(),3)
-
-for card in flashcards:
-    print(card)

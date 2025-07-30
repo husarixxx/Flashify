@@ -36,3 +36,22 @@ class UserResponse(BaseModel):
 
 class Token(BaseModel):
     access_token : str
+
+
+class BaseFlashcard(BaseModel):
+    question : str
+    answer : str
+
+class CreateFlashcard(BaseFlashcard):
+    pass 
+
+class ResponseFlashcard(BaseFlashcard):
+    id : int
+    user_id : int
+
+    class Config:
+        from_attributes = True
+
+class GenerateRequest(BaseModel):
+    topic : str
+    number_of_flashcards: int = 5

@@ -1,17 +1,19 @@
-from fastapi import FastAPI,HTTPException,Depends
+from fastapi import FastAPI,HTTPException,Depends,Response
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
 import models,schemas, utils
 from database import engine, Sessionlocal
 from typing import Annotated
 from sqlalchemy.orm  import Session
-from login import create_access_token
+from login import create_access_token, get_current_user
+
+from ai.gemini import generate_flashcards
 
 
 
 # TODO : Working Google and Facebook mechanics (Login and Register)
-# TODO : take care of Ai (for scientific purposes )
-# TODO : second table connected with Ai
+# TODO : take care of Ai (for scientific purposes ), and image processing
+# TODO : second table  add column with specific topic (propably the same as the topic)
 
 app = FastAPI(
     title="Flashify API"
@@ -62,19 +64,59 @@ async def register(user : schemas.UserCreate, db : db_deppendency):
     db.refresh(new_user)
     return new_user
 
-@app.post("/login" ,response_model= schemas.Token)
-async def login(db : db_deppendency, credentials : schemas.UserLogin = None):
+@app.post("/login")
+async def login(response : Response, db: db_deppendency, login_data: schemas.UserLogin):
+
     user = db.query(models.Users).filter(
-        (models.Users.username == credentials.username) 
+        (models.Users.username == login_data.username) 
     ).first()
 
-    if not user or not utils.verify_password(credentials.password, user.hashed_password):
+    if not user or not utils.verify_password(login_data.password, user.hashed_password):
         raise HTTPException(status_code=401, detail="Invalid password or username")
     
-    access_token = create_access_token(data = {"sub" : user.username})
-    return{"access_token" : access_token}
+    access_token = create_access_token(data={"sub": user.username})
 
 
+    response.set_cookie(
+        key="access_token",
+        value=f"Bearer {access_token}",
+        httponly=True,
+        samesite='lax',
+        secure=True,
+    )
+    return {"status": "success", "message": "Logged in successfully"}
 
 
+@app.post("/Flashcards/Generate", response_model=list[schemas.CreateFlashcard])
+async def createFlash(db : db_deppendency,
+                    request_data : schemas.GenerateRequest,
+                    current_user: models.Users = Depends(get_current_user)
+                       ):
+    Created_flashcards = generate_flashcards(
+        request_data.topic,
+        request_data.number_of_flashcards
+    )
+    saved_flashcards = []
+    if not Created_flashcards:
+        raise HTTPException(
+            status_code=500,
+            detail= "Failed to generate Flashcards"
+        )
+    for flashcard in Created_flashcards:
+        db_flashcard = models.Flashcard(
+            question = flashcard["question"],
+            answer = flashcard["answer"],
+            user_id = current_user.id 
+        )
+        db.add(db_flashcard)
+        saved_flashcards.append(db_flashcard)
+
+    db.commit()
+
+
+    for flashcard in saved_flashcards:
+        db.refresh(flashcard)
+
+
+    return saved_flashcards
 
