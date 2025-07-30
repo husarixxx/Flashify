@@ -3,7 +3,7 @@ import Container from "./Container";
 function Subjects({ subject, types }) {
   return (
     <Link to={`/home/flashcards/${subject}`}>
-      <Container styles="relative group md:w-[250px] hover:text-white group ">
+      <Container styles="relative group md:w-[250px] hover:text-white group overflow-hidden">
         <div className="relative z-10">
           <h3 className="group-hover:text-white">{subject}</h3>
 
@@ -13,7 +13,7 @@ function Subjects({ subject, types }) {
             </p>
           ))}
         </div>
-        <div className="absolute z-1 top-0 left-0 bg-gradient-to-r  from-purple-600 to-pink-400 opacity-0 group-hover:opacity-100 transition-opacity h-full w-full rounded-2xl"></div>
+        <div className="absolute z-1 top-0 left-0 bg-gradient-to-r scale-x-0 origin-left  from-purple-600 to-purple-500  group-hover:scale-100 duration-200 transition-transform h-full w-full rounded-2xl"></div>
       </Container>
     </Link>
   );
