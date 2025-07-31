@@ -1,15 +1,16 @@
 import { Link } from "react-router-dom";
 import Container from "./Container";
-function Subjects({ subject, types }) {
+function Subjects({ subject, types, type }) {
+  const globalType = type;
   return (
-    <Link to={`/home/flashcards/${subject}`}>
+    <Link to={`/home/${type.toLowerCase()}/${subject}`}>
       <Container styles="relative group md:w-[250px] hover:text-white group overflow-hidden">
         <div className="relative z-10">
           <h3 className="group-hover:text-white">{subject}</h3>
 
           {types.map((type) => (
             <p key={crypto.randomUUID()} className="group-hover:text-white ">
-              {type.length} Flashcards
+              {type.length + " " + globalType}
             </p>
           ))}
         </div>

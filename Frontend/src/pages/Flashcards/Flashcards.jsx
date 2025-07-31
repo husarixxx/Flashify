@@ -1,5 +1,6 @@
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
+import SubjectList from "../../components/SubjectList";
 import Subject from "../../components/Subject";
 
 import MainButton from "../../components/MainButton";
@@ -13,7 +14,7 @@ import { useState } from "react";
 function Flashcards() {
   const flashcardsSubjects = Object.entries(mySubjects).map(
     ([subject, data]) => {
-      return { subject: subject, flashcards: data.flashcards };
+      return { subject: subject, types: data.flashcards };
     }
   );
 
@@ -104,34 +105,11 @@ function Flashcards() {
   return (
     <div className="min-h-[100vh] flex flex-col justify-between">
       <Header loggedIn={true} logo="../src/assets/flashify.png"></Header>
-      <div className="mx-4 p-4 md:mx-auto max-w-[1200px] md:translate-y-[-80px]">
-        <h2>My Subjects</h2>
-        <div className="md:grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {flashcardsSubjects.map((subject) => (
-            <Subject
-              key={crypto.randomUUID()}
-              subject={subject.subject}
-              types={[subject.flashcards]}
-            />
-          ))}
-        </div>
-        <div className="flex justify-center mt-20 lg:mt-32">
-          <MainButton
-            text={"Create Flashcards"}
-            styles={"py-2 px-6 lg:py-3 px-12"}
-            onClick={modalOpen}
-          ></MainButton>
-        </div>
-      </div>
-      {isModalOpen && (
-        <Modal
-          heading={
-            <>
-              Create <span className="text-purple-500">Flashcards</span> subject
-            </>
-          }
-          modalClose={modalClose}
-        >
+      <SubjectList
+        subjects={flashcardsSubjects}
+        type={"Flashcards"}
+        createBtnText={"Flashcards"}
+        modalForm={
           <Form
             inputs={createInputs}
             onSubmit={modalOnSubmit}
@@ -139,8 +117,9 @@ function Flashcards() {
             radioLegend={"Creation Type"}
             additionalInputs={isWithAiChosen() ? aiInputs : null}
           ></Form>
-        </Modal>
-      )}
+        }
+      />
+
       <Footer></Footer>
     </div>
   );

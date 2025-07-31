@@ -10,6 +10,7 @@ import Flashcards from "./pages/Flashcards/Flashcards";
 import FlashcardsSet from "./pages/Flashcards/FlashcardsSet";
 import FlashcardsLearn from "./pages/Flashcards/FlashcardsLearn";
 import FlashcardsEdit from "./pages/Flashcards/FlashcardsEdit";
+import Quizzes from "./pages/Quizzes/Quizzes";
 import { FlashcardProvider } from "./context/FlashcardContext";
 
 createRoot(document.getElementById("root")).render(
@@ -35,6 +36,7 @@ createRoot(document.getElementById("root")).render(
           path="/home/flashcards/:subject/edit"
           element={<FlashcardsEdit />}
         />
+        <Route path="/home/quizzes" element={<Quizzes />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>

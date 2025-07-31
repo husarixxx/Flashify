@@ -26,7 +26,7 @@ function Header({
     {
       icon: <MdOutlineQuiz size={23} />,
       text: "Quizzes",
-      path: "/quizzes",
+      path: "/home/quizzes",
       regex: /quizzes/,
     },
     {
