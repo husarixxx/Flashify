@@ -35,10 +35,8 @@ function FlashcardsEdit() {
 
   const [flashcards, setFlashcards] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
-
-  function modalClose() {
-    setIsEditOpen(false);
-  }
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   const subject = params.subject;
   const subjectFiltered = Object.entries(mySubjects).filter(
@@ -61,6 +59,29 @@ function FlashcardsEdit() {
     setFlashcards(dataFlashcards);
   }, [flashcards, dataFlashcards]);
 
+  function openEditModal() {
+    setIsEditOpen(true);
+  }
+  function openCreateModal() {
+    setIsCreateOpen(true);
+  }
+  function closeEditModal() {
+    setIsEditOpen(false);
+  }
+  function closeCreateModal() {
+    setIsCreateOpen(false);
+  }
+  function closeDeleteModal() {
+    setIsDeleteOpen(false);
+  }
+  function openDeleteModal() {
+    setIsDeleteOpen(true);
+  }
+
+  function handleDelete() {}
+  function handleEdit() {}
+
+  function handleCreate() {}
   return (
     <div
       className={`min-h-[100vh] flex flex-col justify-between overflow-hidden `}
@@ -75,6 +96,8 @@ function FlashcardsEdit() {
               <FlashcardEdit
                 key={crypto.randomUUID()}
                 definition={flashcard.definition}
+                openDeleteModal={openDeleteModal}
+                openEditModal={openEditModal}
               />
             ))}
         </div>
@@ -82,6 +105,7 @@ function FlashcardsEdit() {
           <SecondButton
             text={"Create Flashcard"}
             styles={"w-[250px] h-[50px]"}
+            onClick={openCreateModal}
           />
 
           <Link to={`${path.pathname}/../learn`}>
@@ -98,9 +122,45 @@ function FlashcardsEdit() {
               <span className="text-purple-500"> Flashcard</span>
             </>
           }
-          modalClose={modalClose}
+          modalClose={closeEditModal}
         >
-          <Form inputs={editInputs} submitText={"Edit"} />
+          <Form inputs={editInputs} submitText={"Edit"} onSubmit={handleEdit} />
+        </Modal>
+      )}
+      {isDeleteOpen && (
+        <Modal heading={"Delete Flashcard"} modalClose={closeDeleteModal}>
+          <p>Are you sure you want to delete this flashcard</p>
+          <div className="flex gap-4 justify-end mt-6">
+            <button
+              className="cursor-pointer opacity-80 hover:opacity-100 transition-opacity"
+              onClick={closeDeleteModal}
+            >
+              Cancel
+            </button>
+            <button
+              className="bg-red-600 text-white px-5 py-2 rounded-md cursor-pointer opacity-85  hover:opacity-100 transition-opacity"
+              onClick={handleDelete}
+            >
+              Delete
+            </button>
+          </div>
+        </Modal>
+      )}
+      {isCreateOpen && (
+        <Modal
+          heading={
+            <>
+              Create
+              <span className="text-purple-500"> Flashcard</span>
+            </>
+          }
+          modalClose={closeCreateModal}
+        >
+          <Form
+            inputs={editInputs}
+            submitText={"Edit"}
+            onSubmit={handleCreate}
+          />
         </Modal>
       )}
       <Footer></Footer>

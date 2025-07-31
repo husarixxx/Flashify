@@ -127,8 +127,7 @@ function Flashcards() {
         <Modal
           heading={
             <>
-              Create <span className="text-purple-500">Flashcards</span>{" "}
-              subjects
+              Create <span className="text-purple-500">Flashcards</span> subject
             </>
           }
           modalClose={modalClose}
