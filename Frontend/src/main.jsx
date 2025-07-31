@@ -11,6 +11,7 @@ import FlashcardsSet from "./pages/Flashcards/FlashcardsSet";
 import FlashcardsLearn from "./pages/Flashcards/FlashcardsLearn";
 import FlashcardsEdit from "./pages/Flashcards/FlashcardsEdit";
 import Quizzes from "./pages/Quizzes/Quizzes";
+import NotFound from "./components/NotFound";
 import { FlashcardProvider } from "./context/FlashcardContext";
 
 createRoot(document.getElementById("root")).render(
@@ -37,6 +38,7 @@ createRoot(document.getElementById("root")).render(
           element={<FlashcardsEdit />}
         />
         <Route path="/home/quizzes" element={<Quizzes />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>
