@@ -32,7 +32,7 @@ function FlashcardsSet() {
 
   return (
     <div className="min-h-[100vh] flex flex-col justify-between">
-      <Header loggedIn={true} logo="../../src/assets/flashify.png"></Header>
+      <Header logo="../../src/assets/flashify.png"></Header>
       <div className="p-4 mx-auto">
         <h1 className="my-4 ">{subject}</h1>
         <Link to={`${path.pathname}/learn`}>

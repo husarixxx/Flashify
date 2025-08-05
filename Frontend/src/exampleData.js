@@ -25,21 +25,26 @@ const mySubjects = {
     ],
     quizzes: [
       {
-        question: "What does 'to procrastinate' mean?",
-        type: "multiple-choice",
-        answers: [
-          { text: "To act immediately", isCorrect: false },
-          { text: "To delay doing something", isCorrect: true },
-          { text: "To plan ahead", isCorrect: false },
-        ],
-      },
-      {
-        question: "'Ubiquitous' is closest in meaning to:",
-        type: "multiple-choice",
-        answers: [
-          { text: "Rare", isCorrect: false },
-          { text: "Common", isCorrect: true },
-          { text: "Expensive", isCorrect: false },
+        title: "Basics of Vocabulary",
+        questions: [
+          {
+            question: "What does 'to procrastinate' mean?",
+            type: "multiple-choice",
+            answers: [
+              { text: "To act immediately", isCorrect: false },
+              { text: "To delay doing something", isCorrect: true },
+              { text: "To plan ahead", isCorrect: false },
+            ],
+          },
+          {
+            question: "'Ubiquitous' is closest in meaning to:",
+            type: "multiple-choice",
+            answers: [
+              { text: "Rare", isCorrect: false },
+              { text: "Common", isCorrect: true },
+              { text: "Expensive", isCorrect: false },
+            ],
+          },
         ],
       },
     ],
@@ -48,7 +53,6 @@ const mySubjects = {
       "Tryb warunkowy typu 2: If I were you, I would...",
     ],
   },
-
   matematyka: {
     flashcards: [
       {
@@ -64,17 +68,28 @@ const mySubjects = {
     ],
     quizzes: [
       {
-        question: "What is the derivative of x²?",
-        type: "short-answer",
-        answers: [{ text: "2x", isCorrect: true }],
+        title: "Podstawy pochodnych",
+        questions: [
+          {
+            question: "What is the derivative of x²?",
+            type: "short-answer",
+            answers: [{ text: "2x", isCorrect: true }],
+          },
+        ],
       },
       {
-        question: "What is the hypotenuse of a triangle with sides 3 and 4?",
-        type: "multiple-choice",
-        answers: [
-          { text: "5", isCorrect: true },
-          { text: "6", isCorrect: false },
-          { text: "7", isCorrect: false },
+        title: "Geometria – trójkąty",
+        questions: [
+          {
+            question:
+              "What is the hypotenuse of a triangle with sides 3 and 4?",
+            type: "multiple-choice",
+            answers: [
+              { text: "5", isCorrect: true },
+              { text: "6", isCorrect: false },
+              { text: "7", isCorrect: false },
+            ],
+          },
         ],
       },
     ],
@@ -83,7 +98,6 @@ const mySubjects = {
       "Pochodna funkcji stałej to 0.",
     ],
   },
-
   biologia: {
     flashcards: [
       {
@@ -100,21 +114,26 @@ const mySubjects = {
     ],
     quizzes: [
       {
-        question: "Which part of the cell produces energy?",
-        type: "multiple-choice",
-        answers: [
-          { text: "Nucleus", isCorrect: false },
-          { text: "Mitochondrion", isCorrect: true },
-          { text: "Chloroplast", isCorrect: false },
-        ],
-      },
-      {
-        question: "What is osmosis?",
-        type: "multiple-choice",
-        answers: [
-          { text: "Water movement across a membrane", isCorrect: true },
-          { text: "Cell division", isCorrect: false },
-          { text: "Protein synthesis", isCorrect: false },
+        title: "Komórka – podstawy",
+        questions: [
+          {
+            question: "Which part of the cell produces energy?",
+            type: "multiple-choice",
+            answers: [
+              { text: "Nucleus", isCorrect: false },
+              { text: "Mitochondrion", isCorrect: true },
+              { text: "Chloroplast", isCorrect: false },
+            ],
+          },
+          {
+            question: "What is osmosis?",
+            type: "multiple-choice",
+            answers: [
+              { text: "Water movement across a membrane", isCorrect: true },
+              { text: "Cell division", isCorrect: false },
+              { text: "Protein synthesis", isCorrect: false },
+            ],
+          },
         ],
       },
     ],
@@ -123,7 +142,6 @@ const mySubjects = {
       "Fotosynteza zachodzi w chloroplastach i wymaga światła słonecznego.",
     ],
   },
-
   informatyka: {
     flashcards: [
       {
@@ -144,21 +162,26 @@ const mySubjects = {
     ],
     quizzes: [
       {
-        question: "What is a function?",
-        type: "multiple-choice",
-        answers: [
-          { text: "A loop", isCorrect: false },
-          { text: "A reusable code block", isCorrect: true },
-          { text: "A comment", isCorrect: false },
-        ],
-      },
-      {
-        question: "Which of the following is a boolean value?",
-        type: "multiple-choice",
-        answers: [
-          { text: `"maybe"`, isCorrect: false },
-          { text: `"true"`, isCorrect: true },
-          { text: `"42"`, isCorrect: false },
+        title: "Podstawy programowania",
+        questions: [
+          {
+            question: "What is a function?",
+            type: "multiple-choice",
+            answers: [
+              { text: "A loop", isCorrect: false },
+              { text: "A reusable code block", isCorrect: true },
+              { text: "A comment", isCorrect: false },
+            ],
+          },
+          {
+            question: "Which of the following is a boolean value?",
+            type: "multiple-choice",
+            answers: [
+              { text: '"maybe"', isCorrect: false },
+              { text: '"true"', isCorrect: true },
+              { text: '"42"', isCorrect: false },
+            ],
+          },
         ],
       },
     ],

@@ -33,7 +33,7 @@ function SubjectList({ subjects, type, createBtnText, modalForm }) {
         </div>
         <div className="flex justify-center mt-20 lg:mt-32">
           <MainButton
-            text={`Create ${createBtnText}`}
+            text={`${createBtnText}`}
             styles={"py-2 px-6 lg:py-3 px-12"}
             onClick={modalOpen}
           ></MainButton>
@@ -43,8 +43,7 @@ function SubjectList({ subjects, type, createBtnText, modalForm }) {
         <Modal
           heading={
             <>
-              Create <span className="text-purple-500">{createBtnText}</span>{" "}
-              subject
+              Create <span className="text-purple-500">{type}</span> subject
             </>
           }
           modalClose={modalClose}

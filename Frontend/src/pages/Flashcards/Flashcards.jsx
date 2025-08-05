@@ -18,8 +18,6 @@ function Flashcards() {
     }
   );
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
   const [createInputs, setCreateInputs] = useState([
     {
       id: crypto.randomUUID(),
@@ -93,13 +91,6 @@ function Flashcards() {
 
   function modalOnSubmit(e) {
     e.preventDefault();
-    modalClose();
-  }
-  function modalOpen() {
-    setIsModalOpen(true);
-  }
-  function modalClose() {
-    setIsModalOpen(false);
   }
 
   return (
@@ -108,7 +99,7 @@ function Flashcards() {
       <SubjectList
         subjects={flashcardsSubjects}
         type={"Flashcards"}
-        createBtnText={"Flashcards"}
+        createBtnText={"Create Flashcards"}
         modalForm={
           <Form
             inputs={createInputs}
