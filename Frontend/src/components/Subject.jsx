@@ -3,7 +3,7 @@ import Container from "./Container";
 function Subjects({ subject, types, type }) {
   const globalType = type;
   return (
-    <Link to={`/home/${type.toLowerCase()}/${subject}`}>
+    <Link to={`/app/${type.toLowerCase()}/${subject}`}>
       <Container styles="relative group md:w-[250px] hover:text-white group overflow-hidden">
         <div className="relative z-10">
           <h3 className="group-hover:text-white">{subject}</h3>

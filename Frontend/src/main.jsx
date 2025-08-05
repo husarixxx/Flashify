@@ -13,33 +13,71 @@ import FlashcardsEdit from "./pages/Flashcards/FlashcardsEdit";
 import Quizzes from "./pages/Quizzes/Quizzes";
 import NotFound from "./components/NotFound";
 import { FlashcardProvider } from "./context/FlashcardContext";
+import { LoggedInProvider } from "./context/LoggedInContext";
+import Authenticate from "./components/Authenticate";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Landing></Landing>} />
-        <Route path="/Sign-up" element={<SignUp />} />
-        <Route path="/log-in" element={<LogIn />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/home/flashcards" element={<Flashcards />} />
-        <Route path="/home/flashcards/:subject" element={<FlashcardsSet />} />
+      <LoggedInProvider>
+        <Routes>
+          <Route path="/" element={<Landing></Landing>} />
+          <Route path="/Sign-up" element={<SignUp />} />
+          <Route path="/log-in" element={<LogIn />} />
+          <Route
+            path="/app"
+            element={
+              <Authenticate>
+                <Home />
+              </Authenticate>
+            }
+          />
+          <Route
+            path="/app/flashcards"
+            element={
+              <Authenticate>
+                <Flashcards />
+              </Authenticate>
+            }
+          />
+          <Route
+            path="/app/flashcards/:subject"
+            element={
+              <Authenticate>
+                <FlashcardsSet />
+              </Authenticate>
+            }
+          />
 
-        <Route
-          path="/home/flashcards/:subject/learn"
-          element={
-            <FlashcardProvider>
-              <FlashcardsLearn />
-            </FlashcardProvider>
-          }
-        />
-        <Route
-          path="/home/flashcards/:subject/edit"
-          element={<FlashcardsEdit />}
-        />
-        <Route path="/home/quizzes" element={<Quizzes />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+          <Route
+            path="/app/flashcards/:subject/learn"
+            element={
+              <Authenticate>
+                <FlashcardProvider>
+                  <FlashcardsLearn />
+                </FlashcardProvider>
+              </Authenticate>
+            }
+          />
+          <Route
+            path="/app/flashcards/:subject/edit"
+            element={
+              <Authenticate>
+                <FlashcardsEdit />
+              </Authenticate>
+            }
+          />
+          <Route
+            path="/app/quizzes"
+            element={
+              <Authenticate>
+                <Quizzes />
+              </Authenticate>
+            }
+          />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </LoggedInProvider>
     </BrowserRouter>
   </StrictMode>
 );

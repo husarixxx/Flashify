@@ -7,44 +7,46 @@ import { IoIosStats } from "react-icons/io";
 import { FaRegUserCircle } from "react-icons/fa";
 import { LiaLayerGroupSolid } from "react-icons/lia";
 import { useLocation } from "react-router-dom";
+import { useLoggedIn } from "../context/LoggedInContext";
 
 function Header({
-  loggedIn = false,
   user = {
     img: <FaRegUserCircle size={25} />,
     username: "username",
   },
   logo = "./src/assets/flashify.png",
 }) {
+  const { isLoggedIn } = useLoggedIn();
+
   const icons = [
     {
       icon: <TbCards size={23} />,
       text: "Flashcards",
-      path: "/home/flashcards",
+      path: "/app/flashcards",
       regex: /flashcards/,
     },
     {
       icon: <MdOutlineQuiz size={23} />,
       text: "Quizzes",
-      path: "/home/quizzes",
+      path: "/app/quizzes",
       regex: /quizzes/,
     },
     {
       icon: <TbNotes size={23} />,
       text: "Notes",
-      path: "/notes",
+      path: "/app/notes",
       regex: /notes/,
     },
     {
       icon: <IoIosStats size={23} />,
       text: "Stats",
-      path: "/stats",
+      path: "/app/stats",
       regex: /stats/,
     },
     {
       icon: <LiaLayerGroupSolid size={23} />,
       text: "Subjects",
-      path: "/subjects",
+      path: "/app/subjects",
       regex: /subject/,
     },
   ];
@@ -55,7 +57,7 @@ function Header({
 
   return (
     <header className="flex justify-between gap-1 p-4 shadow-xl">
-      <Link to="/" className="flex items-center">
+      <Link to={isLoggedIn ? "/app" : "/"} className="flex items-center">
         <img
           className="w-[80px] sm:w-[100px] md:w-[120px] lg:w-[150px]"
           src={logo}
@@ -64,7 +66,7 @@ function Header({
       </Link>
       {icons && (
         <div className="flex justify-around grow gap-2 max-w-[720px]">
-          {loggedIn &&
+          {isLoggedIn &&
             icons.map((icon, index) => (
               <Link
                 to={icon.path}
@@ -88,7 +90,7 @@ function Header({
             ))}
         </div>
       )}
-      {loggedIn ? (
+      {isLoggedIn ? (
         <div className="flex flex-col justify-center items-center">
           {user.img}
           <p className="text-xs lg:text-base">{user.username}</p>

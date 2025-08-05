@@ -8,7 +8,11 @@ import { FaFacebook } from "react-icons/fa6";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { useLoggedIn } from "../../context/LoggedInContext";
+
 function LogIn() {
+  const { setIsLoggedIn } = useLoggedIn();
+
   const [inputs, setInputs] = useState([
     {
       id: crypto.randomUUID(),
@@ -93,7 +97,8 @@ function LogIn() {
         });
 
         if (response.ok) {
-          navigateLogin("/home");
+          setIsLoggedIn(true);
+          navigateLogin("/app");
         } else {
           const dataResponse = await response.json();
           assignError(dataResponse.detail);
