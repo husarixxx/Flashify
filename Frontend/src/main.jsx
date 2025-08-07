@@ -16,6 +16,7 @@ import { FlashcardProvider } from "./context/FlashcardContext";
 import { LoggedInProvider } from "./context/LoggedInContext";
 import Authenticate from "./components/Authenticate";
 import QuizzesSet from "./pages/Quizzes/QuizzesSet";
+import QuizEdit from "./pages/Quizzes/QuizEdit";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -81,6 +82,14 @@ createRoot(document.getElementById("root")).render(
             element={
               <Authenticate>
                 <QuizzesSet />
+              </Authenticate>
+            }
+          />
+          <Route
+            path="/app/quizzes/:subject/:quizTitle/edit"
+            element={
+              <Authenticate>
+                <QuizEdit />
               </Authenticate>
             }
           />
