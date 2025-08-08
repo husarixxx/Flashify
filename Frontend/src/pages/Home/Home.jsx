@@ -38,7 +38,7 @@ function Home() {
   };
   return (
     <div className="min-h-[100vh] flex flex-col justify-between">
-      <Header loggedIn={true}></Header>
+      <Header></Header>
 
       <div className="md:flex items-start md:mx-auto">
         <div>

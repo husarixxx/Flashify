@@ -62,7 +62,7 @@ function FlashcardsLearn() {
 
   return (
     <div className="min-h-[100vh] flex flex-col justify-between overflow-hidden">
-      <Header loggedIn={true} logo="../../../src/assets/flashify.png"></Header>
+      <Header></Header>
       <div className="p-4 mx-auto">
         <h1 className="my-4">{subject}</h1>
         {flashcards.length === 0 && (

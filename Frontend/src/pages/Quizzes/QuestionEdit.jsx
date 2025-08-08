@@ -5,7 +5,7 @@ import MainButton from "../../components/MainButton";
 
 function QuestionEdit({ question, questionNumber }) {
   return (
-    <div className="rounded-xl shadow-lg px-8 py-6 flex justify-between gap-8">
+    <div className="rounded-xl shadow-lg px-5 md:px-8 py-5 md:py-6 flex justify-between gap-3 md:gap-8">
       <div className="flex flex-col justify-between">
         <div>
           <p className="text-purple-600">{question.type} question</p>
@@ -17,7 +17,7 @@ function QuestionEdit({ question, questionNumber }) {
               Edit <FaEdit size={22}></FaEdit>
             </>
           }
-          styles={"flex justify-center items-center gap-3 px-7 w-[200px]"}
+          styles={"flex justify-center items-center gap-3 px-2 max-w-[200px]"}
         />
       </div>
       <div className="flex flex-col justify-start">

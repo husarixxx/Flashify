@@ -38,7 +38,7 @@ function QuizEdit() {
     <div
       className={`min-h-[100vh] flex flex-col justify-between overflow-hidden `}
     >
-      <Header logo="../../../src/assets/flashify.png"></Header>
+      <Header></Header>
       <div className="p-4 mx-auto mt-10 md:translate-y-[-80px]">
         <h2 className="my-4">{title}</h2>
 
@@ -52,7 +52,7 @@ function QuizEdit() {
               />
             ))}
         </div>
-        <div className="mt-20 flex justify-center gap-3">
+        <div className="mt-20 flex flex-col md:flex-row items-center justify-center gap-6">
           <SecondButton
             text={"Create Question"}
             styles={"w-[250px] h-[50px]"}

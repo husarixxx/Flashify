@@ -8,13 +8,13 @@ import { FaRegUserCircle } from "react-icons/fa";
 import { LiaLayerGroupSolid } from "react-icons/lia";
 import { useLocation } from "react-router-dom";
 import { useLoggedIn } from "../context/LoggedInContext";
+import flashifyLogo from "../assets/flashify.png";
 
 function Header({
   user = {
     img: <FaRegUserCircle size={25} />,
     username: "username",
   },
-  logo = "./src/assets/flashify.png",
 }) {
   const { isLoggedIn } = useLoggedIn();
 
@@ -60,7 +60,7 @@ function Header({
       <Link to={isLoggedIn ? "/app" : "/"} className="flex items-center">
         <img
           className="w-[80px] sm:w-[100px] md:w-[120px] lg:w-[150px]"
-          src={logo}
+          src={flashifyLogo}
           alt=""
         />
       </Link>
