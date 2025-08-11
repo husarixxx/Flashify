@@ -1,8 +1,26 @@
-import { useState } from "react";
 import MainButton from "./MainButton";
-function Form({ inputs, onSubmit, submitText, radioLegend, additionalInputs }) {
+function Form({
+  inputs,
+  onSubmit,
+  submitText,
+  radioLegend,
+  checkboxLegend,
+  additionalInputs = [],
+}) {
   const radios = inputs.filter((input) => input.type === "radio");
-  const normalnInputs = inputs.filter((input) => input.type !== "radio");
+
+  const normalnInputs = inputs.filter(
+    (input) => input.type !== "radio" && input.type !== "checkbox"
+  );
+
+  let checkboxes = [];
+  let normalAditionalInputs = [];
+  if (additionalInputs !== null && additionalInputs.length > 0) {
+    normalAditionalInputs = additionalInputs.filter(
+      (input) => input.type !== "radio" && input.type !== "checkbox"
+    );
+    checkboxes = additionalInputs.filter((input) => input.type === "checkbox");
+  }
   return (
     <form className="flex flex-col gap-10 px-4" onSubmit={onSubmit}>
       {normalnInputs.map((input) => {
@@ -32,7 +50,6 @@ function Form({ inputs, onSubmit, submitText, radioLegend, additionalInputs }) {
           </label>
         );
       })}
-
       {radios.length > 0 && (
         <fieldset className="flex flex-col gap-4 border-1 p-4 px-6 border-purple-400">
           <legend>{radioLegend}</legend>
@@ -52,8 +69,8 @@ function Form({ inputs, onSubmit, submitText, radioLegend, additionalInputs }) {
           ))}
         </fieldset>
       )}
-      {additionalInputs &&
-        additionalInputs.map((input) => {
+      {normalAditionalInputs &&
+        normalAditionalInputs.map((input) => {
           return (
             <label
               key={input.id}
@@ -81,6 +98,25 @@ function Form({ inputs, onSubmit, submitText, radioLegend, additionalInputs }) {
           );
         })}
 
+      {checkboxes.length > 0 && (
+        <fieldset className="flex flex-col gap-4 border-1 p-4 px-6 border-purple-400">
+          <legend>{checkboxLegend}</legend>
+          {checkboxes.map((checkbox) => (
+            <label key={crypto.randomUUID()} className="flex gap-2">
+              <input
+                name={radioLegend}
+                id={checkbox.value}
+                type={checkbox.type}
+                value={checkbox.value}
+                checked={checkbox.checked}
+                className="accent-purple-500/25"
+                onChange={checkbox.onChange}
+              />
+              {checkbox.label}
+            </label>
+          ))}
+        </fieldset>
+      )}
       <MainButton text={submitText} />
     </form>
   );

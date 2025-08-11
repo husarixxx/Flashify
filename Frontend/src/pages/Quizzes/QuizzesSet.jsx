@@ -6,6 +6,7 @@ import Quiz from "./Quiz";
 import MainButton from "../../components/MainButton";
 import { useState } from "react";
 import Modal from "../../components/Modal";
+import Form from "../../components/Form";
 
 function QuizzesSet() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -20,7 +21,113 @@ function QuizzesSet() {
     }
   );
   const quizzes = subjectFiltered.map(([subject, data]) => data.quizzes)[0];
-  console.log(quizzes);
+
+  const [createQuizInputs, setCreateQuizInputs] = useState([
+    {
+      id: crypto.randomUUID(),
+      type: "text",
+      value: "",
+      label: "Name",
+      onChange: handleOnChange,
+    },
+    {
+      id: crypto.randomUUID(),
+      type: "radio",
+      value: "Empty",
+      label: "Empty",
+      checked: true,
+      onChange: handleRadioOnChange,
+    },
+    {
+      id: crypto.randomUUID(),
+      type: "radio",
+      value: "With AI",
+      label: "With AI",
+      checked: false,
+      onChange: handleRadioOnChange,
+    },
+  ]);
+
+  const [aiCreateInputs, setAiCreateInputs] = useState([
+    {
+      id: crypto.randomUUID(),
+      type: "text",
+      value: "",
+      label: "Topic",
+      onChange: handleOnChangeAI,
+    },
+    {
+      id: crypto.randomUUID(),
+      type: "number",
+      value: "",
+      label: "Number of questions",
+
+      onChange: handleOnChangeAI,
+    },
+    {
+      id: crypto.randomUUID(),
+      type: "checkbox",
+      value: "Single choice",
+      label: "Single choice",
+      checked: false,
+      onChange: handleCheckboxOnChange,
+    },
+    {
+      id: crypto.randomUUID(),
+      type: "checkbox",
+      value: "Multiple choice",
+      label: "Multiple choice",
+      checked: false,
+      onChange: handleCheckboxOnChange,
+    },
+    {
+      id: crypto.randomUUID(),
+      type: "checkbox",
+      value: "True or False",
+      label: "True or False",
+      checked: false,
+      onChange: handleCheckboxOnChange,
+    },
+  ]);
+
+  function handleOnChange(e, id) {
+    setCreateQuizInputs((prevInputs) =>
+      prevInputs.map((input) => {
+        return input.id === id ? { ...input, value: e.target.value } : input;
+      })
+    );
+  }
+  function handleOnChangeAI(e, id) {
+    setAiCreateInputs((prevInputs) =>
+      prevInputs.map((input) => {
+        return input.id === id ? { ...input, value: e.target.value } : input;
+      })
+    );
+  }
+
+  function handleRadioOnChange(e) {
+    setCreateQuizInputs((prevInputs) =>
+      prevInputs.map((input) => {
+        return input.type === "radio" && input.value === e.target.value
+          ? { ...input, checked: e.target.checked }
+          : { ...input, checked: false };
+      })
+    );
+  }
+  function handleCheckboxOnChange(e) {
+    setAiCreateInputs((prevInputs) =>
+      prevInputs.map((input) => {
+        return input.type === "checkbox" && input.value === e.target.value
+          ? { ...input, checked: e.target.checked }
+          : { ...input };
+      })
+    );
+  }
+
+  function isWithAiChosen() {
+    return createQuizInputs.filter((input) => input.label === "With AI")[0]
+      .checked;
+  }
 
   function openCreateModal() {
     setIsCreateModalOpen(true);
@@ -62,7 +169,15 @@ function QuizzesSet() {
             </>
           }
           modalClose={closeCreateModal}
-        />
+        >
+          <Form
+            inputs={createQuizInputs}
+            submitText={"Create"}
+            radioLegend={"Creation Type"}
+            additionalInputs={isWithAiChosen() ? aiCreateInputs : null}
+            checkboxLegend={"Types of questions"}
+          ></Form>
+        </Modal>
       )}
     </div>
   );
