@@ -1,7 +1,4 @@
-import AnswerMultiple from "./AnswerMultiple";
-
 function QuestionLearn({ question, questionNumber, allQuestionsNumber }) {
-  console.log(question);
   return (
     <>
       <div className="shadow-xl rounded-xl py-6 px-8 sm:px-28 sm:py-8 text-center md:w-[650px] md:h-[250px] flex justify-center items-center flex-col">
