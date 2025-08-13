@@ -6,6 +6,9 @@ import SecondButton from "../../components/SecondButton";
 import QuestionEdit from "./QuestionEdit";
 import { useParams, useLocation } from "react-router-dom";
 import mySubjects from "../../exampleData";
+import Modal from "../../components/Modal";
+import Form from "../../components/Form";
+import { useState } from "react";
 
 function QuizEdit() {
   let params = useParams();
@@ -26,13 +29,278 @@ function QuizEdit() {
   );
   const quizzes = subjectFiltered.map(([subject, data]) => data.quizzes)[0];
   const quiz = quizzes.filter((quiz) => quiz.title === params.quizTitle)[0];
-  console.log(quiz);
   const { title, questions } = quiz;
-  console.log(quizzes);
-  console.log(params.quizTitle);
-  console.log(title);
-  console.log(questions);
-  console.log(questions.length);
+
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+  function openCreateModal() {
+    setIsCreateModalOpen(true);
+  }
+  function closeCreateModal() {
+    setIsCreateModalOpen(false);
+  }
+
+  const [createInputs, setCreateInputs] = useState([
+    {
+      id: crypto.randomUUID(),
+      type: "text",
+      value: "",
+      label: "Question",
+      onChange: handleOnChange,
+    },
+    {
+      id: crypto.randomUUID(),
+      type: "radio",
+      value: "Single choice",
+      label: "Single choice",
+      checked: true,
+      onChange: handleRadioOnChange,
+    },
+    {
+      id: crypto.randomUUID(),
+      type: "radio",
+      value: "Multiple choice",
+      label: "Multiple choice",
+      checked: false,
+      onChange: handleRadioOnChange,
+    },
+    {
+      id: crypto.randomUUID(),
+      type: "radio",
+      value: "True or False",
+      label: "True or False",
+      checked: false,
+      onChange: handleRadioOnChange,
+    },
+  ]);
+
+  const singleInputs = [
+    {
+      id: crypto.randomUUID(),
+      type: "text",
+      value: "",
+      label: "A",
+      onChange: handleAnswerOnChange,
+    },
+    {
+      id: crypto.randomUUID(),
+      type: "text",
+      value: "",
+      label: "B",
+      onChange: handleAnswerOnChange,
+    },
+    {
+      id: crypto.randomUUID(),
+      type: "text",
+      value: "",
+      label: "C",
+      onChange: handleAnswerOnChange,
+    },
+    {
+      id: crypto.randomUUID(),
+      type: "text",
+      value: "",
+      label: "D",
+      onChange: handleAnswerOnChange,
+    },
+    {
+      id: crypto.randomUUID(),
+      name: "Correct answer",
+      type: "radio",
+      value: "A",
+      label: "A",
+      checked: true,
+      onChange: handleCorrectRadioOnChange,
+    },
+    {
+      id: crypto.randomUUID(),
+      name: "Correct answer",
+      type: "radio",
+      value: "B",
+      label: "B",
+      checked: false,
+      onChange: handleCorrectRadioOnChange,
+    },
+    {
+      id: crypto.randomUUID(),
+      type: "radio",
+      name: "Correct answer",
+      value: "C",
+      label: "C",
+      checked: false,
+      onChange: handleCorrectRadioOnChange,
+    },
+    {
+      id: crypto.randomUUID(),
+      type: "radio",
+      name: "Correct answer",
+      value: "D",
+      label: "D",
+      checked: false,
+      onChange: handleCorrectRadioOnChange,
+    },
+  ];
+
+  const multipleInputs = [
+    {
+      id: crypto.randomUUID(),
+      type: "text",
+      value: "",
+      label: "A",
+      onChange: handleAnswerOnChange,
+    },
+    {
+      id: crypto.randomUUID(),
+      type: "text",
+      value: "",
+      label: "B",
+      onChange: handleAnswerOnChange,
+    },
+    {
+      id: crypto.randomUUID(),
+      type: "text",
+      value: "",
+      label: "C",
+      onChange: handleAnswerOnChange,
+    },
+    {
+      id: crypto.randomUUID(),
+      type: "text",
+      value: "",
+      label: "D",
+      onChange: handleAnswerOnChange,
+    },
+    {
+      id: crypto.randomUUID(),
+      name: "Correct answer",
+      type: "checkbox",
+      value: "A",
+      label: "A",
+      checked: true,
+      onChange: handleCorrectCheckboxOnChange,
+    },
+    {
+      id: crypto.randomUUID(),
+      name: "Correct answer",
+      type: "checkbox",
+      value: "B",
+      label: "B",
+      checked: false,
+      onChange: handleCorrectCheckboxOnChange,
+    },
+    {
+      id: crypto.randomUUID(),
+      type: "checkbox",
+      name: "Correct answer",
+      value: "C",
+      label: "C",
+      checked: false,
+      onChange: handleCorrectCheckboxOnChange,
+    },
+    {
+      id: crypto.randomUUID(),
+      type: "checkbox",
+      name: "Correct answer",
+      value: "D",
+      label: "D",
+      checked: false,
+      onChange: handleCorrectCheckboxOnChange,
+    },
+  ];
+  const trueFalseInputs = [
+    {
+      id: crypto.randomUUID(),
+      type: "text",
+      value: "",
+      label: "True",
+      onChange: handleAnswerOnChange,
+    },
+    {
+      id: crypto.randomUUID(),
+      type: "text",
+      value: "",
+      label: "False",
+      onChange: handleAnswerOnChange,
+    },
+
+    {
+      id: crypto.randomUUID(),
+      name: "Correct answer",
+      type: "radio",
+      value: "True",
+      label: "True",
+      checked: true,
+      onChange: handleCorrectRadioOnChange,
+    },
+    {
+      id: crypto.randomUUID(),
+      name: "Correct answer",
+      type: "radio",
+      value: "False",
+      label: "False",
+      checked: false,
+      onChange: handleCorrectRadioOnChange,
+    },
+  ];
+  const [createAdditionalInputs, setCreateAdditionalInputs] =
+    useState(singleInputs);
+
+  function handleOnChange(e, id) {
+    setCreateInputs((prevInputs) =>
+      prevInputs.map((input) => {
+        return input.id === id ? { ...input, value: e.target.value } : input;
+      })
+    );
+  }
+  function handleRadioOnChange(e) {
+    setCreateInputs((prevInputs) =>
+      prevInputs.map((input) => {
+        return input.type === "radio" && input.value === e.target.value
+          ? { ...input, checked: e.target.checked }
+          : { ...input, checked: false };
+      })
+    );
+    console.log("haloo");
+    switchQuestionType(e);
+  }
+  function handleAnswerOnChange(e, id) {
+    setCreateAdditionalInputs((prevInputs) =>
+      prevInputs.map((input) => {
+        return input.id === id ? { ...input, value: e.target.value } : input;
+      })
+    );
+  }
+  function handleCorrectRadioOnChange(e) {
+    setCreateAdditionalInputs((prevInputs) =>
+      prevInputs.map((input) => {
+        return input.type === "radio" && input.value === e.target.value
+          ? { ...input, checked: e.target.checked }
+          : { ...input, checked: false };
+      })
+    );
+  }
+  function handleCorrectCheckboxOnChange(e) {
+    setCreateAdditionalInputs((prevInputs) =>
+      prevInputs.map((input) => {
+        return input.type === "checkbox" && input.value === e.target.value
+          ? { ...input, checked: e.target.checked }
+          : { ...input };
+      })
+    );
+  }
+
+  function switchQuestionType(e) {
+    const checkedInput = e.target.value;
+    console.log(`CheckedInput: ${checkedInput.value}`);
+    if (checkedInput === "Single choice")
+      setCreateAdditionalInputs(singleInputs);
+    else if (checkedInput === "Multiple choice")
+      setCreateAdditionalInputs(multipleInputs);
+    else if (checkedInput === "True or False")
+      setCreateAdditionalInputs(trueFalseInputs);
+
+    console.log(createInputs);
+  }
 
   return (
     <div
@@ -56,6 +324,7 @@ function QuizEdit() {
           <SecondButton
             text={"Create Question"}
             styles={"w-[250px] h-[50px]"}
+            onClick={openCreateModal}
           />
 
           <Link to={`${path.pathname}/../learn`}>
@@ -63,6 +332,23 @@ function QuizEdit() {
           </Link>
         </div>
       </div>
+      {isCreateModalOpen && (
+        <Modal
+          heading={
+            <>
+              Create <span className="text-purple-600">question</span>
+            </>
+          }
+          modalClose={closeCreateModal}
+        >
+          <Form
+            inputs={createInputs}
+            submitText={"Create question"}
+            radioLegend="Type of question"
+            additionalInputs={createAdditionalInputs}
+          ></Form>
+        </Modal>
+      )}
       <Footer></Footer>
     </div>
   );

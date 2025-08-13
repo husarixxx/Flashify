@@ -15,14 +15,21 @@ function Form({
 
   let checkboxes = [];
   let normalAditionalInputs = [];
+  let radioAdditionalInputs = [];
   if (additionalInputs !== null && additionalInputs.length > 0) {
     normalAditionalInputs = additionalInputs.filter(
       (input) => input.type !== "radio" && input.type !== "checkbox"
     );
+    radioAdditionalInputs = additionalInputs.filter(
+      (input) => input.type === "radio"
+    );
     checkboxes = additionalInputs.filter((input) => input.type === "checkbox");
   }
   return (
-    <form className="flex flex-col gap-10 px-4" onSubmit={onSubmit}>
+    <form
+      className="flex flex-col gap-10 px-4 py-2 max-h-[80vh] overflow-y-auto"
+      onSubmit={onSubmit}
+    >
       {normalnInputs.map((input) => {
         return (
           <label
@@ -100,11 +107,11 @@ function Form({
 
       {checkboxes.length > 0 && (
         <fieldset className="flex flex-col gap-4 border-1 p-4 px-6 border-purple-400">
-          <legend>{checkboxLegend}</legend>
+          <legend>{checkboxes[0].name}</legend>
           {checkboxes.map((checkbox) => (
             <label key={crypto.randomUUID()} className="flex gap-2">
               <input
-                name={radioLegend}
+                name={checkbox.name}
                 id={checkbox.value}
                 type={checkbox.type}
                 value={checkbox.value}
@@ -113,6 +120,25 @@ function Form({
                 onChange={checkbox.onChange}
               />
               {checkbox.label}
+            </label>
+          ))}
+        </fieldset>
+      )}
+      {radioAdditionalInputs.length > 0 && (
+        <fieldset className="flex flex-col gap-4 border-1 p-4 px-6 border-purple-400">
+          <legend>{radioAdditionalInputs[0].name}</legend>
+          {radioAdditionalInputs.map((radio) => (
+            <label key={crypto.randomUUID()} className="flex gap-2">
+              <input
+                name={name}
+                id={radio.value}
+                type={radio.type}
+                value={radio.value}
+                checked={radio.checked}
+                className="accent-purple-500/25"
+                onChange={radio.onChange}
+              />
+              {radio.label}
             </label>
           ))}
         </fieldset>
