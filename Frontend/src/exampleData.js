@@ -86,8 +86,14 @@ const mySubjects = {
       },
     ],
     notes: [
-      "Present Perfect używamy, gdy czynność ma skutek teraz.",
-      "Tryb warunkowy typu 2: If I were you, I would...",
+      {
+        title: "Present Perfect",
+        note: "<h3>Present Perfect</h3><ul><li>Używamy, gdy czynność <b>ma skutek teraz</b>.</li><li>Typowe słowa klucze: <i>already, yet, just, ever, never</i>.</li><li>Przykład: <i>I have finished my homework.</i></li></ul>",
+      },
+      {
+        title: "Tryb warunkowy typu 2",
+        note: "<h3>Tryb warunkowy typu 2</h3><ul><li>Konstrukcja: <code>If + Past Simple, would + verb</code></li><li>Używamy do mówienia o <b>hipotetycznych sytuacjach</b>.</li><li>Przykład: <i>If I were you, I would study more.</i></li></ul>",
+      },
     ],
   },
   matematyka: {
@@ -157,8 +163,14 @@ const mySubjects = {
       },
     ],
     notes: [
-      "Wzór skróconego mnożenia: (a+b)² = a² + 2ab + b²",
-      "Pochodna funkcji stałej to 0.",
+      {
+        title: "Wzory skróconego mnożenia",
+        note: "<h3>Wzory skróconego mnożenia</h3><ul><li><b>(a+b)² = a² + 2ab + b²</b></li><li><b>(a-b)² = a² - 2ab + b²</b></li><li><b>(a+b)(a-b) = a² - b²</b></li></ul>",
+      },
+      {
+        title: "Pochodne",
+        note: "<h3>Pochodne</h3><ul><li>Pochodna <b>funkcji stałej</b> = 0.</li><li>Pochodna <i>x<sup>n</sup></i> = <i>n·x<sup>n-1</sup></i>.</li><li>Pochodna <i>sin(x)</i> = <i>cos(x)</i>.</li><li>Pochodna <i>cos(x)</i> = <i>-sin(x)</i>.</li></ul>",
+      },
     ],
   },
   biologia: {
@@ -228,8 +240,14 @@ const mySubjects = {
       },
     ],
     notes: [
-      "DNA znajduje się w jądrze komórkowym.",
-      "Fotosynteza zachodzi w chloroplastach i wymaga światła słonecznego.",
+      {
+        title: "DNA",
+        note: "<h3>DNA</h3><ul><li>Materiał genetyczny znajduje się w <b>jądrze komórkowym</b>.</li><li>DNA zawiera informacje potrzebne do syntezy białek.</li></ul>",
+      },
+      {
+        title: "Fotosynteza",
+        note: "<h3>Fotosynteza</h3><ul><li>Zachodzi w <b>chloroplastach</b>.</li><li>Wymaga: <i>światła słonecznego, wody i dwutlenku węgla</i>.</li><li>Produkty: <b>glukoza</b> + <b>tlen</b>.</li></ul>",
+      },
     ],
   },
   informatyka: {
@@ -303,8 +321,14 @@ const mySubjects = {
       },
     ],
     notes: [
-      "W JavaScript deklarujemy zmienne za pomocą `let`, `const`, lub `var`.",
-      "Funkcja może przyjmować parametry i zwracać wartość.",
+      {
+        title: "Zmienne w JavaScript",
+        note: "<h3>Zmienne w JavaScript</h3><ul><li>Deklarujemy za pomocą: <code>let</code>, <code>const</code>, lub <code>var</code>.</li><li><code>let</code> – zmienna, którą można zmieniać.</li><li><code>const</code> – wartość stała, której nie można nadpisać.</li><li><code>var</code> – stara metoda, rzadziej używana.</li></ul>",
+      },
+      {
+        title: "Funkcje",
+        note: "<h3>Funkcje</h3><ul><li>Funkcja może przyjmować <b>parametry</b>.</li><li>Może <b>zwracać wartość</b> za pomocą <code>return</code>.</li><li>Możemy pisać funkcje tradycyjne lub tzw. <i>arrow functions</i>.</li></ul>",
+      },
     ],
   },
 };

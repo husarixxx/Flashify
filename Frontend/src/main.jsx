@@ -18,6 +18,10 @@ import Authenticate from "./components/Authenticate";
 import QuizzesSet from "./pages/Quizzes/QuizzesSet";
 import QuizEdit from "./pages/Quizzes/QuizEdit";
 import QuizLearn from "./pages/Quizzes/QuizLearn";
+import Notes from "./pages/Notes/Notes";
+import NotesSet from "./pages/Notes/NotesSet";
+import NoteEdit from "./pages/Notes/NoteEdit";
+import NoteLearn from "./pages/Notes/NoteLearn";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -99,6 +103,38 @@ createRoot(document.getElementById("root")).render(
             element={
               <Authenticate>
                 <QuizLearn />
+              </Authenticate>
+            }
+          />
+          <Route
+            path="/app/notes"
+            element={
+              <Authenticate>
+                <Notes />
+              </Authenticate>
+            }
+          />
+          <Route
+            path="/app/notes/:subject"
+            element={
+              <Authenticate>
+                <NotesSet />
+              </Authenticate>
+            }
+          />
+          <Route
+            path="/app/notes/:subject/:noteTitle/edit"
+            element={
+              <Authenticate>
+                <NoteEdit />
+              </Authenticate>
+            }
+          />
+          <Route
+            path="/app/notes/:subject/:noteTitle/learn"
+            element={
+              <Authenticate>
+                <NoteLearn />
               </Authenticate>
             }
           />
