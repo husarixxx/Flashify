@@ -1,6 +1,6 @@
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import mySubjects from "../../exampleData";
 import QuestionLearn from "./QuestionLearn";
 import { useState } from "react";
@@ -12,7 +12,6 @@ import { Link } from "react-router-dom";
 
 function QuizLearn() {
   let params = useParams();
-  const path = useLocation();
 
   //   const subject = params.subject;
   //   const subjectFiltered = Object.entries(mySubjects).filter(
@@ -21,7 +20,6 @@ function QuizLearn() {
   //     }
   //   );
 
-  const subject = params.subject;
   const subjectFiltered = Object.entries(mySubjects).filter(
     ([subject, data]) => {
       return subject === params.subject;

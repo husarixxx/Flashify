@@ -28,10 +28,6 @@ function Notes() {
     );
   }
 
-  function isWithAiChosen() {
-    return createInputs.filter((input) => input.label === "With AI")[0].checked;
-  }
-
   function modalOnSubmit(e) {
     e.preventDefault();
   }

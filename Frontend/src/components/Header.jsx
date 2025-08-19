@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { TbCards } from "react-icons/tb";
 import { MdOutlineQuiz } from "react-icons/md";
 import { TbNotes } from "react-icons/tb";
-import { IoIosStats } from "react-icons/io";
 import { FaRegUserCircle } from "react-icons/fa";
 import { LiaLayerGroupSolid } from "react-icons/lia";
 import { useLocation } from "react-router-dom";
@@ -37,12 +36,7 @@ function Header({
       path: "/app/notes",
       regex: /notes/,
     },
-    {
-      icon: <IoIosStats size={23} />,
-      text: "Stats",
-      path: "/app/stats",
-      regex: /stats/,
-    },
+
     {
       icon: <LiaLayerGroupSolid size={23} />,
       text: "Subjects",
@@ -52,8 +46,6 @@ function Header({
   ];
 
   const path = useLocation();
-  const flashcardRegex = /flashcards/;
-  const isInFlashcards = flashcardRegex.test(path.pathname);
 
   return (
     <header className="flex justify-between gap-1 p-4 shadow-xl">
@@ -65,7 +57,7 @@ function Header({
         />
       </Link>
       {icons && (
-        <div className="flex justify-around grow gap-2 max-w-[720px]">
+        <div className="flex justify-around grow gap-2 xm:mx-8 max-w-[220px] sm:max-w-[640px]">
           {isLoggedIn &&
             icons.map((icon, index) => (
               <Link
@@ -93,7 +85,9 @@ function Header({
       {isLoggedIn ? (
         <div className="flex flex-col justify-center items-center">
           {user.img}
-          <p className="text-xs lg:text-base">{user.username}</p>
+          <p className="text-xs lg:text-base hidden md:block">
+            {user.username}
+          </p>
         </div>
       ) : (
         <div className="flex items-center gap-2 text-xs lg:gap-4 lg:text-base">

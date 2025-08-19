@@ -1,7 +1,7 @@
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import mySubjects from "../../exampleData";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Quiz from "./Quiz";
 import MainButton from "../../components/MainButton";
 import { useState } from "react";
@@ -12,7 +12,6 @@ function QuizzesSet() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   let params = useParams();
-  const path = useLocation();
 
   const subject = params.subject;
   const subjectFiltered = Object.entries(mySubjects).filter(
