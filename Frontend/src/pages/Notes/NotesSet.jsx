@@ -1,9 +1,12 @@
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import mySubjects from "../../exampleData";
 import MainButton from "../../components/MainButton";
 import NoteSet from "./NoteSet";
+import { useState } from "react";
+import Modal from "../../components/Modal";
+import Form from "../../components/Form";
 
 function NotesSet() {
   let params = useParams();
@@ -17,6 +20,37 @@ function NotesSet() {
   const notes = subjectFiltered.map(([subject, data]) => data.notes)[0];
   console.log(notes);
   console.log(notes[0].title);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+  function openCreateModal() {
+    setIsCreateModalOpen(true);
+  }
+  function closeCreateModal() {
+    setIsCreateModalOpen(false);
+  }
+
+  const [createInputs, setCreateInputs] = useState([
+    {
+      id: crypto.randomUUID(),
+      type: "text",
+      value: "",
+      label: "Name",
+      onChange: handleOnChange,
+    },
+  ]);
+
+  function handleOnChange(e, id) {
+    setCreateInputs((prevInputs) =>
+      prevInputs.map((input) => {
+        return input.id === id ? { ...input, value: e.target.value } : input;
+      })
+    );
+  }
+
+  function modalOnSubmit(e) {
+    e.preventDefault();
+    closeCreateModal();
+  }
 
   return (
     <div className="min-h-[100vh] flex flex-col justify-between ">
@@ -33,9 +67,26 @@ function NotesSet() {
           <MainButton
             text={"Create Note"}
             styles={"px-12 md:px-14"}
+            onClick={openCreateModal}
           ></MainButton>
         </div>
       </div>
+      {isCreateModalOpen && (
+        <Modal
+          heading={
+            <>
+              Create <span className="text-purple-600">Note</span>
+            </>
+          }
+          modalClose={closeCreateModal}
+        >
+          <Form
+            inputs={createInputs}
+            onSubmit={modalOnSubmit}
+            submitText={"Create"}
+          ></Form>
+        </Modal>
+      )}
 
       <Footer></Footer>
     </div>
