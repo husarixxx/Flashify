@@ -22,6 +22,8 @@ import Notes from "./pages/Notes/Notes";
 import NotesSet from "./pages/Notes/NotesSet";
 import NoteEdit from "./pages/Notes/NoteEdit";
 import NoteLearn from "./pages/Notes/NoteLearn";
+import Subjects from "./pages/Subjects/Subjects";
+import SubjectsSpecific from "./pages/Subjects/SubjectsSpecific";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -135,6 +137,23 @@ createRoot(document.getElementById("root")).render(
             element={
               <Authenticate>
                 <NoteLearn />
+              </Authenticate>
+            }
+          />
+          <Route path="*" element={<NotFound />} />
+          <Route
+            path="/app/subjects"
+            element={
+              <Authenticate>
+                <Subjects />
+              </Authenticate>
+            }
+          />
+          <Route
+            path="/app/subjects/:subject"
+            element={
+              <Authenticate>
+                <SubjectsSpecific />
               </Authenticate>
             }
           />
