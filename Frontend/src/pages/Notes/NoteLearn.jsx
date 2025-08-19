@@ -5,12 +5,13 @@ import mySubjects from "../../exampleData";
 import { useQuill } from "react-quilljs";
 import "quill/dist/quill.bubble.css";
 import { useEffect } from "react";
+import { useNavigate } from "react-router";
 
 function NoteLearn() {
   let params = useParams();
-  const path = useLocation();
+  let path = useLocation();
+  let navigate = useNavigate();
 
-  const subject = params.subject;
   const subjectFiltered = Object.entries(mySubjects).filter(
     ([subject, data]) => {
       return subject === params.subject;
@@ -20,7 +21,7 @@ function NoteLearn() {
   const noteData = notesData.filter(
     (note) => note.title === params.noteTitle
   )[0];
-  const { title, note } = noteData;
+  const { note } = noteData;
 
   const { quill, quillRef } = useQuill({ readOnly: true, theme: "bubble" });
   useEffect(() => {
@@ -31,14 +32,20 @@ function NoteLearn() {
 
   return (
     <div className="min-h-[100vh] flex flex-col justify-between ">
-      <div>
-        <Header></Header>
+      <Header />
 
-        <div className="mx-6 my-12  shadow-lg p-4 ">
-          <div ref={quillRef} />
+      <div className="grow flex flex-col">
+        <div
+          className="   p-8 grow flex flex-col"
+          onDoubleClick={() => {
+            navigate("../edit", { relative: "path", preventScrollReset: true });
+          }}
+        >
+          <div ref={quillRef} className="grow h-full" />
         </div>
       </div>
-      <Footer></Footer>
+
+      <Footer />
     </div>
   );
 }
