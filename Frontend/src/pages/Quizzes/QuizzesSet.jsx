@@ -137,9 +137,9 @@ function QuizzesSet() {
   return (
     <div className="min-h-[100vh] flex flex-col justify-between ">
       <Header></Header>
-      <div className="mx-4 md:mx-16 lg:mx-24 xl:mx-30 mt-12">
+      <div className="mx-4 md:mx-16 lg:mx-24 xl:mx-30 mt-12 2xl:mx-auto 2xl:px-10 ">
         <h1 className="my-4 ">{subject}</h1>
-        <div className="md:grid grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4  gap-4">
+        <div className="md:grid grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4   gap-4 ">
           {quizzes.map((quiz) => {
             return (
               <Quiz

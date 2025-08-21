@@ -10,16 +10,16 @@ function NoteSet({ title }) {
     <div className="  rounded-xl shadow-lg m-4 px-8 py-6 pb-10 text-center flex flex-col justify-between gap-5 border-1 border-gray-200">
       <h2>{title}</h2>
       <div className="flex flex-col gap-4">
-        <Link to={`${path.pathname}/${title}/edit`}>
+        <Link to={`${path.pathname}/${title}/edit`} className="w-full">
           <SecondButton
             text={"Edit"}
-            styles={"w-full max-w-[260px]"}
+            styles={"w-full min-w-[180px] max-w-[250px]"}
           ></SecondButton>
         </Link>
-        <Link to={`${path.pathname}/${title}/learn`}>
+        <Link to={`${path.pathname}/${title}/learn`} className="w-full">
           <MainButton
             text={"Learn"}
-            styles={"w-full max-w-[260px] "}
+            styles={"w-full min-w-[180px] max-w-[250px] "}
           ></MainButton>
         </Link>
       </div>

@@ -55,8 +55,8 @@ function NotesSet() {
   return (
     <div className="min-h-[100vh] flex flex-col justify-between ">
       <Header></Header>
-      <div className="mx-4 md:mx-16 lg:mx-24 xl:mx-30 mt-12">
-        <h1 className="my-4 ">{subject}</h1>
+      <div className="mx-4 md:mx-16 lg:mx-24 xl:mx-30 mt-12 2xl:mx-auto ">
+        <h1 className="my-4 mx-2 ">{subject}</h1>
         <div className="md:grid grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4  gap-4">
           {notes.map((note) => (
             <NoteSet key={crypto.randomUUID()} title={note.title} />

@@ -8,6 +8,8 @@ import { LiaLayerGroupSolid } from "react-icons/lia";
 import { useLocation } from "react-router-dom";
 import { useLoggedIn } from "../context/LoggedInContext";
 import flashifyLogo from "../assets/flashify.png";
+import { useState } from "react";
+import UserModal from "./UserModal";
 
 function Header({
   user = {
@@ -47,6 +49,12 @@ function Header({
 
   const path = useLocation();
 
+  const [isUserModalOpen, setIsUserModalOpen] = useState(false);
+
+  function closeUserModal() {
+    setIsUserModalOpen(false);
+  }
+
   return (
     <header className="flex justify-between gap-1 p-4 shadow-xl">
       <Link to={isLoggedIn ? "/app" : "/"} className="flex items-center">
@@ -83,11 +91,23 @@ function Header({
         </div>
       )}
       {isLoggedIn ? (
-        <div className="flex flex-col justify-center items-center">
-          {user.img}
-          <p className="text-xs lg:text-base hidden md:block">
-            {user.username}
-          </p>
+        <div className="relative">
+          <button
+            className="flex flex-col justify-center items-center hover:cursor-pointer "
+            onClick={() => setIsUserModalOpen(!isUserModalOpen)}
+          >
+            {user.img}
+            <p className="text-xs lg:text-base hidden lg:block">
+              {user.username}
+            </p>
+          </button>
+          {isUserModalOpen && (
+            <UserModal
+              modalClose={closeUserModal}
+              userImg={user.img}
+              username={user.username}
+            />
+          )}
         </div>
       ) : (
         <div className="flex items-center gap-2 text-xs lg:gap-4 lg:text-base">
