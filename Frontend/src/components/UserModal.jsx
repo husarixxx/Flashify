@@ -17,7 +17,7 @@ function UserModal({ userImg, username, modalClose }) {
         </button>
       </div>
       <div>
-        <Link className="flex items-center gap-2">
+        <Link to={"/app/settings"} className="flex items-center gap-2">
           <IoSettingsOutline size={20} /> <p>Settings</p>
         </Link>
         <button className="flex items-center gap-2 mt-3 hover:cursor-pointer w-full">

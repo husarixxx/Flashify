@@ -24,6 +24,7 @@ import NoteEdit from "./pages/Notes/NoteEdit";
 import NoteLearn from "./pages/Notes/NoteLearn";
 import Subjects from "./pages/Subjects/Subjects";
 import SubjectsSpecific from "./pages/Subjects/SubjectsSpecific";
+import Settings from "./pages/Settings/Settings";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -154,6 +155,14 @@ createRoot(document.getElementById("root")).render(
             element={
               <Authenticate>
                 <SubjectsSpecific />
+              </Authenticate>
+            }
+          />
+          <Route
+            path="/app/settings"
+            element={
+              <Authenticate>
+                <Settings />
               </Authenticate>
             }
           />

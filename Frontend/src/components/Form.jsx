@@ -6,6 +6,7 @@ function Form({
   radioLegend,
   checkboxLegend,
   additionalInputs = [],
+  styles = "",
 }) {
   const radios = inputs.filter((input) => input.type === "radio");
 
@@ -27,7 +28,7 @@ function Form({
   }
   return (
     <form
-      className="flex flex-col gap-10 px-4 py-2 max-h-[80vh] overflow-y-auto"
+      className={`flex flex-col gap-10 px-4 py-2 max-h-[80vh] overflow-y-auto ${styles}`}
       onSubmit={onSubmit}
     >
       {normalnInputs.map((input) => {
