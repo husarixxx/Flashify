@@ -47,6 +47,14 @@ const mySubjects = {
               { text: "Boring", isCorrect: false },
             ],
           },
+          {
+            question: "True or false: 'To procrastinate' means to hurry up.",
+            type: "true-false",
+            answers: [
+              { text: "True", isCorrect: false },
+              { text: "False", isCorrect: true },
+            ],
+          },
         ],
       },
       {
@@ -82,6 +90,16 @@ const mySubjects = {
               { text: "To hurry", isCorrect: false },
             ],
           },
+          {
+            question: "Select all words that are verbs:",
+            type: "single-choice",
+            answers: [
+              { text: "to enhance", isCorrect: true },
+              { text: "ubiquitous", isCorrect: false },
+              { text: "to procrastinate", isCorrect: true },
+              { text: "beautiful", isCorrect: false },
+            ],
+          },
         ],
       },
     ],
@@ -96,6 +114,7 @@ const mySubjects = {
       },
     ],
   },
+
   matematyka: {
     flashcards: [
       {
@@ -108,55 +127,76 @@ const mySubjects = {
         explanation: "A measure of how a function changes as its input changes",
         tags: ["calculus"],
       },
+      {
+        definition: "Logarithm",
+        explanation: "The inverse operation to exponentiation",
+        tags: ["algebra"],
+      },
     ],
     quizzes: [
       {
-        title: "Podstawy pochodnych",
+        title: "Podstawy geometrii",
+        questions: [
+          {
+            question: "What is the sum of angles in a triangle?",
+            type: "single-choice",
+            answers: [
+              { text: "90°", isCorrect: false },
+              { text: "180°", isCorrect: true },
+              { text: "270°", isCorrect: false },
+              { text: "360°", isCorrect: false },
+            ],
+          },
+          {
+            question: "Which of the following are types of triangles?",
+            type: "multiple-choice",
+            answers: [
+              { text: "Equilateral", isCorrect: true },
+              { text: "Isosceles", isCorrect: true },
+              { text: "Scalene", isCorrect: true },
+              { text: "Circular", isCorrect: false },
+            ],
+          },
+          {
+            question:
+              "True or false: All equilateral triangles are also isosceles.",
+            type: "true-false",
+            answers: [
+              { text: "True", isCorrect: true },
+              { text: "False", isCorrect: false },
+            ],
+          },
+        ],
+      },
+      {
+        title: "Rachunek różniczkowy",
         questions: [
           {
             question: "What is the derivative of x²?",
-            type: "short-answer",
-            answers: [{ text: "2x", isCorrect: true }],
-          },
-        ],
-      },
-      {
-        title: "Geometria – trójkąty",
-        questions: [
-          {
-            question:
-              "What is the hypotenuse of a triangle with sides 3 and 4?",
-            type: "multiple-choice",
+            type: "single-choice",
             answers: [
-              { text: "5", isCorrect: true },
-              { text: "6", isCorrect: false },
-              { text: "7", isCorrect: false },
-              { text: "4", isCorrect: false },
-            ],
-          },
-        ],
-      },
-      {
-        title: "Rachunek różniczkowy – poziom 1",
-        questions: [
-          {
-            question: "What is the derivative of a constant value?",
-            type: "multiple-choice",
-            answers: [
-              { text: "1", isCorrect: false },
               { text: "x", isCorrect: false },
-              { text: "0", isCorrect: true },
-              { text: "Undefined", isCorrect: false },
+              { text: "2x", isCorrect: true },
+              { text: "x²", isCorrect: false },
+              { text: "1", isCorrect: false },
             ],
           },
           {
-            question: "What is the derivative of sin(x)?",
+            question: "Select all correct rules of derivatives:",
             type: "multiple-choice",
             answers: [
-              { text: "cos(x)", isCorrect: true },
-              { text: "-cos(x)", isCorrect: false },
-              { text: "sin(x)", isCorrect: false },
-              { text: "-sin(x)", isCorrect: false },
+              { text: "d/dx(c) = 0 for constant c", isCorrect: true },
+              { text: "d/dx(xⁿ) = n·xⁿ⁻¹", isCorrect: true },
+              { text: "d/dx(sin x) = cos x", isCorrect: true },
+              { text: "d/dx(cos x) = sin x", isCorrect: false },
+            ],
+          },
+          {
+            question: "True or false: derivative of ln(x) is 1/x.",
+            type: "true-false",
+            answers: [
+              { text: "True", isCorrect: true },
+              { text: "False", isCorrect: false },
             ],
           },
         ],
@@ -165,14 +205,15 @@ const mySubjects = {
     notes: [
       {
         title: "Wzory skróconego mnożenia",
-        note: "<h3>Wzory skróconego mnożenia</h3><ul><li><b>(a+b)² = a² + 2ab + b²</b></li><li><b>(a-b)² = a² - 2ab + b²</b></li><li><b>(a+b)(a-b) = a² - b²</b></li></ul>",
+        note: "<h3>Wzory skróconego mnożenia</h3><ul><li>(a+b)² = a² + 2ab + b²</li><li>(a-b)² = a² - 2ab + b²</li><li>(a+b)(a-b) = a² - b²</li></ul>",
       },
       {
-        title: "Pochodne",
-        note: "<h3>Pochodne</h3><ul><li>Pochodna <b>funkcji stałej</b> = 0.</li><li>Pochodna <i>x<sup>n</sup></i> = <i>n·x<sup>n-1</sup></i>.</li><li>Pochodna <i>sin(x)</i> = <i>cos(x)</i>.</li><li>Pochodna <i>cos(x)</i> = <i>-sin(x)</i>.</li></ul>",
+        title: "Pochodne – podstawowe wzory",
+        note: "<ul><li>d/dx(c) = 0</li><li>d/dx(xⁿ) = n·xⁿ⁻¹</li><li>d/dx(sin x) = cos x</li><li>d/dx(cos x) = -sin x</li><li>d/dx(eˣ) = eˣ</li></ul>",
       },
     ],
   },
+
   biologia: {
     flashcards: [
       {
@@ -211,6 +252,15 @@ const mySubjects = {
               { text: "DNA replication", isCorrect: false },
             ],
           },
+          {
+            question:
+              "True or false: Ribosomes are responsible for energy production.",
+            type: "true-false",
+            answers: [
+              { text: "True", isCorrect: false },
+              { text: "False", isCorrect: true },
+            ],
+          },
         ],
       },
       {
@@ -234,6 +284,16 @@ const mySubjects = {
               { text: "Nucleus", isCorrect: false },
               { text: "Chloroplast", isCorrect: true },
               { text: "Cell wall", isCorrect: false },
+            ],
+          },
+          {
+            question: "Select all organelles present in plant cells:",
+            type: "multiple-choice",
+            answers: [
+              { text: "Chloroplast", isCorrect: true },
+              { text: "Mitochondrion", isCorrect: true },
+              { text: "Cell wall", isCorrect: true },
+              { text: "Centrioles", isCorrect: false },
             ],
           },
         ],
@@ -292,6 +352,15 @@ const mySubjects = {
               { text: '"null"', isCorrect: false },
             ],
           },
+          {
+            question:
+              "True or false: A variable can hold different types of data during execution.",
+            type: "true-false",
+            answers: [
+              { text: "True", isCorrect: true },
+              { text: "False", isCorrect: false },
+            ],
+          },
         ],
       },
       {
@@ -315,6 +384,16 @@ const mySubjects = {
               { text: "Integer", isCorrect: false },
               { text: "Boolean", isCorrect: true },
               { text: "Array", isCorrect: false },
+            ],
+          },
+          {
+            question: "Select all correct ways to declare variables in JS:",
+            type: "multiple-choice",
+            answers: [
+              { text: "let", isCorrect: true },
+              { text: "var", isCorrect: true },
+              { text: "constant", isCorrect: false },
+              { text: "const", isCorrect: true },
             ],
           },
         ],

@@ -4,11 +4,13 @@ import { useParams } from "react-router-dom";
 import mySubjects from "../../exampleData";
 import QuestionLearn from "./QuestionLearn";
 import { useState } from "react";
+import AnswerSingle from "./AnswerSingle";
 import AnswerMultiple from "./AnswerMultiple";
 import SecondButton from "../../components/SecondButton";
 import MainButton from "../../components/MainButton";
 import removeByValue from "../../utils/removeByValue";
 import { Link } from "react-router-dom";
+import AnswerTrueFalse from "./AnswerTrueFalse";
 
 function QuizLearn() {
   let params = useParams();
@@ -91,7 +93,7 @@ function QuizLearn() {
     return {
       points: points,
       maxPoints: maxPoints,
-      percentage: (points / maxPoints) * 100,
+      percentage: Math.round((points / maxPoints) * 100),
     };
   }
 
@@ -113,6 +115,7 @@ function QuizLearn() {
     return "Tough one, huh? Time to hit the books and give it another go!";
   }
   const result = countResult();
+  console.log(result);
 
   return (
     <div
@@ -130,7 +133,7 @@ function QuizLearn() {
             </h1>
             <p>You can do again this quiz or try your skills on others</p>
             <div className="flex flex-col gap-6 my-8 sm:flex-row justify-center items-center">
-              <Link to="/app/quizzes">
+              <Link to="/app/quizzes" className="w-full">
                 <SecondButton
                   text={"Explore Other Quizzes"}
                   styles={"w-full sm:max-w-[270px]"}
@@ -153,18 +156,42 @@ function QuizLearn() {
               allQuestionsNumber={questions.length}
               answers={currentQuesiton.answers}
             />
-            <div className="grid sm:grid-cols-2 gap-4 mt-18">
-              {currentQuesiton.answers.map((answer, index) => (
-                <AnswerMultiple
-                  answer={answer.text}
-                  onClick={() => handleMultipleAnswer(index)}
-                  isSelected={
-                    answers[currentIndex] !== null
-                      ? answers[currentIndex].includes(index)
-                      : false
-                  }
-                />
-              ))}
+            <div className="grid sm:grid-cols-2 gap-4 mt-18 h-[200px] sm:h-[100px]">
+              {currentQuesiton.answers.map((answer, index) =>
+                currentQuesiton.type === "single-choice" ? (
+                  <AnswerSingle
+                    answer={answer.text}
+                    onClick={() => handleSingleAnswer(index)}
+                    isSelected={
+                      answers[currentIndex] !== null
+                        ? answers[currentIndex] === index
+                        : false
+                    }
+                  />
+                ) : currentQuesiton.type === "multiple-choice" ? (
+                  <AnswerMultiple
+                    answer={answer.text}
+                    onClick={() => handleMultipleAnswer(index)}
+                    isSelected={
+                      answers[currentIndex] !== null &&
+                      !Number.isInteger(answers[currentIndex])
+                        ? answers[currentIndex].includes(index)
+                        : false
+                    }
+                  />
+                ) : (
+                  <AnswerTrueFalse
+                    answer={answer.text}
+                    onClick={() => handleSingleAnswer(index)}
+                    isSelected={
+                      answers[currentIndex] !== null
+                        ? answers[currentIndex] === index
+                        : false
+                    }
+                    isCorrect={answer.isCorrect}
+                  />
+                )
+              )}
             </div>
             <div className="flex justify-center gap-12 my-10 md:mt-18">
               <SecondButton
