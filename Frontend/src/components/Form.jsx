@@ -4,7 +4,6 @@ function Form({
   onSubmit,
   submitText,
   radioLegend,
-  checkboxLegend,
   additionalInputs = [],
   styles = "",
 }) {
