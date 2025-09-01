@@ -1,5 +1,7 @@
 from pydantic import BaseModel, EmailStr, Field, field_validator
 
+
+
 class UserCreate(BaseModel):
     username: str = Field(..., min_length= 5 , max_length= 20)
     email  : EmailStr
@@ -55,3 +57,14 @@ class ResponseFlashcard(BaseFlashcard):
 class GenerateRequest(BaseModel):
     topic : str
     number_of_flashcards: int = 5
+
+
+class UserUpdate(BaseModel):
+    username: str 
+    email: str 
+    password: str 
+
+
+class UpdateFlashcard(BaseModel):
+    question: str 
+    answer: str

@@ -24,7 +24,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://localhost:5174"],
     allow_credentials=True,
-    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_methods=["GET", "POST","PUT","DELETE" "OPTIONS"],
     allow_headers=["Content-Type", "Authorization"]
 )
 
@@ -120,3 +120,41 @@ async def createFlash(db : db_deppendency,
 
     return saved_flashcards
 
+# ----------------------Flashcards methods for specific User---------------------------#
+@app.get("/flashcards", response_model=list[schemas.CreateFlashcard])
+async def get_flashcards(db: db_deppendency, current_user: models.Users = Depends(get_current_user)):
+    flashcards = db.query(models.Flashcard).filter(models.Flashcard.user_id == current_user.id).all()
+    return flashcards
+
+
+@app.put("/flashcards/{flashcard_id}", response_model=schemas.CreateFlashcard)
+async def update_flashcard(flashcard_id: int, update: schemas.UpdateFlashcard, 
+                           db: db_deppendency, current_user: models.Users = Depends(get_current_user)):
+    flashcard = db.query(models.Flashcard).filter(
+        models.Flashcard.id == flashcard_id,
+        models.Flashcard.user_id == current_user.id
+    ).first()
+    if not flashcard:
+        raise HTTPException(status_code=404, detail="Flashcard not found")
+
+    if update.question:
+        flashcard.question = update.question
+    if update.answer:
+        flashcard.answer = update.answer
+
+    db.commit()
+    db.refresh(flashcard)
+    return flashcard
+
+@app.delete("/flashcards/{flashcard_id}")
+async def delete_flashcard(flashcard_id: int, db: db_deppendency, current_user: models.Users = Depends(get_current_user)):
+    flashcard = db.query(models.Flashcard).filter(
+        models.Flashcard.id == flashcard_id,
+        models.Flashcard.user_id == current_user.id
+    ).first()
+    if not flashcard:
+        raise HTTPException(status_code=404, detail="Flashcard not found")
+
+    db.delete(flashcard)
+    db.commit()
+    return {"status": "success", "message": "Flashcard deleted"}
