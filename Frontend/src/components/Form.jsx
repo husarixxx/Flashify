@@ -89,6 +89,7 @@ function Form({
                 value={input.value}
                 onChange={(e) => input.onChange(e, input.id)}
                 placeholder={input.type === "email" ? "example@gmail.com" : ""}
+                min={input.min ?? ""}
                 className={`border-b-1 text-sm lg:text-lg border-purple-400 focus:outline-none focus:outline-1 py-1  px-1 text-gray-900 placeholder:text-gray-400 ${
                   input.error ? "border-red-400" : ""
                 }`}

@@ -3,19 +3,15 @@ import Subject from "./Subject";
 import MainButton from "./MainButton";
 import Modal from "./Modal";
 
-function SubjectList({ subjects, type, createBtnText, modalForm }) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  function modalOnSubmit(e) {
-    e.preventDefault();
-    modalClose();
-  }
-  function modalOpen() {
-    setIsModalOpen(true);
-  }
-  function modalClose() {
-    setIsModalOpen(false);
-  }
+function SubjectList({
+  subjects,
+  type,
+  createBtnText,
+  modalForm,
+  isModalOpen,
+  modalClose,
+  modalOpen,
+}) {
   console.log(subjects);
   return (
     <>

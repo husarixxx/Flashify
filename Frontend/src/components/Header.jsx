@@ -91,7 +91,7 @@ function Header({
         </div>
       )}
       {isLoggedIn ? (
-        <div className="relative">
+        <div className="relative flex justify-center items-center">
           <button
             className="flex flex-col justify-center items-center hover:cursor-pointer "
             onClick={() => setIsUserModalOpen(!isUserModalOpen)}

@@ -1,22 +1,31 @@
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import SubjectList from "../../components/SubjectList";
-import Subject from "../../components/Subject";
-
-import MainButton from "../../components/MainButton";
-import Modal from "../../components/Modal";
 import Form from "../../components/Form";
+import useGetFlashcards from "../../hooks/useGetFlashcards";
+import { usePostFlashcards } from "../../hooks/usePostFlashcards";
 
 // delete after creating backend
 import mySubjects from "../../exampleData";
 import { useState } from "react";
 
 function Flashcards() {
+  const { data, loading, error } = useGetFlashcards();
+  console.log(data);
+
+  const {
+    aiPost: aiPost,
+    data: postData,
+    loading: postLoading,
+    error: postError,
+  } = usePostFlashcards();
+
   const flashcardsSubjects = Object.entries(mySubjects).map(
     ([subject, data]) => {
       return { subject: subject, types: data.flashcards };
     }
   );
+  console.log(flashcardsSubjects);
 
   const [createInputs, setCreateInputs] = useState([
     {
@@ -50,13 +59,15 @@ function Flashcards() {
       type: "text",
       value: "",
       label: "Topic",
+      error: "",
       onChange: handleOnChangeAI,
     },
     {
       id: crypto.randomUUID(),
       type: "number",
-      value: "",
+      value: "1",
       label: "Number of Flashcards",
+      min: 1,
       onChange: handleOnChangeAI,
     },
   ]);
@@ -91,6 +102,82 @@ function Flashcards() {
 
   function modalOnSubmit(e) {
     e.preventDefault();
+
+    const nameInput = createInputs.find((input) => input.label === "Name");
+
+    if (nameInput.value === "") {
+      setCreateInputs((prevInputs) =>
+        prevInputs.map((input) => {
+          return input.label === "Name"
+            ? { ...input, error: "Name cannot be empty" }
+            : input;
+        })
+      );
+      return;
+    } else {
+      setCreateInputs((prevInputs) =>
+        prevInputs.map((input) => {
+          return input.label === "Name" ? { ...input, error: "" } : input;
+        })
+      );
+    }
+
+    const emptyInput = createInputs.find((input) => input.label === "Empty");
+    if (emptyInput.checked) {
+    } else {
+      const topicInput = aiInputs.find((input) => input.label === "Topic");
+
+      if (topicInput.value === "") {
+        setAiInputs((prevInputs) =>
+          prevInputs.map((input) => {
+            return input.label === "Topic"
+              ? { ...input, error: "Topic cannot be empty" }
+              : input;
+          })
+        );
+        return;
+      } else {
+        setAiInputs((prevInputs) =>
+          prevInputs.map((input) => {
+            return input.label === "Topic" ? { ...input, error: "" } : input;
+          })
+        );
+      }
+
+      const formData = aiInputs.reduce((acc, input) => {
+        const key = input.label.toLowerCase().replaceAll(" ", "_");
+        acc[key] = input.error ? "" : input.value;
+        return acc;
+      }, {});
+      formData.number_of_flashcards = Number.parseInt(
+        formData.number_of_flashcards
+      );
+      console.log("formData: ");
+
+      console.log(formData);
+      console.log(aiInputs);
+
+      setAiInputs((prevInputs) =>
+        prevInputs.map((input) => {
+          return input.label === "Topic" ? { ...input, error: "" } : input;
+        })
+      );
+      aiPost(formData);
+      console.log(postData);
+      console.log(postLoading);
+      console.log(postError);
+    }
+
+    modalClose();
+  }
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  function modalOpen() {
+    setIsModalOpen(true);
+  }
+  function modalClose() {
+    setIsModalOpen(false);
   }
 
   return (
@@ -100,6 +187,9 @@ function Flashcards() {
         subjects={flashcardsSubjects}
         type={"Flashcards"}
         createBtnText={"Create Flashcards"}
+        isModalOpen={isModalOpen}
+        modalOpen={modalOpen}
+        modalClose={modalClose}
         modalForm={
           <Form
             inputs={createInputs}

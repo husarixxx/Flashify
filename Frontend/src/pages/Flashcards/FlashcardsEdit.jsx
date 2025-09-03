@@ -19,14 +19,30 @@ function FlashcardsEdit() {
       type: "text",
       value: "",
       label: "Definition",
-      onChange: handleOnChange,
+      onChange: handleEditOnChange,
     },
     {
       id: crypto.randomUUID(),
       type: "text",
       value: "",
       label: "Explanation",
-      onChange: handleOnChange,
+      onChange: handleEditOnChange,
+    },
+  ]);
+  const [createInputs, setCreateInputs] = useState([
+    {
+      id: crypto.randomUUID(),
+      type: "text",
+      value: "",
+      label: "Definition",
+      onChange: handleCreateOnChange,
+    },
+    {
+      id: crypto.randomUUID(),
+      type: "text",
+      value: "",
+      label: "Explanation",
+      onChange: handleCreateOnChange,
     },
   ]);
 
@@ -48,8 +64,15 @@ function FlashcardsEdit() {
     ([subject, data]) => data.flashcards
   )[0];
 
-  function handleOnChange(e, id) {
+  function handleEditOnChange(e, id) {
     setEditInputs((prevInputs) =>
+      prevInputs.map((input) => {
+        return input.id === id ? { ...input, value: e.target.value } : input;
+      })
+    );
+  }
+  function handleCreateOnChange(e, id) {
+    setCreateInputs((prevInputs) =>
       prevInputs.map((input) => {
         return input.id === id ? { ...input, value: e.target.value } : input;
       })
@@ -101,15 +124,18 @@ function FlashcardsEdit() {
               />
             ))}
         </div>
-        <div className="mt-20 flex justify-center gap-3">
+        <div className="mt-20 flex justify-center gap-3 flex-col sm:flex-row">
           <SecondButton
             text={"Create Flashcard"}
-            styles={"w-[250px] h-[50px]"}
+            styles={"w-full sm:w-[250px] h-[50px]"}
             onClick={openCreateModal}
           />
 
           <Link to={`${path.pathname}/../learn`}>
-            <MainButton text={"Learn"} styles={"w-[250px] h-[50px]"} />
+            <MainButton
+              text={"Learn"}
+              styles={"w-full sm:w-[250px] h-[50px]"}
+            />
           </Link>
         </div>
       </div>
@@ -157,8 +183,8 @@ function FlashcardsEdit() {
           modalClose={closeCreateModal}
         >
           <Form
-            inputs={editInputs}
-            submitText={"Edit"}
+            inputs={createInputs}
+            submitText={"Create"}
             onSubmit={handleCreate}
           />
         </Modal>
