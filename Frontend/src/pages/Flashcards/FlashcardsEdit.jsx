@@ -12,7 +12,14 @@ import mySubjects from "../../exampleData";
 import SecondButton from "../../components/SecondButton";
 import Form from "../../components/Form";
 
+import useDeleteFlashcards from "../../hooks/useDeleteFlashcards";
+
 function FlashcardsEdit() {
+  const { data, loading, error } = useDeleteFlashcards(2);
+  console.log(data);
+  console.log(loading);
+  console.log(error);
+
   const [editInputs, setEditInputs] = useState([
     {
       id: crypto.randomUUID(),
@@ -105,6 +112,7 @@ function FlashcardsEdit() {
   function handleEdit() {}
 
   function handleCreate() {}
+
   return (
     <div
       className={`min-h-[100vh] flex flex-col justify-between overflow-hidden `}

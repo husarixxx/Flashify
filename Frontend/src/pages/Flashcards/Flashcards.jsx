@@ -166,6 +166,7 @@ function Flashcards() {
       console.log(postData);
       console.log(postLoading);
       console.log(postError);
+      if (postError !== null) alert(postError.detail[0].msg);
     }
 
     modalClose();

@@ -20,13 +20,10 @@ export function usePostFlashcards() {
           body: JSON.stringify(formData),
         }
       );
-      console.log(currentData);
 
       setData(currentData);
       setLoading(false);
     } catch (err) {
-      console.log(err);
-
       setError(err);
       setLoading(false);
     }
