@@ -13,12 +13,15 @@ import SecondButton from "../../components/SecondButton";
 import Form from "../../components/Form";
 
 import useDeleteFlashcards from "../../hooks/useDeleteFlashcards";
+import { usePutFlashcards } from "../../hooks/usePutFlashcards";
 
 function FlashcardsEdit() {
-  const { data, loading, error } = useDeleteFlashcards(2);
-  console.log(data);
-  console.log(loading);
-  console.log(error);
+  // const { data, loading, error } = useDeleteFlashcards(2);
+  // console.log(data);
+  // console.log(loading);
+  // console.log(error);
+
+  const { put, data, loading, error } = usePutFlashcards();
 
   const [editInputs, setEditInputs] = useState([
     {
@@ -109,7 +112,16 @@ function FlashcardsEdit() {
   }
 
   function handleDelete() {}
-  function handleEdit() {}
+  function handleEdit(e) {
+    e.preventDefault();
+    put({ question: "zmienione pytanie", answer: "zmieniona definicja" }, 4);
+    console.log("data");
+    console.log(data);
+    console.log("loading");
+    console.log(loading);
+    console.log("error");
+    console.log(error);
+  }
 
   function handleCreate() {}
 

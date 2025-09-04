@@ -28,7 +28,7 @@ export function usePostFlashcards() {
       setLoading(false);
     }
   }
-  async function singlePost(definition, explanation) {
+  async function singlePost(formData) {
     try {
       const currentData = await request("http://127.0.0.1:8000/flashcards", {
         method: "POST",
@@ -36,10 +36,7 @@ export function usePostFlashcards() {
           "Content-Type": "application/json",
         },
         credentials: "include",
-        body: {
-          definition: definition,
-          explanation: explanation,
-        }.stringify(),
+        body: JSON.stringify(formData),
       });
       setData(currentData);
       setLoading(false);
