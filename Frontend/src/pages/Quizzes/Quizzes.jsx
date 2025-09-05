@@ -28,9 +28,45 @@ function Quizzes() {
       })
     );
   }
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
+  function modalOpen() {
+    setIsModalOpen(true);
+  }
+  function modalClose() {
+    setIsModalOpen(false);
+  }
   function modalOnSubmit(e) {
     e.preventDefault();
+
+    const nameInput = createInputs.find((input) => input.label === "Name");
+
+    if (nameInput.value === "") {
+      setCreateInputs((prevInputs) =>
+        prevInputs.map((input) => {
+          return input.label === "Name"
+            ? { ...input, error: "Name cannot be empty" }
+            : input;
+        })
+      );
+      return;
+    } else {
+      setCreateInputs((prevInputs) =>
+        prevInputs.map((input) => {
+          return input.label === "Name" ? { ...input, error: "" } : input;
+        })
+      );
+    }
+    setCreateInputs([
+      {
+        id: crypto.randomUUID(),
+        type: "text",
+        value: "",
+        label: "Name",
+        onChange: handleOnChange,
+      },
+    ]);
+    modalClose();
   }
 
   return (
@@ -40,6 +76,9 @@ function Quizzes() {
         subjects={quizzesSubjects}
         type={"Quizzes"}
         createBtnText={"Create Quizzes subject"}
+        isModalOpen={isModalOpen}
+        modalOpen={modalOpen}
+        modalClose={modalClose}
         modalForm={
           <Form
             inputs={createInputs}

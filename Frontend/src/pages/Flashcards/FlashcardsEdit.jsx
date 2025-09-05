@@ -12,16 +12,18 @@ import mySubjects from "../../exampleData";
 import SecondButton from "../../components/SecondButton";
 import Form from "../../components/Form";
 
-import useDeleteFlashcards from "../../hooks/useDeleteFlashcards";
-import { usePutFlashcards } from "../../hooks/usePutFlashcards";
+import useDelete from "../../hooks/useDelete";
+import usePut from "../../hooks/usePut";
 
 function FlashcardsEdit() {
-  // const { data, loading, error } = useDeleteFlashcards(2);
-  // console.log(data);
-  // console.log(loading);
-  // console.log(error);
+  const {
+    deleteEntity: deleteEntity,
+    data: dataDelete,
+    loading: loadingDelete,
+    error: errorDelete,
+  } = useDelete();
 
-  const { put, data, loading, error } = usePutFlashcards();
+  const { put, data, loading, error } = usePut();
 
   const [editInputs, setEditInputs] = useState([
     {
@@ -111,10 +113,22 @@ function FlashcardsEdit() {
     setIsDeleteOpen(true);
   }
 
-  function handleDelete() {}
+  function handleDelete(e) {
+    e.preventDefault();
+    deleteEntity("flashcards/1");
+    console.log("dataDelete");
+    console.log(dataDelete);
+    console.log("loadingDelete");
+    console.log(loadingDelete);
+    console.log("errorDelete");
+    console.log(errorDelete);
+  }
   function handleEdit(e) {
     e.preventDefault();
-    put({ question: "zmienione pytanie", answer: "zmieniona definicja" }, 4);
+    put(
+      { question: "zmienione pytanie", answer: "zmieniona definicja" },
+      "flashcards/5"
+    );
     console.log("data");
     console.log(data);
     console.log("loading");

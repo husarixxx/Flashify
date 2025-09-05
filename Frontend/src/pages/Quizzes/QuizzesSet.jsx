@@ -58,7 +58,8 @@ function QuizzesSet() {
     {
       id: crypto.randomUUID(),
       type: "number",
-      value: "",
+      value: 1,
+      min: 1,
       label: "Number of questions",
 
       onChange: handleOnChangeAI,
@@ -68,7 +69,8 @@ function QuizzesSet() {
       type: "checkbox",
       value: "Single choice",
       label: "Single choice",
-      checked: false,
+      checked: true,
+      name: "Types of questions",
       onChange: handleCheckboxOnChange,
     },
     {
@@ -77,6 +79,7 @@ function QuizzesSet() {
       value: "Multiple choice",
       label: "Multiple choice",
       checked: false,
+      name: "Types of questions",
       onChange: handleCheckboxOnChange,
     },
     {
@@ -85,6 +88,7 @@ function QuizzesSet() {
       value: "True or False",
       label: "True or False",
       checked: false,
+      name: "Types of questions",
       onChange: handleCheckboxOnChange,
     },
   ]);
@@ -134,6 +138,86 @@ function QuizzesSet() {
   function closeCreateModal() {
     setIsCreateModalOpen(false);
   }
+
+  function modalCreateOnSubmit(e) {
+    e.preventDefault();
+    let isRdyToSend = true;
+
+    const nameInput = createQuizInputs.find((input) => input.label === "Name");
+
+    if (nameInput.value === "") {
+      setCreateQuizInputs((prevInputs) =>
+        prevInputs.map((input) => {
+          return input.label === "Name"
+            ? { ...input, error: "Name cannot be empty" }
+            : input;
+        })
+      );
+      isRdyToSend = false;
+    } else {
+      setCreateQuizInputs((prevInputs) =>
+        prevInputs.map((input) => {
+          return input.label === "Name" ? { ...input, error: "" } : input;
+        })
+      );
+    }
+
+    const emptyInput = createQuizInputs.find(
+      (input) => input.label === "Empty"
+    );
+    if (emptyInput.checked) {
+      if (isRdyToSend) {
+      } else return;
+    } else {
+      const topicInput = aiCreateInputs.find(
+        (input) => input.label === "Topic"
+      );
+
+      if (topicInput.value === "") {
+        setAiCreateInputs((prevInputs) =>
+          prevInputs.map((input) => {
+            return input.label === "Topic"
+              ? { ...input, error: "Topic cannot be empty" }
+              : input;
+          })
+        );
+        isRdyToSend = false;
+      } else {
+        setAiCreateInputs((prevInputs) =>
+          prevInputs.map((input) => {
+            return input.label === "Topic" ? { ...input, error: "" } : input;
+          })
+        );
+      }
+      if (isRdyToSend) {
+        const formData = setAiCreateInputs.reduce((acc, input) => {
+          const key = input.label.toLowerCase().replaceAll(" ", "_");
+          acc[key] = input.error ? "" : input.value;
+          return acc;
+        }, {});
+        formData.number_of_flashcards = Number.parseInt(
+          formData.number_of_flashcards
+        );
+        console.log("formData: ");
+
+        console.log(formData);
+        console.log(aiCreateInputs);
+
+        setAiCreateInputs((prevInputs) =>
+          prevInputs.map((input) => {
+            return input.label === "Topic" ? { ...input, error: "" } : input;
+          })
+        );
+        // aiPost(formData);
+        // console.log(postData);
+        // console.log(postLoading);
+        // console.log(postError);
+        // if (postError !== null) alert(postError.detail[0].msg);
+      } else return;
+    }
+
+    closeCreateModal();
+  }
   return (
     <div className="min-h-[100vh] flex flex-col justify-between ">
       <Header></Header>
@@ -172,6 +256,7 @@ function QuizzesSet() {
           <Form
             inputs={createQuizInputs}
             submitText={"Create"}
+            onSubmit={modalCreateOnSubmit}
             radioLegend={"Creation Type"}
             additionalInputs={isWithAiChosen() ? aiCreateInputs : null}
             checkboxLegend={"Types of questions"}

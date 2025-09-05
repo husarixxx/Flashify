@@ -12,7 +12,6 @@ function SubjectList({
   modalClose,
   modalOpen,
 }) {
-  console.log(subjects);
   return (
     <>
       <div className="mx-4 p-4 md:mx-auto max-w-[1200px] md:translate-y-[-80px]">

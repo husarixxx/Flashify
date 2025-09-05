@@ -6,9 +6,6 @@ import { TbNotes } from "react-icons/tb";
 
 function Subjects({ subject, types, type }) {
   const globalType = type;
-  console.log(types);
-  console.log(` subject types: ${types}`);
-  console.log(` subject single type: ${type}`);
 
   return (
     <Link

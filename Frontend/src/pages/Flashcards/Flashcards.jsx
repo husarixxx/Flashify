@@ -2,23 +2,22 @@ import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import SubjectList from "../../components/SubjectList";
 import Form from "../../components/Form";
-import useGetFlashcards from "../../hooks/useGetFlashcards";
-import { usePostFlashcards } from "../../hooks/usePostFlashcards";
+import useGet from "../../hooks/useGet";
+import { usePost } from "../../hooks/usePost";
 
 // delete after creating backend
 import mySubjects from "../../exampleData";
 import { useState } from "react";
 
 function Flashcards() {
-  const { data, loading, error } = useGetFlashcards();
-  console.log(data);
+  const { get, data, loading, error } = useGet();
 
   const {
-    aiPost: aiPost,
+    post: post,
     data: postData,
     loading: postLoading,
     error: postError,
-  } = usePostFlashcards();
+  } = usePost();
 
   const flashcardsSubjects = Object.entries(mySubjects).map(
     ([subject, data]) => {
@@ -103,6 +102,8 @@ function Flashcards() {
   function modalOnSubmit(e) {
     e.preventDefault();
 
+    let isRdyToSend = true;
+
     const nameInput = createInputs.find((input) => input.label === "Name");
 
     if (nameInput.value === "") {
@@ -113,7 +114,7 @@ function Flashcards() {
             : input;
         })
       );
-      return;
+      isRdyToSend = false;
     } else {
       setCreateInputs((prevInputs) =>
         prevInputs.map((input) => {
@@ -124,6 +125,8 @@ function Flashcards() {
 
     const emptyInput = createInputs.find((input) => input.label === "Empty");
     if (emptyInput.checked) {
+      if (isRdyToSend) {
+      } else return;
     } else {
       const topicInput = aiInputs.find((input) => input.label === "Topic");
 
@@ -135,7 +138,7 @@ function Flashcards() {
               : input;
           })
         );
-        return;
+        isRdyToSend = false;
       } else {
         setAiInputs((prevInputs) =>
           prevInputs.map((input) => {
@@ -143,30 +146,31 @@ function Flashcards() {
           })
         );
       }
+      if (isRdyToSend) {
+        const formData = aiInputs.reduce((acc, input) => {
+          const key = input.label.toLowerCase().replaceAll(" ", "_");
+          acc[key] = input.error ? "" : input.value;
+          return acc;
+        }, {});
+        formData.number_of_flashcards = Number.parseInt(
+          formData.number_of_flashcards
+        );
+        console.log("formData: ");
 
-      const formData = aiInputs.reduce((acc, input) => {
-        const key = input.label.toLowerCase().replaceAll(" ", "_");
-        acc[key] = input.error ? "" : input.value;
-        return acc;
-      }, {});
-      formData.number_of_flashcards = Number.parseInt(
-        formData.number_of_flashcards
-      );
-      console.log("formData: ");
+        console.log(formData);
+        console.log(aiInputs);
 
-      console.log(formData);
-      console.log(aiInputs);
-
-      setAiInputs((prevInputs) =>
-        prevInputs.map((input) => {
-          return input.label === "Topic" ? { ...input, error: "" } : input;
-        })
-      );
-      aiPost(formData);
-      console.log(postData);
-      console.log(postLoading);
-      console.log(postError);
-      if (postError !== null) alert(postError.detail[0].msg);
+        setAiInputs((prevInputs) =>
+          prevInputs.map((input) => {
+            return input.label === "Topic" ? { ...input, error: "" } : input;
+          })
+        );
+        post(formData, "Flashcards/Generate");
+        console.log(postData);
+        console.log(postLoading);
+        console.log(postError);
+        if (postError !== null) alert(postError.detail[0].msg);
+      } else return;
     }
 
     modalClose();
@@ -176,6 +180,8 @@ function Flashcards() {
 
   function modalOpen() {
     setIsModalOpen(true);
+    get("flashcards");
+    console.log(data);
   }
   function modalClose() {
     setIsModalOpen(false);

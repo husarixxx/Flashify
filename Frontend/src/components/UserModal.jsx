@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 
 function UserModal({ userImg, username, modalClose }) {
   return (
-    <div className="border-1 border-gray-300 rounded-xl shadow-xl bg-white absolute top-14 right-0 p-4 hover:cursor-alias">
+    <div className="z-100 border-1 border-gray-300 rounded-xl shadow-xl bg-white absolute top-14 right-0 p-4 hover:cursor-alias">
       <div className="flex justify-between items-center gap-14 mb-4 border-b-1 pb-3 border-gray-300">
         <div className="flex items-center gap-2">
           {userImg}
