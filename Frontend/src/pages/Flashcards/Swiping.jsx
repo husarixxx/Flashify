@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useFlashcard } from "../../context/FlashcardContext";
+import { useSwipe } from "../../context/FlashcardSwipeContext";
 
 function Swiping({ children, isDragging, setIsDragging }) {
   const [startX, setStartX] = useState(0);
@@ -11,7 +11,7 @@ function Swiping({ children, isDragging, setIsDragging }) {
   const [opacity, setOpacity] = useState(100);
   const [animateBack, setAnimateBack] = useState();
 
-  const { swipe, setSwipe } = useFlashcard();
+  const { swipe, setSwipe } = useSwipe();
 
   useEffect(() => {
     function handleMouseMove(e) {

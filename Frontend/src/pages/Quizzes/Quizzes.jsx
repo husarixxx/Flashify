@@ -4,13 +4,16 @@ import SubjectList from "../../components/SubjectList";
 
 import mySubjects from "../../exampleData";
 import Form from "../../components/Form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import useGet from "../../hooks/useGet";
+import { useSubjects } from "../../context/SubjectsContext";
 
 function Quizzes() {
   const quizzesSubjects = Object.entries(mySubjects).map(([subject, data]) => {
     return { subject: subject, types: data.quizzes };
   });
 
+  const { subjects } = useSubjects();
   const [createInputs, setCreateInputs] = useState([
     {
       id: crypto.randomUUID(),
@@ -73,7 +76,7 @@ function Quizzes() {
     <div className="min-h-[100vh] flex flex-col justify-between">
       <Header></Header>
       <SubjectList
-        subjects={quizzesSubjects}
+        subjects={subjects}
         type={"Quizzes"}
         createBtnText={"Create Quizzes subject"}
         isModalOpen={isModalOpen}

@@ -9,9 +9,13 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useLoggedIn } from "../../context/LoggedInContext";
+import useGet from "../../hooks/useGet";
+import { useSubjects } from "../../context/SubjectsContext";
 
 function LogIn() {
   const { setIsLoggedIn } = useLoggedIn();
+  const { get } = useGet();
+  const { setSubjects } = useSubjects();
 
   const [inputs, setInputs] = useState([
     {
@@ -101,6 +105,8 @@ function LogIn() {
         if (response.ok) {
           setIsLoggedIn(true);
           navigateLogin("/app");
+          const fetchedSubjects = await get("subjects");
+          setSubjects(fetchedSubjects);
         } else {
           const dataResponse = await response.json();
           assignError(dataResponse.detail);

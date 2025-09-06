@@ -7,46 +7,66 @@ import Swiping from "./Swiping";
 
 import shuffleArray from "../../utils/shuffleArray";
 
-import { useFlashcard } from "../../context/FlashcardContext";
+import { useSwipe } from "../../context/FlashcardSwipeContext";
 import { useParams, useLocation } from "react-router-dom";
 
 import mySubjects from "../../exampleData";
 import { useEffect, useState } from "react";
+import { useFlashcards } from "../../context/FlashcardsContext";
+import useGet from "../../hooks/useGet";
 
 function FlashcardsLearn() {
-  const { swipe, setSwipe } = useFlashcard();
+  const { swipe, setSwipe } = useSwipe();
   const [index, setIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [flipped, setFlipped] = useState(false);
-  const [flashcards, setFlashcards] = useState(false);
+  const [localFlashcards, setLocalFlashcards] = useState([]);
 
   let params = useParams();
 
   const subject = params.subject;
-  const subjectFiltered = Object.entries(mySubjects).filter(
-    ([subject, data]) => {
-      return subject === params.subject;
-    }
-  );
-  const dataFlashcards = subjectFiltered.map(
-    ([subject, data]) => data.flashcards
-  )[0];
+  // const subjectFiltered = Object.entries(mySubjects).filter(
+  //   ([subject, data]) => {
+  //     return subject === params.subject;
+  //   }
+  // );
+  // const dataFlashcards = subjectFiltered.map(
+  //   ([subject, data]) => data.flashcards
+  // )[0];
+
+  const { flashcards, setFlashcards } = useFlashcards();
+
+  // const [flashcards, setFlashcards] = useState(null);
+  const { get, loading, error } = useGet();
 
   useEffect(() => {
-    setFlashcards(dataFlashcards);
-  }, [dataFlashcards]);
+    if (!(params.subject in flashcards)) {
+      const fetchData = async () => {
+        const fetchedData = await get(`subjects/${params.subject}/flashcards`);
+        console.log("fetchedData: ", fetchedData);
+        setFlashcards({ ...flashcards, [params.subject]: fetchedData });
+      };
+
+      fetchData();
+    }
+  }, [params.subject]);
+
+  useEffect(() => {
+    setLocalFlashcards(flashcards[subject]);
+  }, [flashcards, subject]);
+
   useEffect(() => {
     function updateIndex(swipe) {
       if (swipe.right) {
-        setFlashcards((prev) => {
+        setLocalFlashcards((prev) => {
           const newCards = prev.filter((flashcard, idx) => index !== idx);
-          if (index + 1 >= flashcards.length) {
+          if (index + 1 >= localFlashcards.length) {
             setIndex(0);
           }
           return newCards;
         });
       } else if (swipe.left) {
-        if (index + 1 > flashcards.length - 1) setIndex(0);
+        if (index + 1 > localFlashcards.length - 1) setIndex(0);
         else setIndex(index + 1);
       }
     }
@@ -58,20 +78,20 @@ function FlashcardsLearn() {
         setSwipe({ left: false, right: false });
       }, 400);
     }
-  }, [flashcards, setFlashcards, swipe, setSwipe, index]);
+  }, [localFlashcards, setLocalFlashcards, swipe, setSwipe, index]);
 
   return (
     <div className="min-h-[100vh] flex flex-col justify-between overflow-hidden">
       <Header></Header>
       <div className="p-4 mx-auto">
         <h1 className="my-4">{subject}</h1>
-        {flashcards.length === 0 && (
+        {localFlashcards.length === 0 && (
           <h2 className="text-2xl lg:text-3xl my-8 lg:my-14 mx-2 ">
             <span className="text-purple-500"> That's it!</span> You’ve mastered
             this set. Want to go another round?
           </h2>
         )}
-        {flashcards && flashcards.length > 0 && (
+        {localFlashcards && localFlashcards.length > 0 && (
           <div className="relative ">
             <Swiping isDragging={isDragging} setIsDragging={setIsDragging}>
               {
@@ -82,13 +102,13 @@ function FlashcardsLearn() {
                 >
                   <Flashcard
                     definition={
-                      flashcards.length > index
-                        ? flashcards[index].definition
+                      localFlashcards.length > index
+                        ? localFlashcards[index].definition
                         : ""
                     }
                     explanation={
-                      flashcards.length > index
-                        ? flashcards[index].explanation
+                      localFlashcards.length > index
+                        ? localFlashcards[index].explanation
                         : ""
                     }
                     isDragging={isDragging}
@@ -99,7 +119,7 @@ function FlashcardsLearn() {
               }
             </Swiping>
 
-            {flashcards.length > 1 && (
+            {localFlashcards.length > 1 && (
               <div
                 className={`absolute z-2 top-[15px] left-[-15px] sm:top-[20px] sm:left-[-20px] h-[200px] w-[80vw]  sm:h-[300px] sm:w-[540px] lg:h-[350px] lg:w-[800px] ${
                   swipe.left || swipe.right
@@ -109,13 +129,13 @@ function FlashcardsLearn() {
               >
                 <Flashcard
                   definition={
-                    flashcards[
-                      index + 1 > flashcards.length - 1 ? 0 : index + 1
+                    localFlashcards[
+                      index + 1 > localFlashcards.length - 1 ? 0 : index + 1
                     ].definition
                   }
                   explanation={
-                    flashcards[
-                      index + 1 > flashcards.length - 1 ? 0 : index + 1
+                    localFlashcards[
+                      index + 1 > localFlashcards.length - 1 ? 0 : index + 1
                     ].explanation
                   }
                   turnOff={true}
@@ -127,7 +147,7 @@ function FlashcardsLearn() {
                 ></Flashcard>
               </div>
             )}
-            {flashcards.length > 2 && (
+            {localFlashcards.length > 2 && (
               <div
                 className={`absolute z-1 top-[30px] left-[-30px] sm:top-[40px] sm:left-[-40px] h-[200px] w-[80vw]  sm:h-[300px] sm:w-[540px] lg:h-[350px] lg:w-[800px] ${
                   swipe.left || swipe.right
@@ -137,39 +157,39 @@ function FlashcardsLearn() {
               >
                 <Flashcard
                   definition={
-                    flashcards[
-                      index + 2 > flashcards.length - 1 ? 1 : index + 2
+                    localFlashcards[
+                      index + 2 > localFlashcards.length - 1 ? 1 : index + 2
                     ].definition
                   }
                   explanation={
-                    flashcards[
-                      index + 2 > flashcards.length - 1 ? 1 : index + 2
+                    localFlashcards[
+                      index + 2 > localFlashcards.length - 1 ? 1 : index + 2
                     ].explanation
                   }
                   turnOff={true}
                 ></Flashcard>
               </div>
             )}
-            {flashcards.length > 0 && (
+            {localFlashcards.length > 0 && (
               <div
                 className={`absolute z-0 top-[30px] left-[-30px] sm:top-[40px] sm:left-[-40px] h-[200px] w-[80vw]  sm:h-[300px] sm:w-[540px] lg:h-[350px] lg:w-[800px] opacity-0  ${
                   (swipe.left || swipe.right) &&
-                  !(flashcards.length - 1 < 3 && !swipe.left)
+                  !(localFlashcards.length - 1 < 3 && !swipe.left)
                     ? "opacity-100 transition-opacity duration-500 "
                     : "o"
                 }  ${
-                  (flashcards.length < 3 && swipe.left) ||
-                  (flashcards.length - 1 < 3 && swipe.right)
-                    ? (flashcards.length < 2 && swipe.left) ||
-                      (flashcards.length - 1 < 2 && swipe.right)
+                  (localFlashcards.length < 3 && swipe.left) ||
+                  (localFlashcards.length - 1 < 3 && swipe.right)
+                    ? (localFlashcards.length < 2 && swipe.left) ||
+                      (localFlashcards.length - 1 < 2 && swipe.right)
                       ? "translate-x-[30px] translate-y-[-30px] sm:translate-x-[40px] sm:translate-y-[-40px]  "
                       : "translate-x-[15px] translate-y-[-15px] sm:translate-x-[20px] sm:translate-y-[-20px] "
                     : ""
                 }`}
               >
                 <Flashcard
-                  definition={flashcards[0].definition}
-                  explanation={flashcards[0].explanation}
+                  definition={localFlashcards[0].definition}
+                  explanation={localFlashcards[0].explanation}
                   turnOff={true}
                 ></Flashcard>
               </div>
@@ -177,29 +197,31 @@ function FlashcardsLearn() {
           </div>
         )}
 
-        {flashcards.length > 0 && (
+        {localFlashcards.length > 0 && (
           <>
             <div className="my-12 text-center">
               <p>
-                {dataFlashcards.length - flashcards.length}/
-                {dataFlashcards.length}
+                {flashcards[subject].length - localFlashcards.length}/
+                {flashcards[subject].length}
               </p>
             </div>
             <div className="w-full flex flex-col justify-center gap-5 mt-[70px] md:mt-[100px] max-w-[300px] mx-auto">
               <MainButton
                 text={"Reshuffle"}
-                onClick={() => setFlashcards(shuffleArray(flashcards))}
+                onClick={() =>
+                  setLocalFlashcards(shuffleArray(localFlashcards))
+                }
               />
             </div>
           </>
         )}
-        {flashcards.length === 0 && (
+        {localFlashcards.length === 0 && (
           <div className="w-full flex flex-col justify-center gap-5 mt-[70px] md:mt-[100px] max-w-[300px] mx-auto">
             <MainButton
               text={"Learn again"}
               styles={"h-12"}
               onClick={() => {
-                setFlashcards(dataFlashcards);
+                setLocalFlashcards(flashcards[subject]);
               }}
             />
           </div>

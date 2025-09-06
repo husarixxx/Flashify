@@ -4,10 +4,11 @@ import SubjectList from "../../components/SubjectList";
 import Form from "../../components/Form";
 import useGet from "../../hooks/useGet";
 import { usePost } from "../../hooks/usePost";
+import { useSubjects } from "../../context/SubjectsContext";
 
 // delete after creating backend
 import mySubjects from "../../exampleData";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function Flashcards() {
   const { get, data, loading, error } = useGet();
@@ -19,12 +20,21 @@ function Flashcards() {
     error: postError,
   } = usePost();
 
-  const flashcardsSubjects = Object.entries(mySubjects).map(
-    ([subject, data]) => {
-      return { subject: subject, types: data.flashcards };
-    }
-  );
-  console.log(flashcardsSubjects);
+  const { subjects } = useSubjects();
+  console.log("subjects: ");
+  console.log(subjects);
+
+  // const flashcardsSubjects = Object.entries(mySubjects).map(
+  //   ([subject, data]) => {
+  //     return { subject: subject, types: data.flashcards };
+  //   }
+  // );
+
+  // // console.log(flashcardsSubjects);
+
+  // useEffect(() => {
+  //   get("subjects");
+  // }, []);
 
   const [createInputs, setCreateInputs] = useState([
     {
@@ -180,8 +190,6 @@ function Flashcards() {
 
   function modalOpen() {
     setIsModalOpen(true);
-    get("flashcards");
-    console.log(data);
   }
   function modalClose() {
     setIsModalOpen(false);
@@ -191,7 +199,7 @@ function Flashcards() {
     <div className="min-h-[100vh] flex flex-col justify-between">
       <Header></Header>
       <SubjectList
-        subjects={flashcardsSubjects}
+        subjects={subjects}
         type={"Flashcards"}
         createBtnText={"Create Flashcards"}
         isModalOpen={isModalOpen}

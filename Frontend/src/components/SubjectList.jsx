@@ -17,14 +17,15 @@ function SubjectList({
       <div className="mx-4 p-4 md:mx-auto max-w-[1200px] md:translate-y-[-80px]">
         <h2>My Subjects</h2>
         <div className="md:grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {subjects.map((subject) => (
-            <Subject
-              key={crypto.randomUUID()}
-              subject={subject.subject}
-              types={[subject.types]}
-              type={type}
-            />
-          ))}
+          {subjects === null
+            ? "Loading..."
+            : subjects.map((subject) => (
+                <Subject
+                  key={crypto.randomUUID()}
+                  subject={subject}
+                  type={type}
+                />
+              ))}
         </div>
         <div className="flex justify-center mt-20 lg:mt-32">
           <MainButton
