@@ -14,6 +14,8 @@ import Form from "../../components/Form";
 
 import useDelete from "../../hooks/useDelete";
 import usePut from "../../hooks/usePut";
+import { useFlashcards } from "../../context/FlashcardsContext";
+import useGet from "../../hooks/useGet";
 
 function FlashcardsEdit() {
   const {
@@ -61,20 +63,37 @@ function FlashcardsEdit() {
   let params = useParams();
   const path = useLocation();
 
-  const [flashcards, setFlashcards] = useState(false);
+  // const [flashcards, setFlashcards] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   const subject = params.subject;
-  const subjectFiltered = Object.entries(mySubjects).filter(
-    ([subject, data]) => {
-      return subject === params.subject;
+  // const subjectFiltered = Object.entries(mySubjects).filter(
+  //   ([subject, data]) => {
+  //     return subject === params.subject;
+  //   }
+  // );
+  // const dataFlashcards = subjectFiltered.map(
+  //   ([subject, data]) => data.flashcards
+  // )[0];
+
+  const { flashcards, setFlashcards } = useFlashcards();
+
+  // const [flashcards, setFlashcards] = useState(null);
+  const { get, loading: loadingGet, error: errorGet } = useGet();
+
+  useEffect(() => {
+    if (!(params.subject in flashcards)) {
+      const fetchData = async () => {
+        const fetchedData = await get(`subjects/${params.subject}/flashcards`);
+        console.log("fetchedData: ", fetchedData);
+        setFlashcards({ ...flashcards, [subject]: fetchedData });
+      };
+
+      fetchData();
     }
-  );
-  const dataFlashcards = subjectFiltered.map(
-    ([subject, data]) => data.flashcards
-  )[0];
+  }, [subject, flashcards, setFlashcards]);
 
   function handleEditOnChange(e, id) {
     setEditInputs((prevInputs) =>
@@ -90,9 +109,9 @@ function FlashcardsEdit() {
       })
     );
   }
-  useEffect(() => {
-    setFlashcards(dataFlashcards);
-  }, [flashcards, dataFlashcards]);
+  // useEffect(() => {
+  //   setFlashcards(dataFlashcards);
+  // }, [flashcards, dataFlashcards]);
 
   function openEditModal() {
     setIsEditOpen(true);
@@ -148,8 +167,8 @@ function FlashcardsEdit() {
         <h1 className="my-4">{subject}</h1>
 
         <div className="flex flex-col justify-center md:grid grid-cols-2 xl:grid-cols-3  gap-5 w-[80vw]">
-          {flashcards.length > 0 &&
-            flashcards.map((flashcard) => (
+          {flashcards[subject].length > 0 &&
+            flashcards[subject].map((flashcard) => (
               <FlashcardEdit
                 key={crypto.randomUUID()}
                 definition={flashcard.definition}
