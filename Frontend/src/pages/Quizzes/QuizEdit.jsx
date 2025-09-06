@@ -8,11 +8,14 @@ import { useParams, useLocation } from "react-router-dom";
 import mySubjects from "../../exampleData";
 import Modal from "../../components/Modal";
 import Form from "../../components/Form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useQuizzes } from "../../context/QuizzesContext";
+import useGet from "../../hooks/useGet";
 
 function QuizEdit() {
   let params = useParams();
   const path = useLocation();
+  const subject = params.subject;
 
   //   const subject = params.subject;
   //   const subjectFiltered = Object.entries(mySubjects).filter(
@@ -21,14 +24,33 @@ function QuizEdit() {
   //     }
   //   );
 
-  const subject = params.subject;
-  const subjectFiltered = Object.entries(mySubjects).filter(
-    ([subject, data]) => {
-      return subject === params.subject;
+  // const subject = params.subject;
+  // const subjectFiltered = Object.entries(mySubjects).filter(
+  //   ([subject, data]) => {
+  //     return subject === params.subject;
+  //   }
+  // );
+  // const quizzes = subjectFiltered.map(([subject, data]) => data.quizzes)[0];
+
+  const { quizzes, setQuizzes } = useQuizzes();
+
+  const { get, loading, error } = useGet();
+
+  useEffect(() => {
+    if (!(subject in quizzes)) {
+      const fetchData = async () => {
+        const fetchedData = await get(`subjects/${subject}/quizzes`);
+        console.log("fetchedData: ", fetchedData);
+        setQuizzes({ ...quizzes, [subject]: fetchedData });
+      };
+
+      fetchData();
     }
-  );
-  const quizzes = subjectFiltered.map(([subject, data]) => data.quizzes)[0];
-  const quiz = quizzes.filter((quiz) => quiz.title === params.quizTitle)[0];
+  }, [subject, quizzes, setQuizzes]);
+
+  const quiz = quizzes[subject].filter(
+    (quiz) => quiz.title === params.quizTitle
+  )[0];
   const { title, questions } = quiz;
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);

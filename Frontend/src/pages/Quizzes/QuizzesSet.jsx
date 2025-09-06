@@ -4,9 +4,11 @@ import mySubjects from "../../exampleData";
 import { useParams } from "react-router-dom";
 import Quiz from "./Quiz";
 import MainButton from "../../components/MainButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "../../components/Modal";
 import Form from "../../components/Form";
+import { useQuizzes } from "../../context/QuizzesContext";
+import useGet from "../../hooks/useGet";
 
 function QuizzesSet() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -14,12 +16,28 @@ function QuizzesSet() {
   let params = useParams();
 
   const subject = params.subject;
-  const subjectFiltered = Object.entries(mySubjects).filter(
-    ([subject, data]) => {
-      return subject === params.subject;
+  // const subjectFiltered = Object.entries(mySubjects).filter(
+  //   ([subject, data]) => {
+  //     return subject === params.subject;
+  //   }
+  // );
+  // const quizzes = subjectFiltered.map(([subject, data]) => data.quizzes)[0];
+
+  const { quizzes, setQuizzes } = useQuizzes();
+
+  const { get, loading, error } = useGet();
+
+  useEffect(() => {
+    if (!(subject in quizzes)) {
+      const fetchData = async () => {
+        const fetchedData = await get(`subjects/${subject}/quizzes`);
+        console.log("fetchedData: ", fetchedData);
+        setQuizzes({ ...quizzes, [subject]: fetchedData });
+      };
+
+      fetchData();
     }
-  );
-  const quizzes = subjectFiltered.map(([subject, data]) => data.quizzes)[0];
+  }, [subject, quizzes, setQuizzes]);
 
   const [createQuizInputs, setCreateQuizInputs] = useState([
     {
@@ -223,18 +241,22 @@ function QuizzesSet() {
       <Header></Header>
       <div className="mx-4 md:mx-16 lg:mx-24 xl:mx-30 mt-12 2xl:mx-auto 2xl:px-10 ">
         <h1 className="my-4 ">{subject}</h1>
-        <div className="md:grid grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4   gap-4 ">
-          {quizzes.map((quiz) => {
-            return (
-              <Quiz
-                key={crypto.randomUUID()}
-                quizData={quiz}
-                title={quiz.title}
-                numOfQuestions={quiz.questions.length}
-              />
-            );
-          })}
-        </div>
+        {!(subject in quizzes) ? (
+          "loading"
+        ) : (
+          <div className="md:grid grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4   gap-4 ">
+            {quizzes[subject].map((quiz) => {
+              return (
+                <Quiz
+                  key={crypto.randomUUID()}
+                  quizData={quiz}
+                  title={quiz.title}
+                  numOfQuestions={quiz.questions.length}
+                />
+              );
+            })}
+          </div>
+        )}
       </div>
       <div className="flex justify-center my-12">
         <MainButton

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState } from "react";
 
 const FlashcardsContext = createContext();
 export const FlashcardsProvider = ({ children }) => {

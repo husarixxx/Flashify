@@ -23,4 +23,9 @@ export const handlers = [
     console.log(subjectId);
     return HttpResponse.json(mySubjects[subjectId].flashcards);
   }),
+  http.get("api/subjects/:subjectId/quizzes", (req) => {
+    const { subjectId } = req.params;
+    console.log(subjectId);
+    return HttpResponse.json(mySubjects[subjectId].quizzes);
+  }),
 ];
