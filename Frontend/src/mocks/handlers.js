@@ -31,6 +31,23 @@ export const handlers = [
     );
     return HttpResponse.json(mySubjects[subjectId].flashcards);
   }),
+  http.put(
+    "api/subjects/:subjectId/flashcards/:flashcardId",
+    async ({ request, params }) => {
+      const { subjectId, flashcardId } = params;
+      const updatedFlashcard = await request.json();
+      console.log(subjectId);
+      console.log(updatedFlashcard);
+
+      mySubjects[subjectId].flashcards = mySubjects[subjectId].flashcards.map(
+        (flashcard) =>
+          flashcard.id == flashcardId
+            ? { ...updatedFlashcard, id: updatedFlashcard }
+            : flashcard
+      );
+      return HttpResponse.json(mySubjects[subjectId].flashcards);
+    }
+  ),
   http.get("api/subjects/:subjectId/quizzes", (req) => {
     const { subjectId } = req.params;
     console.log(subjectId);

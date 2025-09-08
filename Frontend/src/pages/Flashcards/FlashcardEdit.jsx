@@ -6,8 +6,10 @@ import Modal from "../../components/Modal";
 import { useParams } from "react-router-dom";
 import { useFlashcards } from "../../context/FlashcardsContext";
 import { useSubjects } from "../../context/SubjectsContext";
+import usePut from "../../hooks/usePut";
+import Form from "../../components/Form";
 
-function FlashcardEdit({ id, definition, openEditModal }) {
+function FlashcardEdit({ id, definition }) {
   const { flashcards, setFlashcards } = useFlashcards();
   const { updateSubjects } = useSubjects();
 
@@ -37,6 +39,7 @@ function FlashcardEdit({ id, definition, openEditModal }) {
     setFlashcards({ ...flashcards, [subject]: newFlashcards });
     updateSubjects();
 
+    if (errorDelete !== null) alert(errorDelete);
     console.log("dataDelete");
     console.log(newFlashcards);
     console.log("loadingDelete");
@@ -44,6 +47,112 @@ function FlashcardEdit({ id, definition, openEditModal }) {
     console.log("errorDelete");
     console.log(errorDelete);
     closeDeleteModal();
+  }
+
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const { put, data, loading, error } = usePut();
+
+  const [editInputs, setEditInputs] = useState([
+    {
+      id: crypto.randomUUID(),
+      type: "text",
+      value: "",
+      label: "Definition",
+      onChange: handleEditOnChange,
+    },
+    {
+      id: crypto.randomUUID(),
+      type: "text",
+      value: "",
+      label: "Explanation",
+      onChange: handleEditOnChange,
+    },
+  ]);
+
+  function handleEditOnChange(e, id) {
+    setEditInputs((prevInputs) =>
+      prevInputs.map((input) => {
+        return input.id === id ? { ...input, value: e.target.value } : input;
+      })
+    );
+  }
+
+  async function handleEdit(e) {
+    e.preventDefault();
+    const formData = editInputs.reduce((acc, input) => {
+      const key = input.label.toLowerCase();
+      acc[key] = input.error ? "" : input.value;
+      return acc;
+    }, {});
+
+    let isRdyToSend = true;
+
+    const definitionInput = editInputs.find(
+      (input) => input.label === "Definition"
+    );
+    const explanationInput = editInputs.find(
+      (input) => input.label === "Explanation"
+    );
+
+    if (definitionInput.value === "") {
+      setEditInputs((prevInputs) =>
+        prevInputs.map((input) => {
+          return input.label === "Definition"
+            ? { ...input, error: "Definition cannot be empty" }
+            : input;
+        })
+      );
+      isRdyToSend = false;
+    } else {
+      setEditInputs((prevInputs) =>
+        prevInputs.map((input) => {
+          return input.label === "Definition" ? { ...input, error: "" } : input;
+        })
+      );
+    }
+    if (explanationInput.value === "") {
+      setEditInputs((prevInputs) =>
+        prevInputs.map((input) => {
+          return input.label === "Explanation"
+            ? { ...input, error: "Explanation cannot be empty" }
+            : input;
+        })
+      );
+      isRdyToSend = false;
+    } else {
+      setEditInputs((prevInputs) =>
+        prevInputs.map((input) => {
+          return input.label === "Explanation"
+            ? { ...input, error: "" }
+            : input;
+        })
+      );
+    }
+
+    if (isRdyToSend) {
+      const newFlashcards = await put(
+        formData,
+        `subjects/${subject}/flashcards/${id}`
+      );
+
+      setFlashcards({ ...flashcards, [subject]: newFlashcards });
+      updateSubjects();
+
+      console.log("data");
+      console.log(data);
+      console.log("loading");
+      console.log(loading);
+      console.log("error");
+      console.log(error);
+    } else {
+      return;
+    }
+  }
+  function closeEditModal() {
+    setIsEditOpen(false);
+  }
+  function openEditModal() {
+    setIsEditOpen(true);
   }
   return (
     <div className="relative flex justify-center items-center bg-gradient-to-r from-purple-600  to-purple-500 rounded-2xl shadow-xl text-white h-[150px] xs:h-[180px] sm:h-[200px] ">
@@ -79,6 +188,19 @@ function FlashcardEdit({ id, definition, openEditModal }) {
               Delete
             </button>
           </div>
+        </Modal>
+      )}
+      {isEditOpen && (
+        <Modal
+          heading={
+            <>
+              Edit
+              <span className="text-purple-500"> Flashcard</span>
+            </>
+          }
+          modalClose={closeEditModal}
+        >
+          <Form inputs={editInputs} submitText={"Edit"} onSubmit={handleEdit} />
         </Modal>
       )}
     </div>

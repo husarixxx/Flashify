@@ -18,24 +18,6 @@ import { useFlashcards } from "../../context/FlashcardsContext";
 import useGet from "../../hooks/useGet";
 
 function FlashcardsEdit() {
-  const { put, data, loading, error } = usePut();
-
-  const [editInputs, setEditInputs] = useState([
-    {
-      id: crypto.randomUUID(),
-      type: "text",
-      value: "",
-      label: "Definition",
-      onChange: handleEditOnChange,
-    },
-    {
-      id: crypto.randomUUID(),
-      type: "text",
-      value: "",
-      label: "Explanation",
-      onChange: handleEditOnChange,
-    },
-  ]);
   const [createInputs, setCreateInputs] = useState([
     {
       id: crypto.randomUUID(),
@@ -57,7 +39,6 @@ function FlashcardsEdit() {
   const path = useLocation();
 
   // const [flashcards, setFlashcards] = useState(false);
-  const [isEditOpen, setIsEditOpen] = useState(false);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
   const subject = params.subject;
@@ -88,13 +69,6 @@ function FlashcardsEdit() {
     }
   }, [subject]);
 
-  function handleEditOnChange(e, id) {
-    setEditInputs((prevInputs) =>
-      prevInputs.map((input) => {
-        return input.id === id ? { ...input, value: e.target.value } : input;
-      })
-    );
-  }
   function handleCreateOnChange(e, id) {
     setCreateInputs((prevInputs) =>
       prevInputs.map((input) => {
@@ -106,31 +80,12 @@ function FlashcardsEdit() {
   //   setFlashcards(dataFlashcards);
   // }, [flashcards, dataFlashcards]);
 
-  function openEditModal() {
-    setIsEditOpen(true);
-  }
   function openCreateModal() {
     setIsCreateOpen(true);
   }
-  function closeEditModal() {
-    setIsEditOpen(false);
-  }
+
   function closeCreateModal() {
     setIsCreateOpen(false);
-  }
-
-  function handleEdit(e) {
-    e.preventDefault();
-    put(
-      { question: "zmienione pytanie", answer: "zmieniona definicja" },
-      "flashcards/5"
-    );
-    console.log("data");
-    console.log(data);
-    console.log("loading");
-    console.log(loading);
-    console.log("error");
-    console.log(error);
   }
 
   function handleCreate() {}
@@ -150,7 +105,6 @@ function FlashcardsEdit() {
                 key={flashcard.id}
                 id={flashcard.id}
                 definition={flashcard.definition}
-                openEditModal={openEditModal}
               />
             ))}
         </div>
@@ -169,20 +123,6 @@ function FlashcardsEdit() {
           </Link>
         </div>
       </div>
-
-      {isEditOpen && (
-        <Modal
-          heading={
-            <>
-              Edit
-              <span className="text-purple-500"> Flashcard</span>
-            </>
-          }
-          modalClose={closeEditModal}
-        >
-          <Form inputs={editInputs} submitText={"Edit"} onSubmit={handleEdit} />
-        </Modal>
-      )}
 
       {isCreateOpen && (
         <Modal
