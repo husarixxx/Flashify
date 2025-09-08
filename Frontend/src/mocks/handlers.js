@@ -23,6 +23,14 @@ export const handlers = [
     console.log(subjectId);
     return HttpResponse.json(mySubjects[subjectId].flashcards);
   }),
+  http.delete("api/subjects/:subjectId/flashcards/:flashcardId", (req) => {
+    const { subjectId, flashcardId } = req.params;
+    console.log(subjectId);
+    mySubjects[subjectId].flashcards = mySubjects[subjectId].flashcards.filter(
+      (flashcard) => flashcard.id != flashcardId
+    );
+    return HttpResponse.json(mySubjects[subjectId].flashcards);
+  }),
   http.get("api/subjects/:subjectId/quizzes", (req) => {
     const { subjectId } = req.params;
     console.log(subjectId);

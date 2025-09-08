@@ -18,13 +18,6 @@ import { useFlashcards } from "../../context/FlashcardsContext";
 import useGet from "../../hooks/useGet";
 
 function FlashcardsEdit() {
-  const {
-    deleteEntity: deleteEntity,
-    data: dataDelete,
-    loading: loadingDelete,
-    error: errorDelete,
-  } = useDelete();
-
   const { put, data, loading, error } = usePut();
 
   const [editInputs, setEditInputs] = useState([
@@ -66,7 +59,6 @@ function FlashcardsEdit() {
   // const [flashcards, setFlashcards] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   const subject = params.subject;
   // const subjectFiltered = Object.entries(mySubjects).filter(
@@ -79,6 +71,7 @@ function FlashcardsEdit() {
   // )[0];
 
   const { flashcards, setFlashcards } = useFlashcards();
+  console.log(flashcards);
 
   // const [flashcards, setFlashcards] = useState(null);
   const { get, loading: loadingGet, error: errorGet } = useGet();
@@ -86,14 +79,14 @@ function FlashcardsEdit() {
   useEffect(() => {
     if (!(params.subject in flashcards)) {
       const fetchData = async () => {
-        const fetchedData = await get(`subjects/${params.subject}/flashcards`);
+        const fetchedData = await get(`subjects/${subject}/flashcards`);
         console.log("fetchedData: ", fetchedData);
         setFlashcards({ ...flashcards, [subject]: fetchedData });
       };
 
       fetchData();
     }
-  }, [subject, flashcards, setFlashcards]);
+  }, [subject]);
 
   function handleEditOnChange(e, id) {
     setEditInputs((prevInputs) =>
@@ -125,23 +118,7 @@ function FlashcardsEdit() {
   function closeCreateModal() {
     setIsCreateOpen(false);
   }
-  function closeDeleteModal() {
-    setIsDeleteOpen(false);
-  }
-  function openDeleteModal() {
-    setIsDeleteOpen(true);
-  }
 
-  function handleDelete(e) {
-    e.preventDefault();
-    deleteEntity("flashcards/1");
-    console.log("dataDelete");
-    console.log(dataDelete);
-    console.log("loadingDelete");
-    console.log(loadingDelete);
-    console.log("errorDelete");
-    console.log(errorDelete);
-  }
   function handleEdit(e) {
     e.preventDefault();
     put(
@@ -170,9 +147,9 @@ function FlashcardsEdit() {
           {flashcards[subject].length > 0 &&
             flashcards[subject].map((flashcard) => (
               <FlashcardEdit
-                key={crypto.randomUUID()}
+                key={flashcard.id}
+                id={flashcard.id}
                 definition={flashcard.definition}
-                openDeleteModal={openDeleteModal}
                 openEditModal={openEditModal}
               />
             ))}
@@ -206,25 +183,7 @@ function FlashcardsEdit() {
           <Form inputs={editInputs} submitText={"Edit"} onSubmit={handleEdit} />
         </Modal>
       )}
-      {isDeleteOpen && (
-        <Modal heading={"Delete Flashcard"} modalClose={closeDeleteModal}>
-          <p>Are you sure you want to delete this flashcard</p>
-          <div className="flex gap-4 justify-end mt-6">
-            <button
-              className="cursor-pointer opacity-80 hover:opacity-100 transition-opacity"
-              onClick={closeDeleteModal}
-            >
-              Cancel
-            </button>
-            <button
-              className="bg-red-600 text-white px-5 py-2 rounded-md cursor-pointer opacity-85  hover:opacity-100 transition-opacity"
-              onClick={handleDelete}
-            >
-              Delete
-            </button>
-          </div>
-        </Modal>
-      )}
+
       {isCreateOpen && (
         <Modal
           heading={
