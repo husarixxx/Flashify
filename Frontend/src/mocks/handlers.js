@@ -28,4 +28,9 @@ export const handlers = [
     console.log(subjectId);
     return HttpResponse.json(mySubjects[subjectId].quizzes);
   }),
+  http.get("api/subjects/:subjectId/notes", (req) => {
+    const { subjectId } = req.params;
+    console.log(subjectId);
+    return HttpResponse.json(mySubjects[subjectId].notes);
+  }),
 ];

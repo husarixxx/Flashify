@@ -28,6 +28,7 @@ import Settings from "./pages/Settings/Settings";
 import { SubjectsProvider } from "./context/SubjectsContext";
 import { FlashcardsProvider } from "./context/FlashcardsContext";
 import { QuizzesProvider } from "./context/QuizzesContext";
+import { NotesProvider } from "./context/NotesContext";
 
 if (import.meta.env.DEV) {
   const { worker } = await import("./mocks/browser");
@@ -41,144 +42,146 @@ createRoot(document.getElementById("root")).render(
         <SubjectsProvider>
           <FlashcardsProvider>
             <QuizzesProvider>
-              <Routes>
-                <Route path="/" element={<Landing></Landing>} />
-                <Route path="/Sign-up" element={<SignUp />} />
-                <Route path="/log-in" element={<LogIn />} />
-                <Route
-                  path="/app"
-                  element={
-                    <Authenticate>
-                      <Home />
-                    </Authenticate>
-                  }
-                />
-                <Route
-                  path="/app/flashcards"
-                  element={
-                    <Authenticate>
-                      <Flashcards />
-                    </Authenticate>
-                  }
-                />
-                <Route
-                  path="/app/flashcards/:subject"
-                  element={
-                    <Authenticate>
-                      <FlashcardsSet />
-                    </Authenticate>
-                  }
-                />
+              <NotesProvider>
+                <Routes>
+                  <Route path="/" element={<Landing></Landing>} />
+                  <Route path="/Sign-up" element={<SignUp />} />
+                  <Route path="/log-in" element={<LogIn />} />
+                  <Route
+                    path="/app"
+                    element={
+                      <Authenticate>
+                        <Home />
+                      </Authenticate>
+                    }
+                  />
+                  <Route
+                    path="/app/flashcards"
+                    element={
+                      <Authenticate>
+                        <Flashcards />
+                      </Authenticate>
+                    }
+                  />
+                  <Route
+                    path="/app/flashcards/:subject"
+                    element={
+                      <Authenticate>
+                        <FlashcardsSet />
+                      </Authenticate>
+                    }
+                  />
 
-                <Route
-                  path="/app/flashcards/:subject/learn"
-                  element={
-                    <Authenticate>
-                      <FlashcardSwipeProvider>
-                        <FlashcardsLearn />
-                      </FlashcardSwipeProvider>
-                    </Authenticate>
-                  }
-                />
-                <Route
-                  path="/app/flashcards/:subject/edit"
-                  element={
-                    <Authenticate>
-                      <FlashcardsEdit />
-                    </Authenticate>
-                  }
-                />
-                <Route
-                  path="/app/quizzes"
-                  element={
-                    <Authenticate>
-                      <Quizzes />
-                    </Authenticate>
-                  }
-                />
-                <Route
-                  path="/app/quizzes/:subject"
-                  element={
-                    <Authenticate>
-                      <QuizzesSet />
-                    </Authenticate>
-                  }
-                />
-                <Route
-                  path="/app/quizzes/:subject/:quizTitle/edit"
-                  element={
-                    <Authenticate>
-                      <QuizEdit />
-                    </Authenticate>
-                  }
-                />
-                <Route
-                  path="/app/quizzes/:subject/:quizTitle/learn"
-                  element={
-                    <Authenticate>
-                      <QuizLearn />
-                    </Authenticate>
-                  }
-                />
-                <Route
-                  path="/app/notes"
-                  element={
-                    <Authenticate>
-                      <Notes />
-                    </Authenticate>
-                  }
-                />
-                <Route
-                  path="/app/notes/:subject"
-                  element={
-                    <Authenticate>
-                      <NotesSet />
-                    </Authenticate>
-                  }
-                />
-                <Route
-                  path="/app/notes/:subject/:noteTitle/edit"
-                  element={
-                    <Authenticate>
-                      <NoteEdit />
-                    </Authenticate>
-                  }
-                />
-                <Route
-                  path="/app/notes/:subject/:noteTitle/learn"
-                  element={
-                    <Authenticate>
-                      <NoteLearn />
-                    </Authenticate>
-                  }
-                />
-                <Route path="*" element={<NotFound />} />
-                <Route
-                  path="/app/subjects"
-                  element={
-                    <Authenticate>
-                      <Subjects />
-                    </Authenticate>
-                  }
-                />
-                <Route
-                  path="/app/subjects/:subject"
-                  element={
-                    <Authenticate>
-                      <SubjectsSpecific />
-                    </Authenticate>
-                  }
-                />
-                <Route
-                  path="/app/settings"
-                  element={
-                    <Authenticate>
-                      <Settings />
-                    </Authenticate>
-                  }
-                />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
+                  <Route
+                    path="/app/flashcards/:subject/learn"
+                    element={
+                      <Authenticate>
+                        <FlashcardSwipeProvider>
+                          <FlashcardsLearn />
+                        </FlashcardSwipeProvider>
+                      </Authenticate>
+                    }
+                  />
+                  <Route
+                    path="/app/flashcards/:subject/edit"
+                    element={
+                      <Authenticate>
+                        <FlashcardsEdit />
+                      </Authenticate>
+                    }
+                  />
+                  <Route
+                    path="/app/quizzes"
+                    element={
+                      <Authenticate>
+                        <Quizzes />
+                      </Authenticate>
+                    }
+                  />
+                  <Route
+                    path="/app/quizzes/:subject"
+                    element={
+                      <Authenticate>
+                        <QuizzesSet />
+                      </Authenticate>
+                    }
+                  />
+                  <Route
+                    path="/app/quizzes/:subject/:quizTitle/edit"
+                    element={
+                      <Authenticate>
+                        <QuizEdit />
+                      </Authenticate>
+                    }
+                  />
+                  <Route
+                    path="/app/quizzes/:subject/:quizTitle/learn"
+                    element={
+                      <Authenticate>
+                        <QuizLearn />
+                      </Authenticate>
+                    }
+                  />
+                  <Route
+                    path="/app/notes"
+                    element={
+                      <Authenticate>
+                        <Notes />
+                      </Authenticate>
+                    }
+                  />
+                  <Route
+                    path="/app/notes/:subject"
+                    element={
+                      <Authenticate>
+                        <NotesSet />
+                      </Authenticate>
+                    }
+                  />
+                  <Route
+                    path="/app/notes/:subject/:noteTitle/edit"
+                    element={
+                      <Authenticate>
+                        <NoteEdit />
+                      </Authenticate>
+                    }
+                  />
+                  <Route
+                    path="/app/notes/:subject/:noteTitle/learn"
+                    element={
+                      <Authenticate>
+                        <NoteLearn />
+                      </Authenticate>
+                    }
+                  />
+                  <Route path="*" element={<NotFound />} />
+                  <Route
+                    path="/app/subjects"
+                    element={
+                      <Authenticate>
+                        <Subjects />
+                      </Authenticate>
+                    }
+                  />
+                  <Route
+                    path="/app/subjects/:subject"
+                    element={
+                      <Authenticate>
+                        <SubjectsSpecific />
+                      </Authenticate>
+                    }
+                  />
+                  <Route
+                    path="/app/settings"
+                    element={
+                      <Authenticate>
+                        <Settings />
+                      </Authenticate>
+                    }
+                  />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </NotesProvider>
             </QuizzesProvider>
           </FlashcardsProvider>
         </SubjectsProvider>

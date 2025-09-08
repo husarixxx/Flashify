@@ -4,22 +4,41 @@ import { useParams } from "react-router-dom";
 import mySubjects from "../../exampleData";
 import MainButton from "../../components/MainButton";
 import NoteSet from "./NoteSet";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "../../components/Modal";
 import Form from "../../components/Form";
+import { useNotes } from "../../context/NotesContext";
+import useGet from "../../hooks/useGet";
 
 function NotesSet() {
   let params = useParams();
 
   const subject = params.subject;
-  const subjectFiltered = Object.entries(mySubjects).filter(
-    ([subject, data]) => {
-      return subject === params.subject;
+  // const subjectFiltered = Object.entries(mySubjects).filter(
+  //   ([subject, data]) => {
+  //     return subject === params.subject;
+  //   }
+  // );
+  // const notes = subjectFiltered.map(([subject, data]) => data.notes)[0];
+
+  const { notes, setNotes } = useNotes();
+
+  // const [flashcards, setFlashcards] = useState(null);
+  const { get, loading, error } = useGet();
+
+  useEffect(() => {
+    if (!(subject in notes)) {
+      const fetchData = async () => {
+        const fetchedData = await get(`subjects/${subject}/notes`);
+        console.log("fetchedData: ", fetchedData);
+        setNotes({ ...notes, [subject]: fetchedData });
+      };
+
+      fetchData();
     }
-  );
-  const notes = subjectFiltered.map(([subject, data]) => data.notes)[0];
+  }, [subject]);
+
   console.log(notes);
-  console.log(notes[0].title);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   function openCreateModal() {
@@ -57,11 +76,15 @@ function NotesSet() {
       <Header></Header>
       <div className="mx-4 md:mx-16 lg:mx-24 xl:mx-30 mt-12 2xl:mx-auto ">
         <h1 className="my-4 mx-2 ">{subject}</h1>
-        <div className="md:grid grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4  gap-4">
-          {notes.map((note) => (
-            <NoteSet key={crypto.randomUUID()} title={note.title} />
-          ))}
-        </div>
+        {!(subject in notes) ? (
+          "loading"
+        ) : (
+          <div className="md:grid grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4  gap-4">
+            {notes[subject].map((note) => (
+              <NoteSet key={crypto.randomUUID()} title={note.title} />
+            ))}
+          </div>
+        )}
 
         <div className="flex justify-center my-12">
           <MainButton

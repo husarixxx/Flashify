@@ -11,7 +11,7 @@ function Subjects({ subject, type }) {
     <Link
       to={
         type === "global"
-          ? `/app/subjects/${subject}`
+          ? `/app/subjects/${subject.id}`
           : `/app/${type.toLowerCase()}/${subject.id}`
       }
     >
