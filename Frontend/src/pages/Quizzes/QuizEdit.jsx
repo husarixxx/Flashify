@@ -48,10 +48,9 @@ function QuizEdit() {
     }
   }, [subject, quizzes, setQuizzes]);
 
-  const quiz = quizzes[subject].filter(
-    (quiz) => quiz.title === params.quizTitle
-  )[0];
-  const { title, questions } = quiz;
+  const quiz = quizzes[subject].filter((quiz) => quiz.id === params.quizId)[0];
+
+  const { id, title, questions } = quiz;
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -610,6 +609,7 @@ function QuizEdit() {
                 question={question}
                 questionNumber={index + 1}
                 openEditModal={openEditModal}
+                quizId={id}
               />
             ))}
         </div>

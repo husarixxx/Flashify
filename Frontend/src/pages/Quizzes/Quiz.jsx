@@ -11,13 +11,13 @@ function Quiz({ title, numOfQuestions, quizData }) {
         <h2 className="mb-6 mt-2">{title}</h2>
       </div>
       <div className="flex flex-col justify-between items-center gap-5 mt-2 ">
-        <Link to={`${path.pathname}/${title}/edit`} className="w-full">
+        <Link to={`${path.pathname}/${quizData.id}/edit`} className="w-full">
           <SecondButton
             text={"Edit"}
             styles={"w-full min-w-[180px] max-w-[250px]"}
           ></SecondButton>
         </Link>
-        <Link to={`${path.pathname}/${title}/learn`} className="w-full">
+        <Link to={`${path.pathname}/${quizData.id}/learn`} className="w-full">
           <MainButton
             text={"Learn"}
             styles={"w-full min-w-[180px] max-w-[250px]"}

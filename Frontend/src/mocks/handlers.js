@@ -125,9 +125,30 @@ export const handlers = [
   //   },
   http.get("api/subjects/:subjectId/quizzes", (req) => {
     const { subjectId } = req.params;
-    console.log(subjectId);
     return HttpResponse.json(mySubjects[subjectId].quizzes);
   }),
+
+  http.delete(
+    "api/subjects/:subjectId/quizzes/:quizzesId/questions/:questionsId",
+    (req) => {
+      const { subjectId, quizzesId, questionsId } = req.params;
+      console.log(subjectId);
+      mySubjects[subjectId].quizzes = mySubjects[subjectId].quizzes.map(
+        (quiz) => {
+          return quiz.id == quizzesId
+            ? {
+                ...quiz,
+                questions: quiz.questions.filter(
+                  (question) => question.id != questionsId
+                ),
+              }
+            : quiz;
+        }
+      );
+
+      return HttpResponse.json(mySubjects[subjectId].quizzes);
+    }
+  ),
 
   // Zwraca array z obiektami note z konkretnego subjectu w formie:
   // {
@@ -135,6 +156,7 @@ export const handlers = [
   //   title: title,
   //   note: "<h3>Zmienne w JavaScript</h3><ul><li>Deklarujemy za pomocą: <code>let</code>, <code>const</code>, lub <code>var</code>.</li><li><code>let</code> – zmienna, którą można zmieniać.</li><li><code>const</code> – wartość stała, której nie można nadpisać.</li><li><code>var</code> – stara metoda, rzadziej używana.</li></ul>",
   // },
+
   http.get("api/subjects/:subjectId/notes", (req) => {
     const { subjectId } = req.params;
     console.log(subjectId);

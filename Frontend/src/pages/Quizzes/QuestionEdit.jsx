@@ -4,9 +4,26 @@ import SecondButton from "../../components/SecondButton";
 import MainButton from "../../components/MainButton";
 import { useState } from "react";
 import Modal from "../../components/Modal";
+import useDelete from "../../hooks/useDelete";
+import { useFlashcards } from "../../context/FlashcardsContext";
+import { useParams } from "react-router-dom";
+import { useSubjects } from "../../context/SubjectsContext";
+import { useQuizzes } from "../../context/QuizzesContext";
 
-function QuestionEdit({ question, questionNumber, openEditModal }) {
+function QuestionEdit({ question, openEditModal, quizId }) {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const {
+    deleteEntity: deleteEntity,
+    loading: loadingDelete,
+    error: errorDelete,
+  } = useDelete();
+
+  const { quizzes, setQuizzes } = useQuizzes();
+
+  let params = useParams();
+  const subject = params.subject;
+
+  const { updateSubjects } = useSubjects();
 
   function openDeleteModal() {
     setIsDeleteOpen(true);
@@ -14,13 +31,31 @@ function QuestionEdit({ question, questionNumber, openEditModal }) {
   function closeDeleteModal() {
     setIsDeleteOpen(false);
   }
-  function handleDelete() {}
+  async function handleDelete(e) {
+    e.preventDefault();
+    const newQuizzes = await deleteEntity(
+      `subjects/${subject}/quizzes/${quizId}/questions/${question.id}`
+    );
+    setQuizzes({ ...quizzes, [subject]: newQuizzes });
+    updateSubjects();
 
+    if (errorDelete !== null) alert(errorDelete);
+
+    console.log("dataDelete");
+    console.log(newQuizzes);
+    console.log("loadingDelete");
+    console.log(loadingDelete);
+    console.log("errorDelete");
+    console.log(errorDelete);
+    closeDeleteModal();
+  }
   return (
     <div className="rounded-xl shadow-lg px-5 md:px-8 py-5 md:py-6 flex justify-between gap-3 md:gap-8">
       <div className="flex flex-col justify-between">
         <div>
-          <p className="text-purple-600">{question.type} question</p>
+          <p className="text-purple-600">
+            {question.type.replace("-", " ")} question
+          </p>
           <h3 className="mt-1 mb-8">{question.question}</h3>
         </div>
         <MainButton

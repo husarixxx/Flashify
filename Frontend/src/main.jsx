@@ -107,7 +107,7 @@ createRoot(document.getElementById("root")).render(
                     }
                   />
                   <Route
-                    path="/app/quizzes/:subject/:quizTitle/edit"
+                    path="/app/quizzes/:subject/:quizId/edit"
                     element={
                       <Authenticate>
                         <QuizEdit />
@@ -115,7 +115,7 @@ createRoot(document.getElementById("root")).render(
                     }
                   />
                   <Route
-                    path="/app/quizzes/:subject/:quizTitle/learn"
+                    path="/app/quizzes/:subject/:quizId/learn"
                     element={
                       <Authenticate>
                         <QuizLearn />
