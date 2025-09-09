@@ -127,7 +127,25 @@ export const handlers = [
     const { subjectId } = req.params;
     return HttpResponse.json(mySubjects[subjectId].quizzes);
   }),
-
+  // Usuwa konkretne pytanie i zwraca array z obiektami quiz z konkretnego subjectu w formie:
+  // id: id,
+  // title: title,
+  // questions: [
+  //   {
+  //     id: id,
+  //     question: question,
+  //     type: "multiple-choice / single-choice / true-false",
+  //     answers: [
+  //       { id: id, text: text, isCorrect: false },
+  //       {
+  //         id: id,
+  //         text: text,
+  //         isCorrect: true,
+  //       },
+  //       { id: id, text: text, isCorrect: false },
+  //       { id: id, text: text, isCorrect: false },
+  //     ],
+  //   },
   http.delete(
     "api/subjects/:subjectId/quizzes/:quizzesId/questions/:questionsId",
     (req) => {
@@ -141,6 +159,37 @@ export const handlers = [
                 questions: quiz.questions.filter(
                   (question) => question.id != questionsId
                 ),
+              }
+            : quiz;
+        }
+      );
+
+      return HttpResponse.json(mySubjects[subjectId].quizzes);
+    }
+  ),
+  http.post(
+    "api/subjects/:subjectId/quizzes/:quizzesId/questions",
+    async ({ request, params }) => {
+      const { subjectId, quizzesId } = params;
+      const newQuestion = await request.json();
+      console.log(subjectId);
+      console.log("newQuestion");
+
+      console.log(newQuestion);
+      newQuestion.answers = newQuestion.answers.map((answer) => {
+        return { ...answer, id: crypto.randomUUID() };
+      });
+      console.log(newQuestion);
+
+      mySubjects[subjectId].quizzes = mySubjects[subjectId].quizzes.map(
+        (quiz) => {
+          return quiz.id == quizzesId
+            ? {
+                ...quiz,
+                questions: [
+                  ...quiz.questions,
+                  { ...newQuestion, id: crypto.randomUUID() },
+                ],
               }
             : quiz;
         }
