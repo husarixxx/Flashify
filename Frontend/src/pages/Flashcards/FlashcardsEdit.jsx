@@ -16,6 +16,8 @@ import useDelete from "../../hooks/useDelete";
 import usePut from "../../hooks/usePut";
 import { useFlashcards } from "../../context/FlashcardsContext";
 import useGet from "../../hooks/useGet";
+import { useSubjects } from "../../context/SubjectsContext";
+import { usePost } from "../../hooks/usePost";
 
 function FlashcardsEdit() {
   const [createInputs, setCreateInputs] = useState([
@@ -52,10 +54,13 @@ function FlashcardsEdit() {
   // )[0];
 
   const { flashcards, setFlashcards } = useFlashcards();
+  const { updateSubjects } = useSubjects();
+
   console.log(flashcards);
 
   // const [flashcards, setFlashcards] = useState(null);
   const { get, loading: loadingGet, error: errorGet } = useGet();
+  const { post, loading: loadingPost, error: errorPost } = usePost();
 
   useEffect(() => {
     if (!(params.subject in flashcards)) {
@@ -88,7 +93,76 @@ function FlashcardsEdit() {
     setIsCreateOpen(false);
   }
 
-  function handleCreate() {}
+  async function handleCreate(e) {
+    e.preventDefault();
+    const formData = createInputs.reduce((acc, input) => {
+      const key = input.label.toLowerCase();
+      acc[key] = input.error ? "" : input.value;
+      return acc;
+    }, {});
+
+    let isRdyToSend = true;
+
+    const definitionInput = createInputs.find(
+      (input) => input.label === "Definition"
+    );
+    const explanationInput = createInputs.find(
+      (input) => input.label === "Explanation"
+    );
+
+    if (definitionInput.value === "") {
+      setCreateInputs((prevInputs) =>
+        prevInputs.map((input) => {
+          return input.label === "Definition"
+            ? { ...input, error: "Definition cannot be empty" }
+            : input;
+        })
+      );
+      isRdyToSend = false;
+    } else {
+      setCreateInputs((prevInputs) =>
+        prevInputs.map((input) => {
+          return input.label === "Definition" ? { ...input, error: "" } : input;
+        })
+      );
+    }
+    if (explanationInput.value === "") {
+      setCreateInputs((prevInputs) =>
+        prevInputs.map((input) => {
+          return input.label === "Explanation"
+            ? { ...input, error: "Explanation cannot be empty" }
+            : input;
+        })
+      );
+      isRdyToSend = false;
+    } else {
+      setCreateInputs((prevInputs) =>
+        prevInputs.map((input) => {
+          return input.label === "Explanation"
+            ? { ...input, error: "" }
+            : input;
+        })
+      );
+    }
+
+    if (isRdyToSend) {
+      const newFlashcards = await post(
+        formData,
+        `subjects/${subject}/flashcards`
+      );
+
+      setFlashcards({ ...flashcards, [subject]: newFlashcards });
+      updateSubjects();
+
+      console.log("loading");
+      console.log(loadingPost);
+      console.log("error");
+      console.log(errorPost);
+    } else {
+      return;
+    }
+    closeCreateModal();
+  }
 
   return (
     <div

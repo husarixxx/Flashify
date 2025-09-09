@@ -79,6 +79,31 @@ export const handlers = [
       return HttpResponse.json(mySubjects[subjectId].flashcards);
     }
   ),
+  // Zwraca w takiej samej formie co wyzej, tylko zamiast aktualizowania to dodaje nowy flashcard
+  // {
+  //   id: id,
+  //   definition: definition,
+  //   explanation: explanation,
+  // }
+  http.post(
+    "api/subjects/:subjectId/flashcards",
+    async ({ request, params }) => {
+      const { subjectId } = params;
+      const updatedFlashcard = await request.json();
+      console.log(subjectId);
+      console.log(updatedFlashcard);
+
+      mySubjects[subjectId].flashcards = [
+        ...mySubjects[subjectId].flashcards,
+        {
+          ...updatedFlashcard,
+          id: crypto.randomUUID(),
+        },
+      ];
+
+      return HttpResponse.json(mySubjects[subjectId].flashcards);
+    }
+  ),
   // Zwraca array z obiektami quiz z konkretnego subjectu w formie:
   // id: id,
   // title: title,

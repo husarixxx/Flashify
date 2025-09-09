@@ -3,12 +3,11 @@ import { useState } from "react";
 
 export function usePost() {
   const [error, setError] = useState(null);
-  const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   async function post(formData, url) {
     try {
-      const currentData = await request(`http://127.0.0.1:8000/${url}`, {
+      const currentData = await request(`api/${url}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -17,13 +16,13 @@ export function usePost() {
         body: JSON.stringify(formData),
       });
 
-      setData(currentData);
       setLoading(false);
+      return currentData;
     } catch (err) {
       setError(err);
       setLoading(false);
     }
   }
 
-  return { post, error, data, loading };
+  return { post, error, loading };
 }
