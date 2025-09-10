@@ -11,10 +11,6 @@ from ai.gemini import generate_flashcards
 
 
 
-# TODO : Working Google and Facebook mechanics (Login and Register)
-# TODO : take care of Ai (for scientific purposes ), and image processing
-# TODO : second table  add column with specific topic (propably the same as the topic)
-
 app = FastAPI(
     title="Flashify API"
 )
@@ -87,13 +83,23 @@ async def login(response : Response, db: db_deppendency, login_data: schemas.Use
     return {"status": "success", "message": "Logged in successfully"}
 
 
-@app.post("/Flashcards/Generate", response_model=list[schemas.CreateFlashcard])
+@app.post("/Flashcards/Generate", response_model=list[schemas.ResponseFlashcard ])#schemas.CreateFlashcard
 async def createFlash(db : db_deppendency,
                     request_data : schemas.GenerateRequest,
                     current_user: models.Users = Depends(get_current_user)
                        ):
+    subject = db.query(models.Subject).filter(
+        models.Subject.name == request_data.subject
+    ).first()
+
+    if not subject:
+        subject = models.Subject(name=request_data.subject)
+        db.add(subject)
+        db.commit()
+        db.refresh(subject)
+
     Created_flashcards = generate_flashcards(
-        request_data.topic,
+        request_data.subject,
         request_data.number_of_flashcards
     )
     saved_flashcards = []
@@ -106,7 +112,8 @@ async def createFlash(db : db_deppendency,
         db_flashcard = models.Flashcard(
             question = flashcard["question"],
             answer = flashcard["answer"],
-            user_id = current_user.id 
+            user_id = current_user.id,
+            subject_id = subject.id 
         )
         db.add(db_flashcard)
         saved_flashcards.append(db_flashcard)
@@ -121,40 +128,115 @@ async def createFlash(db : db_deppendency,
     return saved_flashcards
 
 # ----------------------Flashcards methods for specific User---------------------------#
-@app.get("/flashcards", response_model=list[schemas.CreateFlashcard])
-async def get_flashcards(db: db_deppendency, current_user: models.Users = Depends(get_current_user)):
-    flashcards = db.query(models.Flashcard).filter(models.Flashcard.user_id == current_user.id).all()
+# @app.get("/flashcards", response_model=list[schemas.CreateFlashcard])
+# async def get_flashcards(db: db_deppendency, current_user: models.Users = Depends(get_current_user)):
+#     flashcards = db.query(models.Flashcard).filter(models.Flashcard.user_id == current_user.id).all()
+#     return flashcards
+
+
+# @app.put("/flashcards/{flashcard_id}", response_model=schemas.CreateFlashcard)
+# async def update_flashcard(flashcard_id: int, update: schemas.UpdateFlashcard, 
+#                            db: db_deppendency, current_user: models.Users = Depends(get_current_user)):
+#     flashcard = db.query(models.Flashcard).filter(
+#         models.Flashcard.id == flashcard_id,
+#         models.Flashcard.user_id == current_user.id
+#     ).first()
+#     if not flashcard:
+#         raise HTTPException(status_code=404, detail="Flashcard not found")
+
+#     if update.question:
+#         flashcard.question = update.question
+#     if update.answer:
+#         flashcard.answer = update.answer
+
+#     db.commit()
+#     db.refresh(flashcard)
+#     return flashcard
+
+# @app.delete("/flashcards/{flashcard_id}")
+# async def delete_flashcard(flashcard_id: int, db: db_deppendency, current_user: models.Users = Depends(get_current_user)):
+#     flashcard = db.query(models.Flashcard).filter(
+#         models.Flashcard.id == flashcard_id,
+#         models.Flashcard.user_id == current_user.id
+#     ).first()
+#     if not flashcard:
+#         raise HTTPException(status_code=404, detail="Flashcard not found")
+
+#     db.delete(flashcard)
+#     db.commit()
+#     return {"status": "success", "message": "Flashcard deleted"}
+
+
+# --- subject methods---
+
+@app.get("/subjects")
+async def get_subjects(db: db_deppendency, current_user: models.Users = Depends(get_current_user)):
+    subjects = db.query(models.Subject).all()
+    response = [
+        {
+            "id" : s.id,
+            "name" : s.name,
+            "flaschcardsCount" : len(s.flashcards)
+
+        } for s in subjects
+    ]
+    return response
+
+
+@app.get("/subjects/{subject_id}/flashcards")
+async def get_flashcards_by_subject(subject_id: int, db: db_deppendency,
+                                     current_user: models.Users = Depends(get_current_user)):
+    flashcards = db.query(models.Flashcard).filter(
+        models.Flashcard.subject_id == subject_id,
+        models.Flashcard.user_id == current_user.id
+    ).all()
     return flashcards
 
 
-@app.put("/flashcards/{flashcard_id}", response_model=schemas.CreateFlashcard)
-async def update_flashcard(flashcard_id: int, update: schemas.UpdateFlashcard, 
-                           db: db_deppendency, current_user: models.Users = Depends(get_current_user)):
-    flashcard = db.query(models.Flashcard).filter(
-        models.Flashcard.id == flashcard_id,
-        models.Flashcard.user_id == current_user.id
-    ).first()
-    if not flashcard:
-        raise HTTPException(status_code=404, detail="Flashcard not found")
-
-    if update.question:
-        flashcard.question = update.question
-    if update.answer:
-        flashcard.answer = update.answer
-
+@app.post("/subjects/{subject_id}/flashcards", response_model=schemas.ResponseFlashcard)
+async def add_flashcards(subject_id: int, flashcard: schemas.CreateFlashcard,
+                         db: db_deppendency, current_user: models.Users = Depends(get_current_user)):
+    db_flashcards = models.Flashcard(
+        question = flashcard.question,
+        answer = flashcard.answer,
+        user_id = current_user.id,
+        subject_id = subject_id
+    )
+    db.add(db_flashcards)
     db.commit()
-    db.refresh(flashcard)
-    return flashcard
+    db.refresh(db_flashcards)
+    return db_flashcards
 
-@app.delete("/flashcards/{flashcard_id}")
-async def delete_flashcard(flashcard_id: int, db: db_deppendency, current_user: models.Users = Depends(get_current_user)):
-    flashcard = db.query(models.Flashcard).filter(
+
+@app.put("/subjects/{subject_id}/flashcards/{flashcard_id}", response_model=schemas.ResponseFlashcard)
+async def update_flashcards(subject_id : int,flashcard_id: int, flashcard: schemas.CreateFlashcard,
+                            db: db_deppendency, current_user: models.Users = Depends(get_current_user)):
+    
+    db_flashcard = db.query(models.Flashcard).filter(
         models.Flashcard.id == flashcard_id,
+        models.Flashcard.subject_id == subject_id,
         models.Flashcard.user_id == current_user.id
     ).first()
-    if not flashcard:
+    if not db_flashcard:
         raise HTTPException(status_code=404, detail="Flashcard not found")
+    db_flashcard.question = flashcard.question
+    db_flashcard.answer = flashcard.answer
+    db.commit()
+    db.refresh(db_flashcard)
+    return db_flashcard
 
-    db.delete(flashcard)
+
+@app.delete("/subjects/{subject_id}/flashcards/{flashcard_id}")
+async def delete_flashcard(subject_id: int , flashcard_id: int,
+                           db: db_deppendency, current_user: models.Users = Depends(get_current_user)):
+    db_flashcard = db.query(models.Flashcard).filter(
+        models.Flashcard == flashcard_id,
+        models.Flashcard.subject_id == subject_id,
+        models.Flashcard.user_id == current_user.id
+    ).first()
+
+    if not db_flashcard:
+        raise HTTPException(status_code=404, detail="Flashcard not found")
+    db.delete(db_flashcard)
     db.commit()
     return {"status": "success", "message": "Flashcard deleted"}

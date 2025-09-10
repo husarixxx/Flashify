@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr, Field, field_validator
 
-
+# -- User mechanics --
 
 class UserCreate(BaseModel):
     username: str = Field(..., min_length= 5 , max_length= 20)
@@ -38,33 +38,54 @@ class UserResponse(BaseModel):
 
 class Token(BaseModel):
     access_token : str
+# -- topics of flaschards --
 
+class SubjectBase(BaseModel):
+    name: str
+
+class SubjectCreate(SubjectBase):
+    pass
+
+class SubjectResponse(SubjectBase):
+    id: int
+    name: str #!!!!!
+    class Config:
+        from_attributes = True
+
+
+
+
+
+# --flashcards---
 
 class BaseFlashcard(BaseModel):
-    question : str
-    answer : str
+    question: str
+    answer: str
 
 class CreateFlashcard(BaseFlashcard):
-    pass 
+    subject_id: int 
+
+class UpdateFlashcard(BaseFlashcard):
+    pass
 
 class ResponseFlashcard(BaseFlashcard):
-    id : int
-    user_id : int
+    id: int
+    user_id: int
+    subject: SubjectResponse   
 
     class Config:
         from_attributes = True
 
 class GenerateRequest(BaseModel):
-    topic : str
-    number_of_flashcards: int = 5
+    subject: str  
+    number_of_flashcards: int  = 5
 
-
+# --- updates ---
 class UserUpdate(BaseModel):
     username: str 
     email: str 
     password: str 
 
 
-class UpdateFlashcard(BaseModel):
-    question: str 
-    answer: str
+
+
