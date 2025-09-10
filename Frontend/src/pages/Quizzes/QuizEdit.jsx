@@ -58,19 +58,12 @@ function QuizEdit() {
   const { id, title, questions } = quiz;
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   function openCreateModal() {
     setIsCreateModalOpen(true);
   }
   function closeCreateModal() {
     setIsCreateModalOpen(false);
-  }
-  function openEditModal() {
-    setIsEditModalOpen(true);
-  }
-  function closeEditModal() {
-    setIsEditModalOpen(false);
   }
 
   async function handleCreateQuestion(e) {
@@ -97,9 +90,9 @@ function QuizEdit() {
     }, {});
     const multipleFormData = createMultipleInputs.reduce((acc, input) => {
       const key = input.label.toLowerCase();
-      acc[input.type === "radio" ? `${key}IsCorrect` : key] = input.error
+      acc[input.type === "checkbox" ? `${key}IsCorrect` : key] = input.error
         ? ""
-        : input.type === "radio"
+        : input.type === "checkbox"
         ? input.checked
         : input.value;
       return acc;
@@ -114,6 +107,7 @@ function QuizEdit() {
       return acc;
     }, {});
     const newFormdata = {
+      id: formData.question.id,
       question: formData.question,
       ...(formData.single_choice
         ? singleFormData
@@ -201,6 +195,7 @@ function QuizEdit() {
 
     if (isRdyToSend) {
       const body = {
+        id: newFormdata.question.id,
         question: newFormdata.question,
         type: checkedInput.toLowerCase().replace(" ", "-"),
         answers:
@@ -307,40 +302,6 @@ function QuizEdit() {
       label: "True or False",
       checked: false,
       onChange: handleCreateRadioOnChange,
-    },
-  ]);
-
-  const [editInputs, setEditInputs] = useState([
-    {
-      id: crypto.randomUUID(),
-      type: "text",
-      value: "",
-      label: "Question",
-      onChange: handleEditOnChange,
-    },
-    {
-      id: crypto.randomUUID(),
-      type: "radio",
-      value: "Single choice",
-      label: "Single choice",
-      checked: true,
-      onChange: handleEditRadioOnChange,
-    },
-    {
-      id: crypto.randomUUID(),
-      type: "radio",
-      value: "Multiple choice",
-      label: "Multiple choice",
-      checked: false,
-      onChange: handleEditRadioOnChange,
-    },
-    {
-      id: crypto.randomUUID(),
-      type: "radio",
-      value: "True or False",
-      label: "True or False",
-      checked: false,
-      onChange: handleEditRadioOnChange,
     },
   ]);
 
@@ -521,180 +482,11 @@ function QuizEdit() {
     },
   ]);
 
-  const editSingleInputs = [
-    {
-      id: crypto.randomUUID(),
-      type: "text",
-      value: "",
-      label: "A",
-      onChange: handleEditAnswerOnChange,
-    },
-    {
-      id: crypto.randomUUID(),
-      type: "text",
-      value: "",
-      label: "B",
-      onChange: handleEditAnswerOnChange,
-    },
-    {
-      id: crypto.randomUUID(),
-      type: "text",
-      value: "",
-      label: "C",
-      onChange: handleEditAnswerOnChange,
-    },
-    {
-      id: crypto.randomUUID(),
-      type: "text",
-      value: "",
-      label: "D",
-      onChange: handleEditAnswerOnChange,
-    },
-    {
-      id: crypto.randomUUID(),
-      name: "Correct answer",
-      type: "radio",
-      value: "A",
-      label: "A",
-      checked: true,
-      onChange: handleEditCorrectRadioOnChange,
-    },
-    {
-      id: crypto.randomUUID(),
-      name: "Correct answer",
-      type: "radio",
-      value: "B",
-      label: "B",
-      checked: false,
-      onChange: handleEditCorrectRadioOnChange,
-    },
-    {
-      id: crypto.randomUUID(),
-      type: "radio",
-      name: "Correct answer",
-      value: "C",
-      label: "C",
-      checked: false,
-      onChange: handleEditCorrectRadioOnChange,
-    },
-    {
-      id: crypto.randomUUID(),
-      type: "radio",
-      name: "Correct answer",
-      value: "D",
-      label: "D",
-      checked: false,
-      onChange: handleEditCorrectRadioOnChange,
-    },
-  ];
-
-  const editMultipleInputs = [
-    {
-      id: crypto.randomUUID(),
-      type: "text",
-      value: "",
-      label: "A",
-      onChange: handleEditAnswerOnChange,
-    },
-    {
-      id: crypto.randomUUID(),
-      type: "text",
-      value: "",
-      label: "B",
-      onChange: handleEditAnswerOnChange,
-    },
-    {
-      id: crypto.randomUUID(),
-      type: "text",
-      value: "",
-      label: "C",
-      onChange: handleEditAnswerOnChange,
-    },
-    {
-      id: crypto.randomUUID(),
-      type: "text",
-      value: "",
-      label: "D",
-      onChange: handleEditAnswerOnChange,
-    },
-    {
-      id: crypto.randomUUID(),
-      name: "Correct answer",
-      type: "checkbox",
-      value: "A",
-      label: "A",
-      checked: true,
-      onChange: handleEditCorrectCheckboxOnChange,
-    },
-    {
-      id: crypto.randomUUID(),
-      name: "Correct answer",
-      type: "checkbox",
-      value: "B",
-      label: "B",
-      checked: false,
-      onChange: handleEditCorrectCheckboxOnChange,
-    },
-    {
-      id: crypto.randomUUID(),
-      type: "checkbox",
-      name: "Correct answer",
-      value: "C",
-      label: "C",
-      checked: false,
-      onChange: handleEditCorrectCheckboxOnChange,
-    },
-    {
-      id: crypto.randomUUID(),
-      type: "checkbox",
-      name: "Correct answer",
-      value: "D",
-      label: "D",
-      checked: false,
-      onChange: handleEditCorrectCheckboxOnChange,
-    },
-  ];
-  const editTrueFalseInputs = [
-    {
-      id: crypto.randomUUID(),
-      type: "text",
-      value: "",
-      label: "True",
-      onChange: handleEditAnswerOnChange,
-    },
-    {
-      id: crypto.randomUUID(),
-      type: "text",
-      value: "",
-      label: "False",
-      onChange: handleEditAnswerOnChange,
-    },
-
-    {
-      id: crypto.randomUUID(),
-      name: "Correct answer",
-      type: "radio",
-      value: "True",
-      label: "True",
-      checked: true,
-      onChange: handleEditCorrectRadioOnChange,
-    },
-    {
-      id: crypto.randomUUID(),
-      name: "Correct answer",
-      type: "radio",
-      value: "False",
-      label: "False",
-      checked: false,
-      onChange: handleEditCorrectRadioOnChange,
-    },
-  ];
-
   const [createAdditionalInputs, setCreateAdditionalInputs] =
     useState(createSingleInputs);
 
-  const [editAdditionalInputs, setEditAdditionalInputs] =
-    useState(editSingleInputs);
+  // const [editAdditionalInputs, setEditAdditionalInputs] =
+  //   useState(editSingleInputs);
 
   function handleCreateOnChange(e, id) {
     setCreateInputs((prevInputs) =>
@@ -818,62 +610,6 @@ function QuizEdit() {
     createTrueFalseInputs,
   ]);
 
-  function handleEditOnChange(e, id) {
-    setEditInputs((prevInputs) =>
-      prevInputs.map((input) => {
-        return input.id === id ? { ...input, value: e.target.value } : input;
-      })
-    );
-  }
-  function handleEditRadioOnChange(e) {
-    setEditInputs((prevInputs) =>
-      prevInputs.map((input) => {
-        return input.type === "radio" && input.value === e.target.value
-          ? { ...input, checked: e.target.checked }
-          : { ...input, checked: false };
-      })
-    );
-    console.log("haloo");
-    switchEditQuestionType(e);
-  }
-  function handleEditAnswerOnChange(e, id) {
-    setEditAdditionalInputs((prevInputs) =>
-      prevInputs.map((input) => {
-        return input.id === id ? { ...input, value: e.target.value } : input;
-      })
-    );
-  }
-  function handleEditCorrectRadioOnChange(e) {
-    setEditAdditionalInputs((prevInputs) =>
-      prevInputs.map((input) => {
-        return input.type === "radio" && input.value === e.target.value
-          ? { ...input, checked: e.target.checked }
-          : { ...input, checked: false };
-      })
-    );
-  }
-  function handleEditCorrectCheckboxOnChange(e) {
-    setEditAdditionalInputs((prevInputs) =>
-      prevInputs.map((input) => {
-        return input.type === "checkbox" && input.value === e.target.value
-          ? { ...input, checked: e.target.checked }
-          : { ...input };
-      })
-    );
-  }
-
-  function switchEditQuestionType(e) {
-    const checkedInput = e.target.value;
-    if (checkedInput === "Single choice")
-      setEditAdditionalInputs(editSingleInputs);
-    else if (checkedInput === "Multiple choice")
-      setEditAdditionalInputs(editMultipleInputs);
-    else if (checkedInput === "True or False")
-      setEditAdditionalInputs(editTrueFalseInputs);
-
-    console.log(createInputs);
-  }
-
   return (
     <div
       className={`min-h-[100vh] flex flex-col justify-between overflow-hidden `}
@@ -889,7 +625,6 @@ function QuizEdit() {
                 key={crypto.randomUUID()}
                 question={question}
                 questionNumber={index + 1}
-                openEditModal={openEditModal}
                 quizId={id}
               />
             ))}
@@ -927,23 +662,6 @@ function QuizEdit() {
                 : createTrueFalseInputs
             }
             onSubmit={handleCreateQuestion}
-          ></Form>
-        </Modal>
-      )}
-      {isEditModalOpen && (
-        <Modal
-          heading={
-            <>
-              Edit <span className="text-purple-600">question</span>
-            </>
-          }
-          modalClose={closeEditModal}
-        >
-          <Form
-            inputs={editInputs}
-            submitText={"Create question"}
-            radioLegend="Type of question"
-            additionalInputs={editAdditionalInputs}
           ></Form>
         </Modal>
       )}

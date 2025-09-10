@@ -167,6 +167,35 @@ export const handlers = [
       return HttpResponse.json(mySubjects[subjectId].quizzes);
     }
   ),
+
+  http.put(
+    "api/subjects/:subjectId/quizzes/:quizzesId/questions/:questionId",
+    async ({ request, params }) => {
+      const { subjectId, quizzesId, questionId } = params;
+      const newQuestion = await request.json();
+      console.log(subjectId);
+      console.log("newQuestion");
+
+      console.log(newQuestion);
+
+      mySubjects[subjectId].quizzes = mySubjects[subjectId].quizzes.map(
+        (quiz) => {
+          return quiz.id == quizzesId
+            ? {
+                ...quiz,
+                questions: [
+                  ...quiz.questions.map((question) =>
+                    question.id == questionId ? newQuestion : question
+                  ),
+                ],
+              }
+            : quiz;
+        }
+      );
+
+      return HttpResponse.json(mySubjects[subjectId].quizzes);
+    }
+  ),
   http.post(
     "api/subjects/:subjectId/quizzes/:quizzesId/questions",
     async ({ request, params }) => {
