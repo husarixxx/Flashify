@@ -240,4 +240,37 @@ export const handlers = [
     console.log(subjectId);
     return HttpResponse.json(mySubjects[subjectId].notes);
   }),
+  http.put(
+    "api/subjects/:subjectId/notes/:notesId",
+    async ({ request, params }) => {
+      const { subjectId, notesId } = params;
+      const newNote = await request.json();
+      console.log(subjectId);
+      console.log("newNote");
+
+      console.log(newNote);
+
+      mySubjects[subjectId].notes = mySubjects[subjectId].notes.map((note) => {
+        return note.id == notesId ? newNote : note;
+      });
+
+      return HttpResponse.json(mySubjects[subjectId].notes);
+    }
+  ),
+  http.post("api/subjects/:subjectId/notes", async ({ request, params }) => {
+    const { subjectId } = params;
+    const newNote = await request.json();
+    console.log(subjectId);
+    console.log(newNote);
+
+    mySubjects[subjectId].notes = [
+      ...mySubjects[subjectId].notes,
+      {
+        ...newNote,
+        id: crypto.randomUUID(),
+      },
+    ];
+
+    return HttpResponse.json(mySubjects[subjectId].notes);
+  }),
 ];

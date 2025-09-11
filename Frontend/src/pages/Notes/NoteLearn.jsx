@@ -15,7 +15,7 @@ function NoteLearn() {
   let navigate = useNavigate();
 
   const subject = params.subject;
-  const noteTitle = params.noteTitle;
+  const noteId = params.noteId;
 
   // const subjectFiltered = Object.entries(mySubjects).filter(
   //   ([subject, data]) => {
@@ -50,7 +50,7 @@ function NoteLearn() {
   useEffect(() => {
     let noteData;
     if (subject in notes) {
-      noteData = notes[subject].find((note) => note.title == noteTitle);
+      noteData = notes[subject].find((note) => note.id == noteId);
       console.log("Note Data halooo:");
       console.log(noteData.note);
 
@@ -58,7 +58,7 @@ function NoteLearn() {
         quill.clipboard.dangerouslyPasteHTML(noteData.note);
       }
     }
-  }, [quill, notes, noteTitle, subject]);
+  }, [quill, notes, noteId, subject]);
 
   return (
     <div className="min-h-[100vh] flex flex-col justify-between ">

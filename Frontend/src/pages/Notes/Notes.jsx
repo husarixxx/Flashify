@@ -34,6 +34,14 @@ function Notes() {
   function modalOnSubmit(e) {
     e.preventDefault();
   }
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  function modalOpen() {
+    setIsModalOpen(true);
+  }
+  function modalClose() {
+    setIsModalOpen(false);
+  }
   return (
     <div className="min-h-[100vh] flex flex-col justify-between">
       <Header></Header>
@@ -41,6 +49,9 @@ function Notes() {
         subjects={subjects}
         type={"Notes"}
         createBtnText={"Create Notes subject"}
+        isModalOpen={isModalOpen}
+        modalOpen={modalOpen}
+        modalClose={modalClose}
         modalForm={
           <Form
             inputs={createInputs}

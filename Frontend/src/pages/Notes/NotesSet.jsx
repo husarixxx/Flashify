@@ -9,6 +9,8 @@ import Modal from "../../components/Modal";
 import Form from "../../components/Form";
 import { useNotes } from "../../context/NotesContext";
 import useGet from "../../hooks/useGet";
+import { usePost } from "../../hooks/usePost";
+import { useSubjects } from "../../context/SubjectsContext";
 
 function NotesSet() {
   let params = useParams();
@@ -53,7 +55,7 @@ function NotesSet() {
       id: crypto.randomUUID(),
       type: "text",
       value: "",
-      label: "Name",
+      label: "Title",
       onChange: handleOnChange,
     },
   ]);
@@ -66,8 +68,52 @@ function NotesSet() {
     );
   }
 
-  function modalOnSubmit(e) {
+  const { post, error: errorPost, loading: loadingPost } = usePost();
+  const { updateSubjects } = useSubjects();
+
+  async function modalOnSubmit(e) {
     e.preventDefault();
+    let isRdyToSend = true;
+
+    const titleInput = createInputs.find((input) => input.label === "Title");
+
+    if (titleInput.value === "") {
+      setCreateInputs((prevInputs) =>
+        prevInputs.map((input) => {
+          return input.label === "Title"
+            ? { ...input, error: "Title cannot be empty" }
+            : input;
+        })
+      );
+      isRdyToSend = false;
+    } else {
+      setCreateInputs((prevInputs) =>
+        prevInputs.map((input) => {
+          return input.label === "Title" ? { ...input, error: "" } : input;
+        })
+      );
+    }
+
+    if (isRdyToSend) {
+      const formData = { title: titleInput.value, note: "" };
+
+      console.log("formData: ");
+
+      const newNotes = await post(formData, `subjects/${subject}/notes`);
+
+      setNotes({ ...notes, [subject]: newNotes });
+      updateSubjects();
+
+      console.log("data");
+      console.log(formData);
+      console.log("loading");
+      console.log(loading);
+      console.log("error");
+      console.log(error);
+
+      if (errorPost !== null) alert(errorPost.detail[0].msg);
+    } else return;
+
     closeCreateModal();
   }
 
@@ -81,7 +127,7 @@ function NotesSet() {
         ) : (
           <div className="md:grid grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4  gap-4">
             {notes[subject].map((note) => (
-              <NoteSet key={crypto.randomUUID()} title={note.title} />
+              <NoteSet id={note.id} key={note.id} title={note.title} />
             ))}
           </div>
         )}

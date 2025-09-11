@@ -48,9 +48,7 @@ function QuizLearn() {
     }
   }, [subject, quizzes, setQuizzes]);
 
-  const quiz = quizzes[subject].filter(
-    (quiz) => quiz.title === params.quizTitle
-  )[0];
+  const quiz = quizzes[subject].filter((quiz) => quiz.id === params.quizId)[0];
   const { title, questions } = quiz;
 
   const [currentQuesiton, setCurrentQuestion] = useState(questions[0]);

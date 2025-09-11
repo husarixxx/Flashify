@@ -139,7 +139,7 @@ createRoot(document.getElementById("root")).render(
                     }
                   />
                   <Route
-                    path="/app/notes/:subject/:noteTitle/edit"
+                    path="/app/notes/:subject/:noteId/edit"
                     element={
                       <Authenticate>
                         <NoteEdit />
@@ -147,7 +147,7 @@ createRoot(document.getElementById("root")).render(
                     }
                   />
                   <Route
-                    path="/app/notes/:subject/:noteTitle/learn"
+                    path="/app/notes/:subject/:noteId/learn"
                     element={
                       <Authenticate>
                         <NoteLearn />
