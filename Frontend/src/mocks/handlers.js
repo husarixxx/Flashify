@@ -144,6 +144,18 @@ export const handlers = [
     const { subjectId } = req.params;
     return HttpResponse.json(mySubjects[subjectId].quizzes);
   }),
+  http.put("api/subjects/:subjectId/quizzes", async ({ request, params }) => {
+    const { subjectId } = params;
+    const newQuiz = await request.json();
+    console.log("newQuiz");
+    console.log(newQuiz);
+    mySubjects[subjectId].quizzes = [
+      ...mySubjects[subjectId].quizzes,
+      { id: crypto.randomUUID(), title: newQuiz.name, questions: [] },
+    ];
+    return HttpResponse.json(mySubjects[subjectId].quizzes);
+  }),
+
   // Usuwa konkretne pytanie i zwraca array z obiektami quiz z konkretnego subjectu w formie:
   // id: id,
   // title: title,

@@ -9,6 +9,7 @@ import Modal from "../../components/Modal";
 import Form from "../../components/Form";
 import { useQuizzes } from "../../context/QuizzesContext";
 import useGet from "../../hooks/useGet";
+import usePut from "../../hooks/usePut";
 
 function QuizzesSet() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -157,7 +158,8 @@ function QuizzesSet() {
     setIsCreateModalOpen(false);
   }
 
-  function modalCreateOnSubmit(e) {
+  const { put } = usePut();
+  async function modalCreateOnSubmit(e) {
     e.preventDefault();
     let isRdyToSend = true;
 
@@ -185,6 +187,11 @@ function QuizzesSet() {
     );
     if (emptyInput.checked) {
       if (isRdyToSend) {
+        const formData = { name: nameInput.value };
+        console.log("formData");
+        console.log(formData);
+        const newQuizzes = await put(formData, `subjects/${subject}/quizzes`);
+        setQuizzes(newQuizzes);
       } else return;
     } else {
       const topicInput = aiCreateInputs.find(
