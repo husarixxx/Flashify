@@ -11,7 +11,7 @@ function Notes() {
   //   return { subject: subject, types: data.notes };
   // });
 
-  const { subjects } = useSubjects();
+  const { subjects, createSubject } = useSubjects();
 
   const [createInputs, setCreateInputs] = useState([
     {
@@ -33,6 +33,44 @@ function Notes() {
 
   function modalOnSubmit(e) {
     e.preventDefault();
+    const nameInput = createInputs.find((input) => input.label === "Name");
+
+    if (nameInput.value === "") {
+      setCreateInputs((prevInputs) =>
+        prevInputs.map((input) => {
+          return input.label === "Name"
+            ? { ...input, error: "Name cannot be empty" }
+            : input;
+        })
+      );
+      return;
+    } else if (subjects.find((subject) => subject.name == nameInput.value)) {
+      setCreateInputs((prevInputs) =>
+        prevInputs.map((input) => {
+          return input.label === "Name"
+            ? { ...input, error: "Subject with this name already exist" }
+            : input;
+        })
+      );
+      return;
+    } else {
+      setCreateInputs((prevInputs) =>
+        prevInputs.map((input) => {
+          return input.label === "Name" ? { ...input, error: "" } : input;
+        })
+      );
+      createSubject(nameInput.value);
+    }
+    setCreateInputs([
+      {
+        id: crypto.randomUUID(),
+        type: "text",
+        value: "",
+        label: "Name",
+        onChange: handleOnChange,
+      },
+    ]);
+    modalClose();
   }
   const [isModalOpen, setIsModalOpen] = useState(false);
 

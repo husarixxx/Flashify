@@ -27,6 +27,23 @@ export const handlers = [
     }));
     return HttpResponse.json(subjectsList);
   }),
+  http.put("api/subjects", async ({ request }) => {
+    const newSubject = await request.json();
+    mySubjects[newSubject.name] = {
+      id: crypto.randomUUID(),
+      flashcards: [],
+      quizzes: [],
+      notes: [],
+    };
+    const subjectsList = Object.entries(mySubjects).map(([key, subject]) => ({
+      id: key,
+      name: key[0].toUpperCase() + key.slice(1),
+      flashcardsCount: subject.flashcards.length,
+      quizzesCount: subject.quizzes.length,
+      notesCount: subject.notes.length,
+    }));
+    return HttpResponse.json(subjectsList);
+  }),
   // Tu jest endpoint ktory zwraca flashcardy z konkretnego subjecta w formie array z flashcardami
   // {
   //   id: id,

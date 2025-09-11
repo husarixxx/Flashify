@@ -20,7 +20,7 @@ function Flashcards() {
     error: postError,
   } = usePost();
 
-  const { subjects } = useSubjects();
+  const { subjects, createSubject } = useSubjects();
   console.log("subjects: ");
   console.log(subjects);
 
@@ -125,6 +125,16 @@ function Flashcards() {
         })
       );
       isRdyToSend = false;
+      console.log(subjects);
+    } else if (subjects.find((subject) => subject.name == nameInput.value)) {
+      setCreateInputs((prevInputs) =>
+        prevInputs.map((input) => {
+          return input.label === "Name"
+            ? { ...input, error: "Subject with this name already exist" }
+            : input;
+        })
+      );
+      isRdyToSend = false;
     } else {
       setCreateInputs((prevInputs) =>
         prevInputs.map((input) => {
@@ -136,6 +146,7 @@ function Flashcards() {
     const emptyInput = createInputs.find((input) => input.label === "Empty");
     if (emptyInput.checked) {
       if (isRdyToSend) {
+        createSubject(nameInput.value);
       } else return;
     } else {
       const topicInput = aiInputs.find((input) => input.label === "Topic");

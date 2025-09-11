@@ -14,7 +14,7 @@ function SubjectList({
 }) {
   return (
     <>
-      <div className="mx-4 p-4 md:mx-auto max-w-[1200px] md:translate-y-[-80px]">
+      <div className="mx-4 p-4 md:mx-auto max-w-[1200px] ">
         <h2>My Subjects</h2>
         <div className="md:grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {subjects === null

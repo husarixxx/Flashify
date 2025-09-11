@@ -13,7 +13,7 @@ function Quizzes() {
     return { subject: subject, types: data.quizzes };
   });
 
-  const { subjects } = useSubjects();
+  const { subjects, createSubject } = useSubjects();
   const [createInputs, setCreateInputs] = useState([
     {
       id: crypto.randomUUID(),
@@ -53,12 +53,22 @@ function Quizzes() {
         })
       );
       return;
+    } else if (subjects.find((subject) => subject.name == nameInput.value)) {
+      setCreateInputs((prevInputs) =>
+        prevInputs.map((input) => {
+          return input.label === "Name"
+            ? { ...input, error: "Subject with this name already exist" }
+            : input;
+        })
+      );
+      return;
     } else {
       setCreateInputs((prevInputs) =>
         prevInputs.map((input) => {
           return input.label === "Name" ? { ...input, error: "" } : input;
         })
       );
+      createSubject(nameInput.value);
     }
     setCreateInputs([
       {
