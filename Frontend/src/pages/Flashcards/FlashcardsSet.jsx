@@ -76,7 +76,7 @@ function FlashcardsSet() {
           <Link to={`${path.pathname}/edit`}>
             <SecondButton text={"Edit"} styles={"min-w-[160px] w-full"} />
           </Link>
-          {flashcards[subject][0] && (
+          {params.subject in flashcards && flashcards[subject][0] && (
             <Link to={`${path.pathname}/learn`}>
               <MainButton text={"Learn"} styles={"w-full"} />
             </Link>

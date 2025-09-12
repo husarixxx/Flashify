@@ -9,7 +9,7 @@ import { useSubjects } from "../../context/SubjectsContext";
 import usePut from "../../hooks/usePut";
 import Form from "../../components/Form";
 
-function FlashcardEdit({ id, definition }) {
+function FlashcardEdit({ id, definition, explanation }) {
   const { flashcards, setFlashcards } = useFlashcards();
   const { updateSubjects } = useSubjects();
 
@@ -50,14 +50,14 @@ function FlashcardEdit({ id, definition }) {
     {
       id: crypto.randomUUID(),
       type: "text",
-      value: "",
+      value: definition,
       label: "Definition",
       onChange: handleEditOnChange,
     },
     {
       id: crypto.randomUUID(),
       type: "text",
-      value: "",
+      value: explanation,
       label: "Explanation",
       onChange: handleEditOnChange,
     },

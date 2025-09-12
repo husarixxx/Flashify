@@ -164,6 +164,7 @@ function FlashcardsEdit() {
                 key={flashcard.id}
                 id={flashcard.id}
                 definition={flashcard.definition}
+                explanation={flashcard.explanation}
               />
             ))}
         </div>
