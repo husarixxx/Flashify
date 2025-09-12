@@ -1,6 +1,5 @@
 import { FaEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
-import SecondButton from "../../components/SecondButton";
 import MainButton from "../../components/MainButton";
 import { useState } from "react";
 import Modal from "../../components/Modal";
@@ -13,11 +12,7 @@ import usePut from "../../hooks/usePut";
 
 function QuestionEdit({ question, quizId }) {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-  const {
-    deleteEntity: deleteEntity,
-    loading: loadingDelete,
-    error: errorDelete,
-  } = useDelete();
+  const { deleteEntity: deleteEntity, error: errorDelete } = useDelete();
 
   const { quizzes, setQuizzes } = useQuizzes();
 
@@ -42,16 +37,10 @@ function QuestionEdit({ question, quizId }) {
 
     if (errorDelete !== null) alert(errorDelete);
 
-    console.log("dataDelete");
-    console.log(newQuizzes);
-    console.log("loadingDelete");
-    console.log(loadingDelete);
-    console.log("errorDelete");
-    console.log(errorDelete);
     closeDeleteModal();
   }
 
-  const { put, loading: loadingPut, error: errorPut } = usePut();
+  const { put, error: errorPut } = usePut();
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   function openEditModal() {
@@ -73,8 +62,7 @@ function QuestionEdit({ question, quizId }) {
         : input.value;
       return acc;
     }, {});
-    console.log("formData");
-    console.log(formData);
+
     const singleFormData = editSingleInputs.reduce((acc, input) => {
       const key = input.label.toLowerCase();
       acc[input.type === "radio" ? `${key}IsCorrect` : key] = input.error
@@ -85,10 +73,7 @@ function QuestionEdit({ question, quizId }) {
       acc[`${key}Id`] = input.id;
       return acc;
     }, {});
-    console.log("singleFormData");
-    console.log(singleFormData);
-    console.log("editMultipleInputs");
-    console.log(editMultipleInputs);
+
     const multipleFormData = editMultipleInputs.reduce((acc, input) => {
       const key = input.label.toLowerCase();
       acc[input.type === "checkbox" ? `${key}IsCorrect` : key] = input.error
@@ -99,8 +84,6 @@ function QuestionEdit({ question, quizId }) {
       acc[`${key}Id`] = input.id;
       return acc;
     }, {});
-    console.log("multipleFormData");
-    console.log(multipleFormData);
 
     const trueFalseFormData = editTrueFalseInputs.reduce((acc, input) => {
       const key = input.label.toLowerCase();
@@ -112,8 +95,6 @@ function QuestionEdit({ question, quizId }) {
       acc[`${key}Id`] = input.id;
       return acc;
     }, {});
-    console.log("trueFalseFormData");
-    console.log(trueFalseFormData);
 
     const newFormdata = {
       question: formData.question,
@@ -123,9 +104,6 @@ function QuestionEdit({ question, quizId }) {
         ? multipleFormData
         : trueFalseFormData),
     };
-    console.log("newFormdata");
-
-    console.log(newFormdata);
 
     function validateInputs(input, setInputs, label, type = "text") {
       if (input.value === "") {
@@ -199,8 +177,6 @@ function QuestionEdit({ question, quizId }) {
       );
       validateInputs(trueInput, setEditTrueFalseInputs, "True");
       validateInputs(falseInput, setEditTrueFalseInputs, "False");
-      console.log(trueInput);
-      console.log(falseInput);
     }
 
     if (isRdyToSend) {
@@ -249,22 +225,19 @@ function QuestionEdit({ question, quizId }) {
                 },
               ],
       };
-      console.log("body");
-      console.log(body);
+
       const newQuizzes = await put(
         body,
         `subjects/${subject}/quizzes/${quizId}/questions/${question.id}`
       );
-      console.log("Zupelnie nowe quizzy");
-      console.log(newQuizzes);
+
+      if (errorPut !== null) {
+        alert(errorPut.detail[0].msg);
+        return;
+      }
 
       setQuizzes({ ...quizzes, [subject]: newQuizzes });
       updateSubjects();
-
-      console.log("loading");
-      console.log(loadingPut);
-      console.log("error");
-      console.log(errorPut);
     } else {
       return;
     }
@@ -337,74 +310,7 @@ function QuestionEdit({ question, quizId }) {
       };
     }),
   ]);
-  console.log(editSingleInputs);
 
-  // {
-  //   id: crypto.randomUUID(),
-  //   type: "text",
-  //   value: "",
-  //   label: "A",
-  //   onChange: handleEditAnswerSingleOnChange,
-  // },
-  // {
-  //   id: crypto.randomUUID(),
-  //   type: "text",
-  //   value: "",
-  //   label: "B",
-  //   onChange: handleEditAnswerSingleOnChange,
-  // },
-  // {
-  //   id: crypto.randomUUID(),
-  //   type: "text",
-  //   value: "",
-  //   label: "C",
-  //   onChange: handleEditAnswerSingleOnChange,
-  // },
-  // {
-  //   id: crypto.randomUUID(),
-  //   type: "text",
-  //   value: "",
-  //   label: "D",
-  //   onChange: handleEditAnswerSingleOnChange,
-  // },
-  //   {
-  //     id: crypto.randomUUID(),
-  //     name: "Correct answer",
-  //     type: "radio",
-  //     value: "A",
-  //     label: "A",
-  //     checked: true,
-  //     onChange: handleEditCorrectRadioSingleOnChange,
-  //   },
-  //   {
-  //     id: crypto.randomUUID(),
-  //     name: "Correct answer",
-  //     type: "radio",
-  //     value: "B",
-  //     label: "B",
-  //     checked: false,
-  //     onChange: handleEditCorrectRadioSingleOnChange,
-  //   },
-  //   {
-  //     id: crypto.randomUUID(),
-  //     type: "radio",
-  //     name: "Correct answer",
-  //     value: "C",
-  //     label: "C",
-  //     checked: false,
-  //     onChange: handleEditCorrectRadioSingleOnChange,
-  //   },
-  //   {
-  //     id: crypto.randomUUID(),
-  //     type: "radio",
-  //     name: "Correct answer",
-  //     value: "D",
-  //     label: "D",
-  //     checked: false,
-  //     onChange: handleEditCorrectRadioSingleOnChange,
-  //   },
-
-  console.log(question.answers);
   const [editMultipleInputs, setEditMultipleInputs] = useState([
     ...labels.map((label, idx) => {
       return {
@@ -440,71 +346,6 @@ function QuestionEdit({ question, quizId }) {
       };
     }),
   ]);
-  console.log(editMultipleInputs);
-  // {
-  //   id: crypto.randomUUID(),
-  //   type: "text",
-  //   value: "",
-  //   label: "A",
-  //   onChange: handleEditAnswerMultipleOnChange,
-  // },
-  // {
-  //   id: crypto.randomUUID(),
-  //   type: "text",
-  //   value: "",
-  //   label: "B",
-  //   onChange: handleEditAnswerMultipleOnChange,
-  // },
-  // {
-  //   id: crypto.randomUUID(),
-  //   type: "text",
-  //   value: "",
-  //   label: "C",
-  //   onChange: handleEditAnswerMultipleOnChange,
-  // },
-  // {
-  //   id: crypto.randomUUID(),
-  //   type: "text",
-  //   value: "",
-  //   label: "D",
-  //   onChange: handleEditAnswerMultipleOnChange,
-  // },
-  // {
-  //   id: crypto.randomUUID(),
-  //   name: "Correct answer",
-  //   type: "checkbox",
-  //   value: "A",
-  //   label: "A",
-  //   checked: true,
-  //   onChange: handleEditCorrectCheckboxMultipleOnChange,
-  // },
-  // {
-  //   id: crypto.randomUUID(),
-  //   name: "Correct answer",
-  //   type: "checkbox",
-  //   value: "B",
-  //   label: "B",
-  //   checked: false,
-  //   onChange: handleEditCorrectCheckboxMultipleOnChange,
-  // },
-  // {
-  //   id: crypto.randomUUID(),
-  //   type: "checkbox",
-  //   name: "Correct answer",
-  //   value: "C",
-  //   label: "C",
-  //   checked: false,
-  //   onChange: handleEditCorrectCheckboxMultipleOnChange,
-  // },
-  // {
-  //   id: crypto.randomUUID(),
-  //   type: "checkbox",
-  //   name: "Correct answer",
-  //   value: "D",
-  //   label: "D",
-  //   checked: false,
-  //   onChange: handleEditCorrectCheckboxMultipleOnChange,
-  // },
 
   const trueFalseLabels = ["True", "False"];
 
@@ -521,7 +362,6 @@ function QuestionEdit({ question, quizId }) {
         onChange: handleEditAnswerTrueFalseOnChange,
       };
     }),
-    //przy zmianie na true false wyskakuje blad bo nie usuwaja sie nadmiarowe inputy
     ...trueFalseLabels.map((label, idx) => {
       return {
         id:
@@ -541,39 +381,6 @@ function QuestionEdit({ question, quizId }) {
         onChange: handleEditCorrectRadioTrueFalseOnChange,
       };
     }),
-    // {
-    //   id: crypto.randomUUID(),
-    //   type: "text",
-    //   value: "",
-    //   label: "True",
-    //   onChange: handleEditAnswerTrueFalseOnChange,
-    // },
-    // {
-    //   id: crypto.randomUUID(),
-    //   type: "text",
-    //   value: "",
-    //   label: "False",
-    //   onChange: handleEditAnswerTrueFalseOnChange,
-    // },
-
-    // {
-    //   id: crypto.randomUUID(),
-    //   name: "Correct answer",
-    //   type: "radio",
-    //   value: "True",
-    //   label: "True",
-    //   checked: true,
-    //   onChange: handleEditCorrectRadioTrueFalseOnChange,
-    // },
-    // {
-    //   id: crypto.randomUUID(),
-    //   name: "Correct answer",
-    //   type: "radio",
-    //   value: "False",
-    //   label: "False",
-    //   checked: false,
-    //   onChange: handleEditCorrectRadioTrueFalseOnChange,
-    // },
   ]);
 
   function handleEditOnChange(e, id) {
@@ -591,15 +398,8 @@ function QuestionEdit({ question, quizId }) {
           : { ...input, checked: false };
       })
     );
-    console.log("haloo");
   }
-  function handleEditAnswerOnChange(e, id) {
-    setEditAdditionalInputs((prevInputs) =>
-      prevInputs.map((input) => {
-        return input.id === id ? { ...input, value: e.target.value } : input;
-      })
-    );
-  }
+
   function handleEditAnswerSingleOnChange(e, id) {
     setEditSingleInputs((prevInputs) =>
       prevInputs.map((input) => {
@@ -667,24 +467,7 @@ function QuestionEdit({ question, quizId }) {
     );
   }
 
-  // function switchEditQuestionType(e) {
-  //   const checkedInput = e.target.value;
-  //   if (checkedInput === "Single choice")
-  //     setEditAdditionalInputs(editSingleInputs);
-  //   else if (checkedInput === "Multiple choice")
-  //     setEditAdditionalInputs(editMultipleInputs);
-  //   else if (checkedInput === "True or False")
-  //     setEditAdditionalInputs(editTrueFalseInputs);
-
-  //   console.log(createInputs);
-  // }
-  console.log(" checkedInput checkedInput checkedInput !!!");
-  console.log(editInputs);
-  console.log("  question  question question !!!");
-  console.log(question);
   const checkedInput = editInputs.filter((input) => input.checked)[0].value;
-  console.log(" checkedInput checkedInput checkedInput !!!");
-  console.log(checkedInput);
 
   return (
     <div className="rounded-xl shadow-lg px-5 md:px-8 py-5 md:py-6 flex justify-between gap-3 md:gap-8">

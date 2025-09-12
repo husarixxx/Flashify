@@ -1,7 +1,6 @@
 import { createPortal } from "react-dom";
 import { IoMdClose } from "react-icons/io";
 import MainButton from "./MainButton";
-import Form from "./Form";
 
 function Modal({
   children,

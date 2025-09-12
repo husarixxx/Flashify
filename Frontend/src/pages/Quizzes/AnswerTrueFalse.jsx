@@ -1,4 +1,4 @@
-function AnswerTrueFalse({ answer, onClick, isSelected, isCorrect }) {
+function AnswerTrueFalse({ answer, onClick, isSelected }) {
   return (
     <label
       for={answer}

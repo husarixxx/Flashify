@@ -2,39 +2,16 @@ import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import SubjectList from "../../components/SubjectList";
 import Form from "../../components/Form";
-import useGet from "../../hooks/useGet";
 import { usePost } from "../../hooks/usePost";
 import { useSubjects } from "../../context/SubjectsContext";
 
 // delete after creating backend
-import mySubjects from "../../exampleData";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 function Flashcards() {
-  const { get, data, loading, error } = useGet();
-
-  const {
-    post: post,
-    data: postData,
-    loading: postLoading,
-    error: postError,
-  } = usePost();
+  const { post: post, error: postError } = usePost();
 
   const { subjects, createSubject } = useSubjects();
-  console.log("subjects: ");
-  console.log(subjects);
-
-  // const flashcardsSubjects = Object.entries(mySubjects).map(
-  //   ([subject, data]) => {
-  //     return { subject: subject, types: data.flashcards };
-  //   }
-  // );
-
-  // // console.log(flashcardsSubjects);
-
-  // useEffect(() => {
-  //   get("subjects");
-  // }, []);
 
   const [createInputs, setCreateInputs] = useState([
     {
@@ -125,7 +102,6 @@ function Flashcards() {
         })
       );
       isRdyToSend = false;
-      console.log(subjects);
     } else if (subjects.find((subject) => subject.name == nameInput.value)) {
       setCreateInputs((prevInputs) =>
         prevInputs.map((input) => {
@@ -176,10 +152,6 @@ function Flashcards() {
         formData.number_of_flashcards = Number.parseInt(
           formData.number_of_flashcards
         );
-        console.log("formData: ");
-
-        console.log(formData);
-        console.log(aiInputs);
 
         setAiInputs((prevInputs) =>
           prevInputs.map((input) => {
@@ -187,10 +159,11 @@ function Flashcards() {
           })
         );
         post(formData, "Flashcards/Generate");
-        console.log(postData);
-        console.log(postLoading);
-        console.log(postError);
-        if (postError !== null) alert(postError.detail[0].msg);
+
+        if (postError !== null) {
+          alert(postError.detail[0].msg);
+          return;
+        }
       } else return;
     }
 

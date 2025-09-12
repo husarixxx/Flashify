@@ -5,8 +5,6 @@ import { MdOutlineQuiz } from "react-icons/md";
 import { TbNotes } from "react-icons/tb";
 
 function Subjects({ subject, type }) {
-  const globalType = type;
-
   return (
     <Link
       to={

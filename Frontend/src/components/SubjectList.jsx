@@ -1,4 +1,3 @@
-import { useState } from "react";
 import Subject from "./Subject";
 import MainButton from "./MainButton";
 import Modal from "./Modal";

@@ -1,7 +1,6 @@
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import { useParams } from "react-router-dom";
-import mySubjects from "../../exampleData";
 import MainButton from "../../components/MainButton";
 import NoteSet from "./NoteSet";
 import { useEffect, useState } from "react";
@@ -14,33 +13,28 @@ import { useSubjects } from "../../context/SubjectsContext";
 
 function NotesSet() {
   let params = useParams();
-
   const subject = params.subject;
-  // const subjectFiltered = Object.entries(mySubjects).filter(
-  //   ([subject, data]) => {
-  //     return subject === params.subject;
-  //   }
-  // );
-  // const notes = subjectFiltered.map(([subject, data]) => data.notes)[0];
 
   const { notes, setNotes } = useNotes();
-
-  // const [flashcards, setFlashcards] = useState(null);
-  const { get, loading, error } = useGet();
+  const { get, error: errorGet } = useGet();
 
   useEffect(() => {
     if (!(subject in notes)) {
       const fetchData = async () => {
         const fetchedData = await get(`subjects/${subject}/notes`);
-        console.log("fetchedData: ", fetchedData);
+
+        if (errorGet !== null) {
+          alert(errorGet.detail[0].msg);
+          return;
+        }
+
         setNotes({ ...notes, [subject]: fetchedData });
       };
 
       fetchData();
     }
-  }, [subject]);
+  }, [errorGet, get, notes, setNotes, subject]);
 
-  console.log(notes);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   function openCreateModal() {
@@ -68,7 +62,7 @@ function NotesSet() {
     );
   }
 
-  const { post, error: errorPost, loading: loadingPost } = usePost();
+  const { post, error: errorPost } = usePost();
   const { updateSubjects } = useSubjects();
 
   async function modalOnSubmit(e) {
@@ -97,21 +91,15 @@ function NotesSet() {
     if (isRdyToSend) {
       const formData = { title: titleInput.value, note: "" };
 
-      console.log("formData: ");
-
       const newNotes = await post(formData, `subjects/${subject}/notes`);
+
+      if (errorPost !== null) {
+        alert(errorPost.detail[0].msg);
+        return;
+      }
 
       setNotes({ ...notes, [subject]: newNotes });
       updateSubjects();
-
-      console.log("data");
-      console.log(formData);
-      console.log("loading");
-      console.log(loading);
-      console.log("error");
-      console.log(error);
-
-      if (errorPost !== null) alert(errorPost.detail[0].msg);
     } else return;
 
     closeCreateModal();

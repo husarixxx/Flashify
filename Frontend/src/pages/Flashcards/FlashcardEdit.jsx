@@ -17,11 +17,7 @@ function FlashcardEdit({ id, definition }) {
 
   const subject = params.subject;
 
-  const {
-    deleteEntity: deleteEntity,
-    loading: loadingDelete,
-    error: errorDelete,
-  } = useDelete();
+  const { deleteEntity: deleteEntity, error: errorDelete } = useDelete();
 
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
@@ -39,18 +35,16 @@ function FlashcardEdit({ id, definition }) {
     setFlashcards({ ...flashcards, [subject]: newFlashcards });
     updateSubjects();
 
-    if (errorDelete !== null) alert(errorDelete);
-    console.log("dataDelete");
-    console.log(newFlashcards);
-    console.log("loadingDelete");
-    console.log(loadingDelete);
-    console.log("errorDelete");
-    console.log(errorDelete);
+    if (errorDelete !== null) {
+      alert(errorDelete.detail[0].msg);
+      return;
+    }
+
     closeDeleteModal();
   }
 
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const { put, data, loading, error } = usePut();
+  const { put, error: errorPut } = usePut();
 
   const [editInputs, setEditInputs] = useState([
     {
@@ -134,16 +128,12 @@ function FlashcardEdit({ id, definition }) {
         formData,
         `subjects/${subject}/flashcards/${id}`
       );
-
+      if (errorPut !== null) {
+        alert(errorPut.detail[0].msg);
+        return;
+      }
       setFlashcards({ ...flashcards, [subject]: newFlashcards });
       updateSubjects();
-
-      console.log("data");
-      console.log(data);
-      console.log("loading");
-      console.log(loading);
-      console.log("error");
-      console.log(error);
     } else {
       return;
     }

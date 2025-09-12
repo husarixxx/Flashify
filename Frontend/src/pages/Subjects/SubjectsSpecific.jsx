@@ -1,6 +1,5 @@
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
-import mySubjects from "../../exampleData";
 import { TbCards } from "react-icons/tb";
 import { MdOutlineQuiz } from "react-icons/md";
 import { TbNotes } from "react-icons/tb";
@@ -11,27 +10,11 @@ function SubjectsSpecific() {
   let params = useParams();
   const subject = params.subject;
 
-  // const subjects = Object.entries(mySubjects).map(([subject, data]) => {
-  //   return {
-  //     subject: subject,
-  //     types: {
-  //       flashcards: data.flashcards.length,
-  //       quizzes: data.quizzes.length,
-  //       notes: data.notes.length,
-  //     },
-  //   };
-  // });
-  // const subjectsFiltered = subjects.filter((subject) => {
-  //   return subject.subject === params.subject;
-  // });
-
   const { subjects } = useSubjects();
-  console.log(subjects);
 
   const specificSubject = subjects.find(
     (currSubject) => currSubject.id === subject
   );
-  console.log(specificSubject);
   return (
     <div className="min-h-[100vh] flex flex-col justify-between">
       <Header></Header>

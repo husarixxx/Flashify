@@ -8,12 +8,9 @@ import { useParams, useLocation } from "react-router-dom";
 import FlashcardEdit from "./FlashcardEdit";
 import Modal from "../../components/Modal";
 
-import mySubjects from "../../exampleData";
 import SecondButton from "../../components/SecondButton";
 import Form from "../../components/Form";
 
-import useDelete from "../../hooks/useDelete";
-import usePut from "../../hooks/usePut";
 import { useFlashcards } from "../../context/FlashcardsContext";
 import useGet from "../../hooks/useGet";
 import { useSubjects } from "../../context/SubjectsContext";
@@ -40,39 +37,30 @@ function FlashcardsEdit() {
   let params = useParams();
   const path = useLocation();
 
-  // const [flashcards, setFlashcards] = useState(false);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
   const subject = params.subject;
-  // const subjectFiltered = Object.entries(mySubjects).filter(
-  //   ([subject, data]) => {
-  //     return subject === params.subject;
-  //   }
-  // );
-  // const dataFlashcards = subjectFiltered.map(
-  //   ([subject, data]) => data.flashcards
-  // )[0];
 
   const { flashcards, setFlashcards } = useFlashcards();
   const { updateSubjects } = useSubjects();
 
-  console.log(flashcards);
-
-  // const [flashcards, setFlashcards] = useState(null);
-  const { get, loading: loadingGet, error: errorGet } = useGet();
-  const { post, loading: loadingPost, error: errorPost } = usePost();
+  const { get, error: errorGet } = useGet();
+  const { post, error: errorPost } = usePost();
 
   useEffect(() => {
-    if (!(params.subject in flashcards)) {
+    if (!(subject in flashcards)) {
       const fetchData = async () => {
         const fetchedData = await get(`subjects/${subject}/flashcards`);
-        console.log("fetchedData: ", fetchedData);
+        if (errorGet !== null) {
+          alert(errorGet.detail[0].msg);
+          return;
+        }
         setFlashcards({ ...flashcards, [subject]: fetchedData });
       };
 
       fetchData();
     }
-  }, [subject]);
+  }, [subject, errorGet, get, flashcards, setFlashcards]);
 
   function handleCreateOnChange(e, id) {
     setCreateInputs((prevInputs) =>
@@ -81,9 +69,6 @@ function FlashcardsEdit() {
       })
     );
   }
-  // useEffect(() => {
-  //   setFlashcards(dataFlashcards);
-  // }, [flashcards, dataFlashcards]);
 
   function openCreateModal() {
     setIsCreateOpen(true);
@@ -151,13 +136,13 @@ function FlashcardsEdit() {
         `subjects/${subject}/flashcards`
       );
 
+      if (errorPost !== null) {
+        alert(errorPost.detail[0].msg);
+        return;
+      }
+
       setFlashcards({ ...flashcards, [subject]: newFlashcards });
       updateSubjects();
-
-      console.log("loading");
-      console.log(loadingPost);
-      console.log("error");
-      console.log(errorPost);
     } else {
       return;
     }

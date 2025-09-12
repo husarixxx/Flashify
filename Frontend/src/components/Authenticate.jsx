@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import { useLoggedIn } from "../context/LoggedInContext";
-import { Navigate } from "react-router-dom";
 import { useEffect } from "react";
 
 function Authenticate({ children }) {
@@ -11,7 +10,7 @@ function Authenticate({ children }) {
     if (isLoggedIn === false) navigate("/log-in");
   });
   if (isLoggedIn) return <>{children}</>;
-  else if (isLoggedIn === null) return { loading };
+  else if (isLoggedIn === null) return "loading...";
   else return null;
 }
 

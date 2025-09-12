@@ -3,14 +3,9 @@ import Footer from "../../components/Footer";
 import SubjectList from "../../components/SubjectList";
 import Form from "../../components/Form";
 import { useState } from "react";
-import mySubjects from "../../exampleData";
 import { useSubjects } from "../../context/SubjectsContext";
 
 function Notes() {
-  // const notesSubjects = Object.entries(mySubjects).map(([subject, data]) => {
-  //   return { subject: subject, types: data.notes };
-  // });
-
   const { subjects, createSubject } = useSubjects();
 
   const [createInputs, setCreateInputs] = useState([

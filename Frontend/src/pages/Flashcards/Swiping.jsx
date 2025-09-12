@@ -5,13 +5,12 @@ function Swiping({ children, isDragging, setIsDragging }) {
   const [startX, setStartX] = useState(0);
   const [currentX, setCurrentX] = useState(0);
 
-  const [isMoved, setIsMoved] = useState(false);
   const [angle, setAngle] = useState(0);
   const [topPos, setTopPos] = useState(0);
   const [opacity, setOpacity] = useState(100);
   const [animateBack, setAnimateBack] = useState();
 
-  const { swipe, setSwipe } = useSwipe();
+  const { setSwipe } = useSwipe();
 
   useEffect(() => {
     function handleMouseMove(e) {
@@ -38,12 +37,6 @@ function Swiping({ children, isDragging, setIsDragging }) {
       setTopPos(Math.ceil(Math.abs((currentX - startX) / 4)));
       setCurrentX(x);
       setCurrentX(x);
-
-      if (Math.abs(delta) > 50) {
-        setIsMoved(true);
-      } else {
-        setIsMoved(false);
-      }
     }
 
     function handleMouseUp(e) {
@@ -87,7 +80,7 @@ function Swiping({ children, isDragging, setIsDragging }) {
       document.removeEventListener("touchmove", handleMouseMove);
       document.removeEventListener("touchend", handleMouseUp);
     };
-  }, [isDragging, startX, currentX]);
+  }, [isDragging, startX, currentX, opacity, setSwipe, setIsDragging]);
 
   function mouseDownHandle(e) {
     const x = e.touches ? e.touches[0].clientX : e.clientX;

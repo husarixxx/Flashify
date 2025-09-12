@@ -2,17 +2,11 @@ import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import SubjectList from "../../components/SubjectList";
 
-import mySubjects from "../../exampleData";
 import Form from "../../components/Form";
-import { useEffect, useState } from "react";
-import useGet from "../../hooks/useGet";
+import { useState } from "react";
 import { useSubjects } from "../../context/SubjectsContext";
 
 function Quizzes() {
-  const quizzesSubjects = Object.entries(mySubjects).map(([subject, data]) => {
-    return { subject: subject, types: data.quizzes };
-  });
-
   const { subjects, createSubject } = useSubjects();
   const [createInputs, setCreateInputs] = useState([
     {

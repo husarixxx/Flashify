@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 
 function NoteSet({ id, title }) {
-  console.log(title);
   const path = useLocation();
   return (
     <div className="  rounded-xl shadow-lg m-4 px-8 py-6 pb-10 text-center flex flex-col justify-between gap-5 border-1 border-gray-200">

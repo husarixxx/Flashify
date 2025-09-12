@@ -12,8 +12,6 @@ import validator from "validator";
 
 function SignUp() {
   const [success, setSucces] = useState("");
-  const [error, setError] = useState("");
-
   const [inputs, setInputs] = useState([
     {
       id: crypto.randomUUID(),
@@ -130,7 +128,7 @@ function SignUp() {
           assignError(dataResponse.detail);
         }
       } catch (err) {
-        setError("Server connection error");
+        alert(err.detail[0].msg || "Server connection error");
       }
     }
   }

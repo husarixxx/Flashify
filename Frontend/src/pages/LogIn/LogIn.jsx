@@ -36,7 +36,6 @@ function LogIn() {
     },
   ]);
 
-  const [error, setError] = useState("");
   const navigateLogin = useNavigate();
 
   function handleOnChange(e, id) {
@@ -110,10 +109,10 @@ function LogIn() {
         } else {
           const dataResponse = await response.json();
           assignError(dataResponse.detail);
-          setError(dataResponse.detail || "Something went wrong. Try again");
+          alert(dataResponse.detail || "Something went wrong. Try again");
         }
       } catch (err) {
-        setError("Server connection error");
+        alert(err.detail[0].msg);
       }
     }
   }

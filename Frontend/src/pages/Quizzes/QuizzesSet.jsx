@@ -1,6 +1,5 @@
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
-import mySubjects from "../../exampleData";
 import { useParams } from "react-router-dom";
 import Quiz from "./Quiz";
 import MainButton from "../../components/MainButton";
@@ -17,28 +16,25 @@ function QuizzesSet() {
   let params = useParams();
 
   const subject = params.subject;
-  // const subjectFiltered = Object.entries(mySubjects).filter(
-  //   ([subject, data]) => {
-  //     return subject === params.subject;
-  //   }
-  // );
-  // const quizzes = subjectFiltered.map(([subject, data]) => data.quizzes)[0];
 
   const { quizzes, setQuizzes } = useQuizzes();
 
-  const { get, loading, error } = useGet();
+  const { get, error: errorGet } = useGet();
 
   useEffect(() => {
     if (!(subject in quizzes)) {
       const fetchData = async () => {
         const fetchedData = await get(`subjects/${subject}/quizzes`);
-        console.log("fetchedData: ", fetchedData);
+        if (errorGet !== null) {
+          alert(errorGet.detail[0].msg);
+          return;
+        }
         setQuizzes({ ...quizzes, [subject]: fetchedData });
       };
 
       fetchData();
     }
-  }, [subject, quizzes, setQuizzes]);
+  }, [subject, quizzes, setQuizzes, get, errorGet]);
 
   const [createQuizInputs, setCreateQuizInputs] = useState([
     {
@@ -188,8 +184,7 @@ function QuizzesSet() {
     if (emptyInput.checked) {
       if (isRdyToSend) {
         const formData = { name: nameInput.value };
-        console.log("formData");
-        console.log(formData);
+
         const newQuizzes = await put(formData, `subjects/${subject}/quizzes`);
         setQuizzes(newQuizzes);
       } else return;
@@ -223,21 +218,12 @@ function QuizzesSet() {
         formData.number_of_flashcards = Number.parseInt(
           formData.number_of_flashcards
         );
-        console.log("formData: ");
-
-        console.log(formData);
-        console.log(aiCreateInputs);
 
         setAiCreateInputs((prevInputs) =>
           prevInputs.map((input) => {
             return input.label === "Topic" ? { ...input, error: "" } : input;
           })
         );
-        // aiPost(formData);
-        // console.log(postData);
-        // console.log(postLoading);
-        // console.log(postError);
-        // if (postError !== null) alert(postError.detail[0].msg);
       } else return;
     }
 

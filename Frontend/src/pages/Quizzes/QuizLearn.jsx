@@ -1,7 +1,6 @@
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import { useParams } from "react-router-dom";
-import mySubjects from "../../exampleData";
 import QuestionLearn from "./QuestionLearn";
 import { useEffect, useState } from "react";
 import AnswerSingle from "./AnswerSingle";
@@ -18,35 +17,24 @@ function QuizLearn() {
   let params = useParams();
   const subject = params.subject;
 
-  //   const subject = params.subject;
-  //   const subjectFiltered = Object.entries(mySubjects).filter(
-  //     ([subject, data]) => {
-  //       return subject === params.subject;
-  //     }
-  //   );
-
-  // const subjectFiltered = Object.entries(mySubjects).filter(
-  //   ([subject, data]) => {
-  //     return subject === params.subject;
-  //   }
-  // );
-  // const quizzes = subjectFiltered.map(([subject, data]) => data.quizzes)[0];
-
   const { quizzes, setQuizzes } = useQuizzes();
 
-  const { get, loading, error } = useGet();
+  const { get, error: errorGet } = useGet();
 
   useEffect(() => {
     if (!(subject in quizzes)) {
       const fetchData = async () => {
         const fetchedData = await get(`subjects/${subject}/quizzes`);
-        console.log("fetchedData: ", fetchedData);
+        if (errorGet !== null) {
+          alert(errorGet.detail[0].msg);
+          return;
+        }
         setQuizzes({ ...quizzes, [subject]: fetchedData });
       };
 
       fetchData();
     }
-  }, [subject, quizzes, setQuizzes]);
+  }, [subject, quizzes, setQuizzes, get, errorGet]);
 
   const quiz = quizzes[subject].filter((quiz) => quiz.id === params.quizId)[0];
   const { title, questions } = quiz;
@@ -135,7 +123,6 @@ function QuizLearn() {
     return "Tough one, huh? Time to hit the books and give it another go!";
   }
   const result = countResult();
-  console.log(result);
 
   return (
     <div

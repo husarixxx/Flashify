@@ -8,9 +8,8 @@ import Swiping from "./Swiping";
 import shuffleArray from "../../utils/shuffleArray";
 
 import { useSwipe } from "../../context/FlashcardSwipeContext";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
-import mySubjects from "../../exampleData";
 import { useEffect, useState } from "react";
 import { useFlashcards } from "../../context/FlashcardsContext";
 import useGet from "../../hooks/useGet";
@@ -23,33 +22,27 @@ function FlashcardsLearn() {
   const [localFlashcards, setLocalFlashcards] = useState([]);
 
   let params = useParams();
-
   const subject = params.subject;
-  // const subjectFiltered = Object.entries(mySubjects).filter(
-  //   ([subject, data]) => {
-  //     return subject === params.subject;
-  //   }
-  // );
-  // const dataFlashcards = subjectFiltered.map(
-  //   ([subject, data]) => data.flashcards
-  // )[0];
 
   const { flashcards, setFlashcards } = useFlashcards();
 
-  // const [flashcards, setFlashcards] = useState(null);
-  const { get, loading, error } = useGet();
+  const { get, error: errorGet } = useGet();
 
   useEffect(() => {
-    if (!(params.subject in flashcards)) {
+    if (!(subject in flashcards)) {
       const fetchData = async () => {
-        const fetchedData = await get(`subjects/${params.subject}/flashcards`);
-        console.log("fetchedData: ", fetchedData);
-        setFlashcards({ ...flashcards, [params.subject]: fetchedData });
+        const fetchedData = await get(`subjects/${subject}/flashcards`);
+
+        if (errorGet !== null) {
+          alert(errorGet.detail[0].msg);
+          return;
+        }
+        setFlashcards({ ...flashcards, [subject]: fetchedData });
       };
 
       fetchData();
     }
-  }, [params.subject]);
+  }, [flashcards, errorGet, get, setFlashcards, subject]);
 
   useEffect(() => {
     setLocalFlashcards(flashcards[subject]);
