@@ -12,7 +12,18 @@ class Users(Base):
     hashed_password = Column(String, nullable=False)
 
     flashcards = relationship("Flashcard", back_populates="user", cascade="all, delete-orphan")
-    quiz_sbujects = relationship("QuizSubject", back_populates="user", cascade="all, delete-orphan")
+    quiz_subjects = relationship("QuizSubject", back_populates="user", cascade="all, delete-orphan")
+
+
+class Subject(Base):
+    __tablename__ = "subjects"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False, unique=True)
+
+    flashcards = relationship("Flashcard", back_populates="subject")
+
+
 
 class Flashcard(Base):
     __tablename__ = 'flashcards'
@@ -27,17 +38,8 @@ class Flashcard(Base):
     subject = relationship("Subject",back_populates="flashcards")
 
 
-class Subject(Base):
-    __tablename__ = "subjects"
 
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, nullable=False, unique=True)
-
-    flashcards = relationship("Flashcard", back_populates="subject")
-
-
-
-class QuizSbubject(Base):
+class QuizSubject(Base):
     __tablename__ = "quiz_subjects"
 
     id = Column(Integer, primary_key=True, index=True)
