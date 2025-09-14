@@ -1,4 +1,6 @@
 from pydantic import BaseModel, EmailStr, Field, field_validator
+from typing import Optional, List, Literal
+
 
 # -- User mechanics --
 
@@ -48,7 +50,7 @@ class SubjectCreate(SubjectBase):
 
 class SubjectResponse(SubjectBase):
     id: int
-    name: str #!!!!!
+    
     class Config:
         from_attributes = True
 
@@ -71,7 +73,7 @@ class UpdateFlashcard(BaseFlashcard):
 class ResponseFlashcard(BaseFlashcard):
     id: int
     user_id: int
-    subject: SubjectResponse   
+    subject: Optional[SubjectResponse] = None 
 
     class Config:
         from_attributes = True
@@ -88,4 +90,71 @@ class UserUpdate(BaseModel):
 
 
 
+# --quizzes--
+class QuizAnswerBase(BaseModel):
+    text: str
+    is_correct: bool
 
+class QuizAnswerCreate(QuizAnswerBase):
+    pass
+
+class QuizAnswerUpdate(QuizAnswerBase):
+    pass
+
+class QuizAnswerResponse(QuizAnswerBase):
+    id: int
+    
+    class Config:
+        from_attributes = True
+
+
+class QuizQuestionBase(BaseModel):
+    question: str
+    type: Literal["multiple-choice", "single-choice", "true-false"]
+
+class QuizQuestionCreate(QuizQuestionBase):
+    answers: List[QuizAnswerCreate]
+
+class QuizQuestionUpdate(QuizQuestionBase):
+    answers: List[QuizAnswerCreate]
+
+class QuizQuestionResponse(QuizQuestionBase):
+    id: int
+    answers: List[QuizAnswerResponse]
+    
+    class Config:
+        from_attributes = True
+
+class QuizBase(BaseModel):
+    title: str
+
+class QuizCreate(BaseModel):
+    name: str  
+
+class QuizUpdate(QuizBase):
+    pass
+
+class QuizResponse(QuizBase):
+    id: int
+    questions: List[QuizQuestionResponse]
+    
+    class Config:
+        from_attributes = True
+
+class QuizSubjectBase(BaseModel):
+    name: str
+
+class QuizSubjectCreate(QuizSubjectBase):
+    pass
+
+class QuizSubjectResponse(QuizSubjectBase):
+    id: int
+    quizzes: List[QuizResponse]
+    
+    class Config:
+        from_attributes = True
+
+class GenerateQuizRequest(BaseModel):
+    topic: str
+    number_of_questions: int = 5
+    question_types: List[Literal["multiple-choice", "single-choice", "true-false"]]
