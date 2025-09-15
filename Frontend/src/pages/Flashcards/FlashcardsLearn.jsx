@@ -13,6 +13,7 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useFlashcards } from "../../context/FlashcardsContext";
 import useGet from "../../hooks/useGet";
+import { useSubjects } from "../../context/SubjectsContext";
 
 function FlashcardsLearn() {
   const { swipe, setSwipe } = useSwipe();
@@ -25,6 +26,11 @@ function FlashcardsLearn() {
   const subject = params.subject;
 
   const { flashcards, setFlashcards } = useFlashcards();
+  const { subjects } = useSubjects();
+
+  const currentSubjectName = subjects.filter(
+    (subject) => subject.id == params.subject
+  )[0].name;
 
   const { get, error: errorGet } = useGet();
 
@@ -77,7 +83,7 @@ function FlashcardsLearn() {
     <div className="min-h-[100vh] flex flex-col justify-between overflow-hidden">
       <Header></Header>
       <div className="p-4 mx-auto">
-        <h1 className="my-4">{subject}</h1>
+        <h1 className="my-4">{currentSubjectName}</h1>
         {localFlashcards.length === 0 && (
           <h2 className="text-2xl lg:text-3xl my-8 lg:my-14 mx-2 ">
             <span className="text-purple-500"> That's it!</span> You’ve mastered
@@ -94,14 +100,14 @@ function FlashcardsLearn() {
                   }`}
                 >
                   <Flashcard
-                    definition={
+                    question={
                       localFlashcards.length > index
-                        ? localFlashcards[index].definition
+                        ? localFlashcards[index].question
                         : ""
                     }
-                    explanation={
+                    answer={
                       localFlashcards.length > index
-                        ? localFlashcards[index].explanation
+                        ? localFlashcards[index].answer
                         : ""
                     }
                     isDragging={isDragging}
@@ -121,15 +127,15 @@ function FlashcardsLearn() {
                 }`}
               >
                 <Flashcard
-                  definition={
+                  question={
                     localFlashcards[
                       index + 1 > localFlashcards.length - 1 ? 0 : index + 1
-                    ].definition
+                    ].question
                   }
-                  explanation={
+                  answer={
                     localFlashcards[
                       index + 1 > localFlashcards.length - 1 ? 0 : index + 1
-                    ].explanation
+                    ].answer
                   }
                   turnOff={true}
                   styles={` ${
@@ -149,15 +155,15 @@ function FlashcardsLearn() {
                 }`}
               >
                 <Flashcard
-                  definition={
+                  question={
                     localFlashcards[
                       index + 2 > localFlashcards.length - 1 ? 1 : index + 2
-                    ].definition
+                    ].question
                   }
-                  explanation={
+                  answer={
                     localFlashcards[
                       index + 2 > localFlashcards.length - 1 ? 1 : index + 2
-                    ].explanation
+                    ].answer
                   }
                   turnOff={true}
                 ></Flashcard>
@@ -181,8 +187,8 @@ function FlashcardsLearn() {
                 }`}
               >
                 <Flashcard
-                  definition={localFlashcards[0].definition}
-                  explanation={localFlashcards[0].explanation}
+                  question={localFlashcards[0].question}
+                  answer={localFlashcards[0].answer}
                   turnOff={true}
                 ></Flashcard>
               </div>

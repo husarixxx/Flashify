@@ -22,14 +22,14 @@ function FlashcardsEdit() {
       id: crypto.randomUUID(),
       type: "text",
       value: "",
-      label: "Definition",
+      label: "Question",
       onChange: handleCreateOnChange,
     },
     {
       id: crypto.randomUUID(),
       type: "text",
       value: "",
-      label: "Explanation",
+      label: "Answer",
       onChange: handleCreateOnChange,
     },
   ]);
@@ -41,8 +41,13 @@ function FlashcardsEdit() {
 
   const subject = params.subject;
 
+  const { subjects, updateSubjects } = useSubjects();
+
+  const currentSubjectName = subjects.filter(
+    (subject) => subject.id == params.subject
+  )[0].name;
+
   const { flashcards, setFlashcards } = useFlashcards();
-  const { updateSubjects } = useSubjects();
 
   const { get, error: errorGet } = useGet();
   const { post, error: errorPost } = usePost();
@@ -89,17 +94,17 @@ function FlashcardsEdit() {
     let isRdyToSend = true;
 
     const definitionInput = createInputs.find(
-      (input) => input.label === "Definition"
+      (input) => input.label === "Question"
     );
     const explanationInput = createInputs.find(
-      (input) => input.label === "Explanation"
+      (input) => input.label === "Answer"
     );
 
     if (definitionInput.value === "") {
       setCreateInputs((prevInputs) =>
         prevInputs.map((input) => {
-          return input.label === "Definition"
-            ? { ...input, error: "Definition cannot be empty" }
+          return input.label === "Question"
+            ? { ...input, error: "Question cannot be empty" }
             : input;
         })
       );
@@ -107,15 +112,15 @@ function FlashcardsEdit() {
     } else {
       setCreateInputs((prevInputs) =>
         prevInputs.map((input) => {
-          return input.label === "Definition" ? { ...input, error: "" } : input;
+          return input.label === "Question" ? { ...input, error: "" } : input;
         })
       );
     }
     if (explanationInput.value === "") {
       setCreateInputs((prevInputs) =>
         prevInputs.map((input) => {
-          return input.label === "Explanation"
-            ? { ...input, error: "Explanation cannot be empty" }
+          return input.label === "Answer"
+            ? { ...input, error: "Answer cannot be empty" }
             : input;
         })
       );
@@ -123,15 +128,13 @@ function FlashcardsEdit() {
     } else {
       setCreateInputs((prevInputs) =>
         prevInputs.map((input) => {
-          return input.label === "Explanation"
-            ? { ...input, error: "" }
-            : input;
+          return input.label === "Answer" ? { ...input, error: "" } : input;
         })
       );
     }
 
     if (isRdyToSend) {
-      const newFlashcards = await post(
+      const newFlashcard = await post(
         formData,
         `subjects/${subject}/flashcards`
       );
@@ -141,7 +144,10 @@ function FlashcardsEdit() {
         return;
       }
 
-      setFlashcards({ ...flashcards, [subject]: newFlashcards });
+      setFlashcards({
+        ...flashcards,
+        [subject]: [...flashcards[subject], newFlashcard],
+      });
       updateSubjects();
     } else {
       return;
@@ -155,7 +161,7 @@ function FlashcardsEdit() {
     >
       <Header></Header>
       <div className="p-4 mx-auto mt-10">
-        <h1 className="my-4">{subject}</h1>
+        <h1 className="my-4">{currentSubjectName}</h1>
 
         <div className="flex flex-col justify-center md:grid grid-cols-2 xl:grid-cols-3  gap-5 w-[80vw]">
           {flashcards[subject].length > 0 &&
@@ -163,8 +169,8 @@ function FlashcardsEdit() {
               <FlashcardEdit
                 key={flashcard.id}
                 id={flashcard.id}
-                definition={flashcard.definition}
-                explanation={flashcard.explanation}
+                question={flashcard.question}
+                answer={flashcard.answer}
               />
             ))}
         </div>

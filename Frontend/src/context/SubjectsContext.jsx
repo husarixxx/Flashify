@@ -1,21 +1,20 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState } from "react";
 import useGet from "../hooks/useGet";
-import usePut from "../hooks/usePut";
-
+import { usePost } from "../hooks/usePost";
 const SubjectsContext = createContext();
 export const SubjectsProvider = ({ children }) => {
   const [subjects, setSubjects] = useState(null);
 
   const { get } = useGet();
-  const { put } = usePut();
+  const { post } = usePost();
   const updateSubjects = async () => {
-    const fetchedSubjects = await get("subjects");
+    const fetchedSubjects = await get("subjects/count");
     setSubjects(fetchedSubjects);
   };
   const createSubject = async (name) => {
     const formData = { name: name };
-    const newSubjects = await put(formData, `subjects`);
-    setSubjects(newSubjects);
+    const newSubject = await post(formData, `subjects`);
+    setSubjects([...subjects, newSubject]);
   };
   return (
     <SubjectsContext.Provider

@@ -24,29 +24,29 @@ function Subjects({ subject, type }) {
                 className="group-hover:text-white flex gap-2"
               >
                 <TbCards size={21} />
-                {subject.flashcardsCount + " Flashcards"}
+                {subject.stats.flashcards_count + " Flashcards"}
               </p>
               <p
                 key={crypto.randomUUID()}
                 className="group-hover:text-white flex gap-2 mt-2"
               >
                 <MdOutlineQuiz size={21} />
-                {subject.quizzesCount + " Quizzes"}
+                {subject.stats.quizzes_count + " Quizzes"}
               </p>
               <p
                 key={crypto.randomUUID()}
                 className="group-hover:text-white flex gap-2 mt-2"
               >
                 <TbNotes size={21} />
-                {subject.notesCount + " Notes"}
+                {subject.stats.notes_count + " Notes"}
               </p>
             </>
           ) : type === "Flashcards" ? (
-            <p className="group-hover:text-white">{`${subject.flashcardsCount} Flashcards`}</p>
+            <p className="group-hover:text-white">{`${subject.stats.flashcards_count} Flashcards`}</p>
           ) : type === "Quizzes" ? (
-            <p className="group-hover:text-white">{`${subject.quizzesCount} Quizzes`}</p>
+            <p className="group-hover:text-white">{`${subject.stats.quizzes_count} Quizzes`}</p>
           ) : (
-            <p className="group-hover:text-white">{`${subject.notesCount} Notes`}</p>
+            <p className="group-hover:text-white">{`${subject.stats.notes_count} Notes`}</p>
           )}
         </div>
         <div className="absolute z-1 top-0 left-0 bg-gradient-to-r scale-x-0 origin-left  from-purple-600 to-purple-500  group-hover:scale-100 duration-200 transition-transform h-full w-full rounded-2xl"></div>

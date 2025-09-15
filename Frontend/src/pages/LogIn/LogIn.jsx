@@ -104,7 +104,8 @@ function LogIn() {
         if (response.ok) {
           setIsLoggedIn(true);
           navigateLogin("/app");
-          const fetchedSubjects = await get("subjects");
+          const fetchedSubjects = await get("subjects/count");
+
           setSubjects(fetchedSubjects);
         } else {
           const dataResponse = await response.json();

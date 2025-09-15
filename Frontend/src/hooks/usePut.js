@@ -5,10 +5,9 @@ export default function usePut() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // change api to real address after backend is finished
   async function put(formData, url) {
     try {
-      const currentData = await request(`api/${url}`, {
+      const currentData = await request(`http://127.0.0.1:8000/api/${url}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

@@ -10,6 +10,7 @@ function SubjectList({
   isModalOpen,
   modalClose,
   modalOpen,
+  modalLoading,
 }) {
   return (
     <>
@@ -42,6 +43,7 @@ function SubjectList({
             </>
           }
           modalClose={modalClose}
+          modalLoading={modalLoading}
         >
           {modalForm}
         </Modal>

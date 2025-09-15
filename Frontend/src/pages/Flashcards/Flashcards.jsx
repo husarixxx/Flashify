@@ -5,13 +5,14 @@ import Form from "../../components/Form";
 import { usePost } from "../../hooks/usePost";
 import { useSubjects } from "../../context/SubjectsContext";
 
-// delete after creating backend
 import { useState } from "react";
+import { useFlashcards } from "../../context/FlashcardsContext";
 
 function Flashcards() {
-  const { post: post, error: postError } = usePost();
+  const { post: post, error: postError, loading: postLoading } = usePost();
 
-  const { subjects, createSubject } = useSubjects();
+  const { subjects, createSubject, updateSubjects } = useSubjects();
+  const { flashcards, setFlashcards } = useFlashcards();
 
   const [createInputs, setCreateInputs] = useState([
     {
@@ -86,7 +87,7 @@ function Flashcards() {
     return createInputs.filter((input) => input.label === "With AI")[0].checked;
   }
 
-  function modalOnSubmit(e) {
+  async function modalOnSubmit(e) {
     e.preventDefault();
 
     let isRdyToSend = true;
@@ -144,13 +145,13 @@ function Flashcards() {
         );
       }
       if (isRdyToSend) {
-        const formData = aiInputs.reduce((acc, input) => {
+        const requestData = aiInputs.reduce((acc, input) => {
           const key = input.label.toLowerCase().replaceAll(" ", "_");
           acc[key] = input.error ? "" : input.value;
           return acc;
         }, {});
-        formData.number_of_flashcards = Number.parseInt(
-          formData.number_of_flashcards
+        requestData.number_of_flashcards = Number.parseInt(
+          requestData.number_of_flashcards
         );
 
         setAiInputs((prevInputs) =>
@@ -158,12 +159,28 @@ function Flashcards() {
             return input.label === "Topic" ? { ...input, error: "" } : input;
           })
         );
-        post(formData, "Flashcards/Generate");
+        console.log(requestData);
+        const formData = {
+          subject_data: { name: nameInput.value },
+          request_data: requestData,
+        };
+        const newFlashcards = await post(
+          formData,
+          "subjects/flashcards/generate"
+        );
+        console.log(newFlashcards);
+        setFlashcards({
+          ...flashcards,
+          [newFlashcards[0].subject_id]: newFlashcards,
+        });
+
+        updateSubjects();
 
         if (postError !== null) {
           alert(postError.detail[0].msg);
           return;
         }
+        modalClose();
       } else return;
     }
 
@@ -189,6 +206,7 @@ function Flashcards() {
         isModalOpen={isModalOpen}
         modalOpen={modalOpen}
         modalClose={modalClose}
+        modalLoading={postLoading}
         modalForm={
           <Form
             inputs={createInputs}

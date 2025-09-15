@@ -7,7 +7,7 @@ export default function useGet() {
 
   async function get(url) {
     try {
-      const currentData = await request(`api/${url}`, {
+      const currentData = await request(`http://127.0.0.1:8000/api/${url}`, {
         method: "GET",
         credentials: "include",
       });

@@ -8,12 +8,18 @@ import { useParams, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import useGet from "../../hooks/useGet";
 import { useFlashcards } from "../../context/FlashcardsContext";
+import { useSubjects } from "../../context/SubjectsContext";
 function FlashcardsSet() {
   let params = useParams();
   const subject = params.subject;
   const path = useLocation();
 
   const { flashcards, setFlashcards } = useFlashcards();
+  const { subjects } = useSubjects();
+
+  const currentSubjectName = subjects.filter(
+    (subject) => subject.id == params.subject
+  )[0].name;
 
   const { get, error: errorGet } = useGet();
 
@@ -35,7 +41,7 @@ function FlashcardsSet() {
     <div className="min-h-[100vh] flex flex-col justify-between">
       <Header></Header>
       <div className="p-4 mx-auto">
-        <h1 className="my-4 ">{params.subject}</h1>
+        <h1 className="my-4 ">{currentSubjectName}</h1>
         {!(params.subject in flashcards) ? (
           "loading..."
         ) : (
@@ -44,8 +50,8 @@ function FlashcardsSet() {
               {flashcards[subject][0] && (
                 <div className="relative z-3 top-0 left-0 h-[200px] w-[80vw]  sm:h-[300px] sm:w-[540px] lg:h-[350px] lg:w-[800px] ">
                   <Flashcard
-                    definition={flashcards[subject][0].definition}
-                    explanation={flashcards[subject][0].explanation}
+                    question={flashcards[subject][0].question}
+                    answer={flashcards[subject][0].answer}
                     turnOff={true}
                   ></Flashcard>
                 </div>
@@ -53,8 +59,8 @@ function FlashcardsSet() {
               {flashcards[subject][1] && (
                 <div className="absolute z-2 top-[15px] left-[-15px] sm:top-[20px] sm:left-[-20px] h-[200px] w-[80vw]  sm:h-[300px] sm:w-[540px] lg:h-[350px] lg:w-[800px] ">
                   <Flashcard
-                    definition={flashcards[subject][1].definition}
-                    explanation={flashcards[subject][1].explanation}
+                    question={flashcards[subject][1].question}
+                    answer={flashcards[subject][1].answer}
                     turnOff={true}
                   ></Flashcard>
                 </div>
@@ -62,8 +68,8 @@ function FlashcardsSet() {
               {flashcards[subject][2] && (
                 <div className="absolute z-1 top-[30px] left-[-30px] sm:top-[40px] sm:left-[-40px] h-[200px] w-[80vw]  sm:h-[300px] sm:w-[540px] lg:h-[350px] lg:w-[800px]">
                   <Flashcard
-                    definition={flashcards[subject][2].definition}
-                    explanation={flashcards[subject][2].explanation}
+                    question={flashcards[subject][2].question}
+                    answer={flashcards[subject][2].answer}
                     turnOff={true}
                   ></Flashcard>
                 </div>

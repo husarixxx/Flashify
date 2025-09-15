@@ -9,7 +9,7 @@ import { useSubjects } from "../../context/SubjectsContext";
 import usePut from "../../hooks/usePut";
 import Form from "../../components/Form";
 
-function FlashcardEdit({ id, definition, explanation }) {
+function FlashcardEdit({ id, question, answer }) {
   const { flashcards, setFlashcards } = useFlashcards();
   const { updateSubjects } = useSubjects();
 
@@ -29,8 +29,11 @@ function FlashcardEdit({ id, definition, explanation }) {
   }
   async function handleDelete(e) {
     e.preventDefault();
-    const newFlashcards = await deleteEntity(
+    const newFlashcard = await deleteEntity(
       `subjects/${subject}/flashcards/${id}`
+    );
+    const newFlashcards = flashcards[subject].filter(
+      (flashcard) => flashcard.id != id
     );
     setFlashcards({ ...flashcards, [subject]: newFlashcards });
     updateSubjects();
@@ -50,15 +53,15 @@ function FlashcardEdit({ id, definition, explanation }) {
     {
       id: crypto.randomUUID(),
       type: "text",
-      value: definition,
-      label: "Definition",
+      value: question,
+      label: "Question",
       onChange: handleEditOnChange,
     },
     {
       id: crypto.randomUUID(),
       type: "text",
-      value: explanation,
-      label: "Explanation",
+      value: answer,
+      label: "Answer",
       onChange: handleEditOnChange,
     },
   ]);
@@ -82,17 +85,17 @@ function FlashcardEdit({ id, definition, explanation }) {
     let isRdyToSend = true;
 
     const definitionInput = editInputs.find(
-      (input) => input.label === "Definition"
+      (input) => input.label === "Question"
     );
     const explanationInput = editInputs.find(
-      (input) => input.label === "Explanation"
+      (input) => input.label === "Answer"
     );
 
     if (definitionInput.value === "") {
       setEditInputs((prevInputs) =>
         prevInputs.map((input) => {
-          return input.label === "Definition"
-            ? { ...input, error: "Definition cannot be empty" }
+          return input.label === "Question"
+            ? { ...input, error: "Question cannot be empty" }
             : input;
         })
       );
@@ -100,15 +103,15 @@ function FlashcardEdit({ id, definition, explanation }) {
     } else {
       setEditInputs((prevInputs) =>
         prevInputs.map((input) => {
-          return input.label === "Definition" ? { ...input, error: "" } : input;
+          return input.label === "Question" ? { ...input, error: "" } : input;
         })
       );
     }
     if (explanationInput.value === "") {
       setEditInputs((prevInputs) =>
         prevInputs.map((input) => {
-          return input.label === "Explanation"
-            ? { ...input, error: "Explanation cannot be empty" }
+          return input.label === "Answer"
+            ? { ...input, error: "Answer cannot be empty" }
             : input;
         })
       );
@@ -116,15 +119,13 @@ function FlashcardEdit({ id, definition, explanation }) {
     } else {
       setEditInputs((prevInputs) =>
         prevInputs.map((input) => {
-          return input.label === "Explanation"
-            ? { ...input, error: "" }
-            : input;
+          return input.label === "Answer" ? { ...input, error: "" } : input;
         })
       );
     }
 
     if (isRdyToSend) {
-      const newFlashcards = await put(
+      const newFlashcard = await put(
         formData,
         `subjects/${subject}/flashcards/${id}`
       );
@@ -132,8 +133,16 @@ function FlashcardEdit({ id, definition, explanation }) {
         alert(errorPut.detail[0].msg);
         return;
       }
-      setFlashcards({ ...flashcards, [subject]: newFlashcards });
+      const newFlashcards = flashcards[subject].map((flashcard) =>
+        flashcard.id == id ? newFlashcard : flashcard
+      );
+
+      setFlashcards({
+        ...flashcards,
+        [subject]: newFlashcards,
+      });
       updateSubjects();
+      closeEditModal();
     } else {
       return;
     }
@@ -146,7 +155,7 @@ function FlashcardEdit({ id, definition, explanation }) {
   }
   return (
     <div className="relative flex justify-center items-center bg-gradient-to-r from-purple-600  to-purple-500 rounded-2xl shadow-xl text-white h-[150px] xs:h-[180px] sm:h-[200px] ">
-      <h2 className="mx-8">{definition}</h2>
+      <h2 className="mx-8 mr-16">{question}</h2>
       <div className="absolute right-[-2px]  flex flex-col  justify-center items-center gap-8 h-full bg-gradient-to-r from-purple-600 to-purple-500 rounded-2xl px-3">
         <button
           className="cursor-pointer hover:translate-y-[2px] transition-transform will-change-transform"

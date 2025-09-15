@@ -1,8 +1,8 @@
 import { useState } from "react";
 
 function Flashcard({
-  definition,
-  explanation,
+  question,
+  answer,
   turnOff = false,
   styles,
   flipped,
@@ -33,10 +33,10 @@ function Flashcard({
         <div
           className={`p-4 absolute z-2 w-full h-full flex items-center justify-center bg-gradient-to-r from-purple-600  to-purple-500 rounded-2xl shadow-xl text-center backface-hidden bg-opacity-100`}
         >
-          <h2 className={`${styles} `}>{definition}</h2>
+          <h2 className={`${styles} `}>{question}</h2>
         </div>
         <div className="absolute z-1 w-full h-full rotate-y-180  flex items-center justify-center bg-gradient-to-r from-purple-600  to-purple-500 rounded-2xl shadow-xl  text-center backface-hidden">
-          <p className="text-white">{explanation}</p>
+          <p className="text-white">{answer}</p>
         </div>
       </div>
     </button>
