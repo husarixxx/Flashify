@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
 import models,schemas, utils
 from database import engine, Sessionlocal
-from typing import Annotated
+from typing import Annotated, List
 from sqlalchemy.orm  import Session
 from login import create_access_token, get_current_user
 
@@ -82,470 +82,561 @@ async def login(response : Response, db: db_deppendency, login_data: schemas.Use
     )
     return {"status": "success", "message": "Logged in successfully"}
 
+# Subjects Endpoints
 
-@app.post("/Flashcards/Generate", response_model=list[schemas.ResponseFlashcard ])#schemas.CreateFlashcard
-async def createFlash(db : db_deppendency,
-                    request_data : schemas.GenerateRequest,
-                    current_user: models.Users = Depends(get_current_user)
-                       ):
-    subject = db.query(models.Subject).filter(
-        models.Subject.name == request_data.subject
-    ).first()
-
-    if not subject:
-        subject = models.Subject(name=request_data.subject)
-        db.add(subject)
-        db.commit()
-        db.refresh(subject)
-
-    Created_flashcards = generate_flashcards(
-        request_data.subject,
-        request_data.number_of_flashcards
-    )
-    saved_flashcards = []
-    if not Created_flashcards:
-        raise HTTPException(
-            status_code=500,
-            detail= "Failed to generate Flashcards"
-        )
-    for flashcard in Created_flashcards:
-        db_flashcard = models.Flashcard(
-            question = flashcard["question"],
-            answer = flashcard["answer"],
-            user_id = current_user.id,
-            subject_id = subject.id 
-        )
-        db.add(db_flashcard)
-        saved_flashcards.append(db_flashcard)
-
-    db.commit()
-
-
-    for flashcard in saved_flashcards:
-        db.refresh(flashcard)
-
-
-    return saved_flashcards
-
-# ----------------------Flashcards methods for specific User---------------------------#
-# @app.get("/flashcards", response_model=list[schemas.CreateFlashcard])
-# async def get_flashcards(db: db_deppendency, current_user: models.Users = Depends(get_current_user)):
-#     flashcards = db.query(models.Flashcard).filter(models.Flashcard.user_id == current_user.id).all()
-#     return flashcards
-
-
-# @app.put("/flashcards/{flashcard_id}", response_model=schemas.CreateFlashcard)
-# async def update_flashcard(flashcard_id: int, update: schemas.UpdateFlashcard, 
-#                            db: db_deppendency, current_user: models.Users = Depends(get_current_user)):
-#     flashcard = db.query(models.Flashcard).filter(
-#         models.Flashcard.id == flashcard_id,
-#         models.Flashcard.user_id == current_user.id
-#     ).first()
-#     if not flashcard:
-#         raise HTTPException(status_code=404, detail="Flashcard not found")
-
-#     if update.question:
-#         flashcard.question = update.question
-#     if update.answer:
-#         flashcard.answer = update.answer
-
-#     db.commit()
-#     db.refresh(flashcard)
-#     return flashcard
-
-# @app.delete("/flashcards/{flashcard_id}")
-# async def delete_flashcard(flashcard_id: int, db: db_deppendency, current_user: models.Users = Depends(get_current_user)):
-#     flashcard = db.query(models.Flashcard).filter(
-#         models.Flashcard.id == flashcard_id,
-#         models.Flashcard.user_id == current_user.id
-#     ).first()
-#     if not flashcard:
-#         raise HTTPException(status_code=404, detail="Flashcard not found")
-
-#     db.delete(flashcard)
-#     db.commit()
-#     return {"status": "success", "message": "Flashcard deleted"}
-
-
-# --- subject methods---
-
-@app.get("/subjects")
-async def get_subjects(db: db_deppendency, current_user: models.Users = Depends(get_current_user)):
-    subjects = db.query(models.Subject).all()
-    response = [
-        {
-            "id" : s.id,
-            "name" : s.name,
-            "flaschcardsCount" : len(s.flashcards)
-
-        } for s in subjects
-    ]
-    return response
-
-
-@app.get("/subjects/{subject_id}/flashcards")
-async def get_flashcards_by_subject(subject_id: int, db: db_deppendency,
-                                     current_user: models.Users = Depends(get_current_user)):
-    flashcards = db.query(models.Flashcard).filter(
-        models.Flashcard.subject_id == subject_id,
-        models.Flashcard.user_id == current_user.id
-    ).all()
-    return flashcards
-
-
-@app.post("/subjects/{subject_id}/flashcards", response_model=schemas.ResponseFlashcard)
-async def add_flashcards(subject_id: int, flashcard: schemas.CreateFlashcard,
-                         db: db_deppendency, current_user: models.Users = Depends(get_current_user)):
-    db_flashcards = models.Flashcard(
-        question = flashcard.question,
-        answer = flashcard.answer,
-        user_id = current_user.id,
-        subject_id = subject_id
-    )
-    db.add(db_flashcards)
-    db.commit()
-    db.refresh(db_flashcards)
-    return db_flashcards
-
-
-@app.put("/subjects/{subject_id}/flashcards/{flashcard_id}", response_model=schemas.ResponseFlashcard)
-async def update_flashcards(subject_id : int,flashcard_id: int, flashcard: schemas.CreateFlashcard,
-                            db: db_deppendency, current_user: models.Users = Depends(get_current_user)):
-    
-    db_flashcard = db.query(models.Flashcard).filter(
-        models.Flashcard.id == flashcard_id,
-        models.Flashcard.subject_id == subject_id,
-        models.Flashcard.user_id == current_user.id
-    ).first()
-    if not db_flashcard:
-        raise HTTPException(status_code=404, detail="Flashcard not found")
-    db_flashcard.question = flashcard.question
-    db_flashcard.answer = flashcard.answer
-    db.commit()
-    db.refresh(db_flashcard)
-    return db_flashcard
-
-
-@app.delete("/subjects/{subject_id}/flashcards/{flashcard_id}")
-async def delete_flashcard(subject_id: int , flashcard_id: int,
-                           db: db_deppendency, current_user: models.Users = Depends(get_current_user)):
-    db_flashcard = db.query(models.Flashcard).filter(
-        models.Flashcard == flashcard_id,
-        models.Flashcard.subject_id == subject_id,
-        models.Flashcard.user_id == current_user.id
-    ).first()
-
-    if not db_flashcard:
-        raise HTTPException(status_code=404, detail="Flashcard not found")
-    db.delete(db_flashcard)
-    db.commit()
-    return {"status": "success", "message": "Flashcard deleted"}
-
-
-
-@app.get("/api/quiz-subjects")
-async def get_quiz_subjects(
-    db: db_deppendency,
-    current_user: models.Users = Depends(get_current_user)
+#zwraca wszystkie tematy dla danego usera
+#zakladka flashcards
+@app.get("/api/subjects/flashcards", response_model=List[schemas.SubjectResponse])
+async def get_user_subjects_and_flascardCount(
+    db : db_deppendency,
+    current_user : models.Users = Depends(get_current_user)
 ):
-    subjects = db.query(models.QuizSubject).filter(
-        models.QuizSubject.user_id == current_user.id
+    subjects = db.query(models.Subject).filter(
+        models.Subject.user_id == current_user.id
     ).all()
-    
-    response = []
+    result = []
     for subject in subjects:
-        subject_data = {
-            "id": subject.id,
-            "name": subject.name,
-            "quizzes": []
-        }
-        for quiz in subject.quizzes:
-            quiz_data = {
-                "id": quiz.id,
-                "title": quiz.title,
-                "questions": []
-            }
-            for question in quiz.questions:
-                question_data = {
-                    "id": question.id,
-                    "question": question.question,
-                    "type": question.type,
-                    "answers": [
-                        {
-                            "id": answer.id,
-                            "text": answer.text,
-                            "isCorrect": answer.is_correct
-                        }
-                        for answer in question.answers
-                    ]
-                }
-                quiz_data["questions"].append(question_data)
-            subject_data["quizzes"].append(quiz_data)
-        response.append(subject_data)
+        subject_data = schemas.SubjectResponse.model_validate(subject)
+        subject_data.stats = schemas.SubjectStats(
+            flashcards_count=len(subject.flashcards)
+        )
+        result.append(subject_data)
     
-    return response
+    return result
 
-@app.post("/api/quiz-subjects")
-async def create_quiz_subject(
-    subject: schemas.QuizSubjectCreate,
+
+#zwraca wszystkie tematy dla danego usera
+#zakladka quizy
+@app.get("/api/subjects/quizzes", response_model=List[schemas.SubjectResponse])
+async def get_user_subjects_and_quizzCount(
+    db : db_deppendency,
+    current_user : models.Users = Depends(get_current_user)
+):
+    subjects = db.query(models.Subject).filter(
+        models.Subject.user_id == current_user.id
+    ).all()
+    result = []
+    for subject in subjects:
+        subject_data = schemas.SubjectResponse.model_validate(subject)
+        subject_data.stats = schemas.SubjectStats(
+            quizzes_count=len(subject.quizzes)
+        )
+        result.append(subject_data)
+    
+    return result
+#zwraca wszystkie tematy dla danego usera
+#zakladka notes
+@app.get("/api/subjects/notes", response_model=List[schemas.SubjectResponse])
+async def get_user_subjects_and_NotesCount(
+    db : db_deppendency,
+    current_user : models.Users = Depends(get_current_user)
+):
+    subjects = db.query(models.Subject).filter(
+        models.Subject.user_id == current_user.id
+    ).all()
+    result = []
+    for subject in subjects:
+        subject_data = schemas.SubjectResponse.model_validate(subject)
+        subject_data.stats = schemas.SubjectStats(
+            notes_count=len(subject.notes)
+        )
+        result.append(subject_data)
+    
+    return result
+
+#zwraca wsystkie tematy z policzonymi itemmami typu quiz itp...
+#zakladka subjects
+@app.get("/api/subjects/count", response_model=List[schemas.SubjectResponse])
+async def get_counted_user_items_by_subject(
+    db : db_deppendency,
+    current_user : models.Users = Depends(get_current_user)
+):
+    subjects = db.query(models.Subject).filter(
+        models.Subject.user_id == current_user.id
+    ).all()
+    result = []
+    for subject in subjects:
+        subject_data = schemas.SubjectResponse.model_validate(subject)
+        subject_data.stats = schemas.SubjectStats(
+            flashcards_count=len(subject.flashcards),
+            quizzes_count=len(subject.quizzes),
+            notes_count=len(subject.notes)
+        )
+        result.append(subject_data)
+    
+    return result
+
+#tworzenie subjectu ( tu akurat nie wazne jak czy quizz czy flash cy notes bo tworzt sie podobnie)
+@app.post("/api/subjects", response_model=schemas.SubjectResponse)
+async def create_subject(
+    subject_data: schemas.SubjectCreate,
     db: db_deppendency,
     current_user: models.Users = Depends(get_current_user)
 ):
-    db_subject = models.QuizSubject(
-        name=subject.name,
+    # sprawdzenie czy juz jest taki temat w bazie
+    existing_subject = db.query(models.Subject).filter(
+        models.Subject.user_id == current_user.id,
+        models.Subject.name == subject_data.name
+    ).first()
+    
+    if existing_subject:
+        raise HTTPException(status_code=400, detail="Subject with this name already exists")
+    
+    new_subject = models.Subject(
+        name=subject_data.name,
         user_id=current_user.id
     )
-    db.add(db_subject)
-    db.commit()
-    db.refresh(db_subject)
     
-    return {"id": db_subject.id, "name": db_subject.name, "quizzes": []}
+    db.add(new_subject)
+    db.commit()
+    db.refresh(new_subject)
+    
+    # zmiennne przy dodawaniu do liceznia
+    result = schemas.SubjectResponse.model_validate(new_subject)
+    result.stats = schemas.SubjectStats(
+        flashcards_count=0,
+        quizzes_count=0,
+        notes_count=0
+    )
+    return result
 
 
-@app.get("/api/subjects/{subject_id}/quizzes")
-async def get_quizzes_from_subject(
+# wszystkie fiszki do danego tematu 
+@app.get("/api/subjects/{subject_id}/flashcards", response_model=List[schemas.FlashcardResponse])
+async def get_flashcards(
     subject_id: int,
     db: db_deppendency,
     current_user: models.Users = Depends(get_current_user)
 ):
-    subject = db.query(models.QuizSubject).filter(
-        models.QuizSubject.id == subject_id,
-        models.QuizSubject.user_id == current_user.id
+
+    subject = db.query(models.Subject).filter(
+        models.Subject.id == subject_id,
+        models.Subject.user_id == current_user.id
     ).first()
     
     if not subject:
         raise HTTPException(status_code=404, detail="Subject not found")
     
-    response = []
-    for quiz in subject.quizzes:
-        quiz_data = {
-            "id": quiz.id,
-            "title": quiz.title,
-            "questions": []
-        }
-        for question in quiz.questions:
-            question_data = {
-                "id": question.id,
-                "question": question.question,
-                "type": question.type,
-                "answers": [
-                    {
-                        "id": answer.id,
-                        "text": answer.text,
-                        "isCorrect": answer.is_correct
-                    }
-                    for answer in question.answers
-                ]
-            }
-            quiz_data["questions"].append(question_data)
-        response.append(quiz_data)
+    return subject.flashcards
+
+
+#  nowq fiszka do tematu
+@app.post("/api/subjects/{subject_id}/flashcards", response_model=schemas.FlashcardResponse)
+async def create_flashcard(
+    subject_id: int,
+    flashcard_data: schemas.FlashcardCreate,
+    db: db_deppendency,
+    current_user: models.Users = Depends(get_current_user)
+):
+   
+    subject = db.query(models.Subject).filter(
+        models.Subject.id == subject_id,
+        models.Subject.user_id == current_user.id
+    ).first()
     
-    return response
+    if not subject:
+        raise HTTPException(status_code=404, detail="Subject not found")
+    
+    new_flashcard = models.Flashcard(
+        question=flashcard_data.question,
+        answer=flashcard_data.answer,
+        subject_id=subject_id
+    )
+    
+    db.add(new_flashcard)
+    db.commit()
+    db.refresh(new_flashcard)
+    return new_flashcard
+
+# fiszki za  pomoca Ai
+@app.post("/api/subjects/{subject_id}/flashcards/generate", response_model=List[schemas.FlashcardResponse])
+async def generate_flashcards_for_subject(
+    subject_data: schemas.SubjectCreate,
+    request_data: schemas.GenerateFlashcardsRequest,
+    db: db_deppendency,
+    current_user: models.Users = Depends(get_current_user)
+):
+    
+    existing_subject = db.query(models.Subject).filter(
+        models.Subject.user_id == current_user.id,
+        models.Subject.name == subject_data.name
+    ).first()
+    
+    if existing_subject:
+        raise HTTPException(status_code=400, detail="Subject with this name already exists")
+    
+    new_subject = models.Subject(
+        name=subject_data.name,
+        user_id=current_user.id
+    )
+    
+    db.add(new_subject)
+    db.commit()
+    db.refresh(new_subject)
+    
+    # zmiennne przy dodawaniu do liceznia
+    result = schemas.SubjectResponse.model_validate(new_subject)
+    result.stats = schemas.SubjectStats(
+        flashcards_count=0,
+        quizzes_count=0,
+        notes_count=0
+    )
+
+    
+    generated_flashcards = generate_flashcards(
+        request_data.topic,
+        request_data.number_of_flashcards
+    )
+    
+    if not generated_flashcards:
+        raise HTTPException(status_code=500, detail="Failed to generate flashcards")
+    
+    saved_flashcards = []
+    for flashcard_data in generated_flashcards:
+        new_flashcard = models.Flashcard(
+            question=flashcard_data["question"],
+            answer=flashcard_data["answer"],
+            subject_id=new_subject.id
+        )
+        db.add(new_flashcard)
+        saved_flashcards.append(new_flashcard)
+    
+    db.commit()
+    
+    for flashcard in saved_flashcards:
+        db.refresh(flashcard)
+    
+    return saved_flashcards
 
 
+#aktualizacja fiszki
+@app.put("/api/subjects/{subject_id}/flashcards/{flashcard_id}", response_model=schemas.FlashcardResponse)
+async def update_flashcard(
+    subject_id: int,
+    flashcard_id: int,
+    flashcard_data: schemas.FlashcardUpdate,
+    db: db_deppendency,
+    current_user: models.Users = Depends(get_current_user)
+):
 
-@app.put("/api/subjects/{subject_id}/quizzes")
-async def create_quiz(
+    flashcard = db.query(models.Flashcard).join(models.Subject).filter(
+        models.Flashcard.id == flashcard_id,
+        models.Flashcard.subject_id == subject_id,
+        models.Subject.user_id == current_user.id
+    ).first()
+    
+    if not flashcard:
+        raise HTTPException(status_code=404, detail="Flashcard not found")
+    
+    if flashcard_data.question is not None:
+        flashcard.question = flashcard_data.question
+    if flashcard_data.answer is not None:
+        flashcard.answer = flashcard_data.answer
+    
+    db.commit()
+    db.refresh(flashcard)
+    return flashcard
+
+# usuniecie fiszki
+@app.delete("/api/subjects/{subject_id}/flashcards/{flashcard_id}")
+async def delete_flashcard(
+    subject_id: int,
+    flashcard_id: int,
+    db: db_deppendency,
+    current_user: models.Users = Depends(get_current_user)
+):
+    
+    flashcard = db.query(models.Flashcard).join(models.Subject).filter(
+        models.Flashcard.id == flashcard_id,
+        models.Flashcard.subject_id == subject_id,
+        models.Subject.user_id == current_user.id
+    ).first()
+    
+    if not flashcard:
+        raise HTTPException(status_code=404, detail="Flashcard not found")
+    
+    db.delete(flashcard)
+    db.commit()
+    return {"status": "success", "message": "Flashcard deleted successfully"}
+
+# --QUIZZY--
+
+#quizy z danego tematu
+@app.get("/api/subjects/{subject_id}/quizzes", response_model=List[schemas.QuizResponse])
+async def get_quizzes(
+    subject_id: int,
+    db: db_deppendency,
+    current_user: models.Users = Depends(get_current_user)
+):
+    subject = db.query(models.Subject).filter(
+        models.Subject.id == subject_id,
+        models.Subject.user_id == current_user.id
+    ).first()
+    
+    if not subject:
+        raise HTTPException(status_code=404, detail="Subject not found")
+    
+    return subject.quizzes
+
+# tworzenie nowego quizu bez AI
+@app.post("/api/subjects/{subject_id}/quizzes", response_model=schemas.QuizResponse)
+async def create_quiz_no_ai(
     subject_id: int,
     quiz_data: schemas.QuizCreate,
     db: db_deppendency,
     current_user: models.Users = Depends(get_current_user)
 ):
-    subject = db.query(models.QuizSubject).filter(
-        models.QuizSubject.id == subject_id,
-        models.QuizSubject.user_id == current_user.id
+    
+    subject = db.query(models.Subject).filter(
+        models.Subject.id == subject_id,
+        models.Subject.user_id == current_user.id
     ).first()
     
     if not subject:
         raise HTTPException(status_code=404, detail="Subject not found")
     
-    db_quiz = models.Quiz(
-        title=quiz_data.name,  
+    new_quiz = models.Quiz(
+        title=quiz_data.title,
         subject_id=subject_id
     )
-    db.add(db_quiz)
-    db.commit()
-    db.refresh(db_quiz)
     
-    return await get_quizzes_from_subject(subject_id, db, current_user)
+    db.add(new_quiz)
+    db.commit()
+    db.refresh(new_quiz)
+    return new_quiz
 
 
-@app.post("/api/subjects/{subject_id}/quizzes/{quiz_id}/generate")
-async def generate_quiz_with_ai(
+# tworzenie nowego quizu z Ai
+@app.post("/api/subjects/{subject_id}/quizzes/{quiz_id}/generate", response_model=schemas.QuizResponse)
+async def create_quiz_with_ai_questions(
     subject_id: int,
-    quiz_id: int,
-    request: schemas.GenerateQuizRequest,
+    quiz_data: schemas.QuizCreate,
+    request_data: schemas.GenerateQuizRequest,
     db: db_deppendency,
     current_user: models.Users = Depends(get_current_user)
 ):
-    quiz = db.query(models.Quiz).join(models.QuizSubject).filter(
-        models.Quiz.id == quiz_id,
-        models.QuizSubject.id == subject_id,
-        models.QuizSubject.user_id == current_user.id
+    subject = db.query(models.Subject).filter(
+        models.Subject.id == subject_id,
+        models.Subject.user_id == current_user.id
     ).first()
+    if not subject:
+        raise HTTPException(status_code=404, detail="Subject not found")
+
+    quiz =  models.Quiz(
+        title=quiz_data.title,
+        subject_id=subject_id
+    )
+    db.add(quiz)
+    db.commit()
+    db.refresh(quiz)
     
     if not quiz:
         raise HTTPException(status_code=404, detail="Quiz not found")
     
     generated_questions = generate_quizz(
-        request.topic,
-        request.number_of_questions,
-        request.question_types
+        request_data.topic,
+        request_data.number_of_questions,
+        request_data.question_types
     )
     
     if not generated_questions:
         raise HTTPException(status_code=500, detail="Failed to generate quiz questions")
     
-    for q_data in generated_questions:
-        db_question = models.QuizQuestion(
-            question=q_data["question"],
-            type=q_data["type"],
-            quiz_id=quiz_id
+    for question_data in generated_questions:
+        new_question = models.QuizQuestion(
+            question=question_data["question"],
+            type=question_data["type"],
+            quiz_id=quiz.id
         )
-        db.add(db_question)
-        db.flush()  
+        db.add(new_question)
+        db.flush()
         
-        for answer_data in q_data["answers"]:
-            db_answer = models.QuizAnswer(
+        for answer_data in question_data["answers"]:
+            new_answer = models.QuizAnswer(
                 text=answer_data["text"],
                 is_correct=answer_data["is_correct"],
-                question_id=db_question.id
+                question_id=new_question.id
             )
-            db.add(db_answer)
+            db.add(new_answer)
     
     db.commit()
+    db.refresh(quiz)
+    return quiz
 
-    return await get_quizzes_from_subject(subject_id, db, current_user)
 
-@app.post("/api/subjects/{subject_id}/quizzes/{quiz_id}/questions")
-async def add_question(
+# --NOTES --
+# wszystkie notatki z danego tematu
+@app.get("/api/subjects/{subject_id}/notes", response_model=List[schemas.NoteResponse])
+async def get_notes(
     subject_id: int,
-    quiz_id: int,
-    question: schemas.QuizQuestionCreate,
     db: db_deppendency,
     current_user: models.Users = Depends(get_current_user)
 ):
-    quiz = db.query(models.Quiz).join(models.QuizSubject).filter(
-        models.Quiz.id == quiz_id,
-        models.QuizSubject.id == subject_id,
-        models.QuizSubject.user_id == current_user.id
+    
+    subject = db.query(models.Subject).filter(
+        models.Subject.id == subject_id,
+        models.Subject.user_id == current_user.id
     ).first()
     
-    if not quiz:
-        raise HTTPException(status_code=404, detail="Quiz not found")
+    if not subject:
+        raise HTTPException(status_code=404, detail="Subject not found")
     
-    db_question = models.QuizQuestion(
-        question=question.question,
-        type=question.type,
-        quiz_id=quiz_id
+    return subject.notes
+
+# nowa notatka do tematu
+@app.post("/api/subjects/{subject_id}/notes", response_model=schemas.NoteResponse)
+async def create_note(
+    subject_id: int,
+    note_data: schemas.NoteCreate,
+    db: db_deppendency,
+    current_user: models.Users = Depends(get_current_user)
+):
+    subject = db.query(models.Subject).filter(
+        models.Subject.id == subject_id,
+        models.Subject.user_id == current_user.id
+    ).first()
+    
+    if not subject:
+        raise HTTPException(status_code=404, detail="Subject not found")
+    
+    new_note = models.Note(
+        title=note_data.title,
+        content=note_data.content,
+        subject_id=subject_id
     )
-    db.add(db_question)
-    db.flush()
     
-
-    for answer in question.answers:
-        db_answer = models.QuizAnswer(
-            text=answer.text,
-            is_correct=answer.is_correct,
-            question_id=db_question.id
-        )
-        db.add(db_answer)
-    
+    db.add(new_note)
     db.commit()
-    
-    return await get_quizzes_from_subject(subject_id, db, current_user)
+    db.refresh(new_note)
+    return new_note
 
-# --- Update question ---
-@app.put("/api/subjects/{subject_id}/quizzes/{quiz_id}/questions/{question_id}")
-async def update_question(
+# Aktualizacja notatki
+@app.put("/api/subjects/{subject_id}/notes/{note_id}", response_model=schemas.NoteResponse)
+async def update_note(
     subject_id: int,
-    quiz_id: int,
-    question_id: int,
-    question: schemas.QuizQuestionUpdate,
+    note_id: int,
+    note_data: schemas.NoteUpdate,
     db: db_deppendency,
     current_user: models.Users = Depends(get_current_user)
 ):
-    db_question = db.query(models.QuizQuestion).join(
-        models.Quiz
-    ).join(
-        models.QuizSubject
-    ).filter(
-        models.QuizQuestion.id == question_id,
-        models.Quiz.id == quiz_id,
-        models.QuizSubject.id == subject_id,
-        models.QuizSubject.user_id == current_user.id
+    
+    note = db.query(models.Note).join(models.Subject).filter(
+        models.Note.id == note_id,
+        models.Note.subject_id == subject_id,
+        models.Subject.user_id == current_user.id
     ).first()
     
-    if not db_question:
-        raise HTTPException(status_code=404, detail="Question not found")
+    if not note:
+        raise HTTPException(status_code=404, detail="Note not found")
     
-
-    db_question.question = question.question
-    db_question.type = question.type
-    
-
-    db.query(models.QuizAnswer).filter(
-        models.QuizAnswer.question_id == question_id
-    ).delete()
-    
-    for answer in question.answers:
-        db_answer = models.QuizAnswer(
-            text=answer.text,
-            is_correct=answer.is_correct,
-            question_id=question_id
-        )
-        db.add(db_answer)
+    if note_data.title is not None:
+        note.title = note_data.title
+    if note_data.content is not None:
+        note.content = note_data.content
     
     db.commit()
-    
-    return await get_quizzes_from_subject(subject_id, db, current_user)
+    db.refresh(note)
+    return note
 
 
-@app.delete("/api/subjects/{subject_id}/quizzes/{quiz_id}/questions/{question_id}")
-async def delete_question(
+# Usuwanie notatki
+@app.delete("/api/subjects/{subject_id}/notes/{note_id}")
+async def delete_note(
     subject_id: int,
-    quiz_id: int,
-    question_id: int,
+    note_id: int,
     db: db_deppendency,
     current_user: models.Users = Depends(get_current_user)
 ):
-    db_question = db.query(models.QuizQuestion).join(
-        models.Quiz
-    ).join(
-        models.QuizSubject
-    ).filter(
-        models.QuizQuestion.id == question_id,
-        models.Quiz.id == quiz_id,
-        models.QuizSubject.id == subject_id,
-        models.QuizSubject.user_id == current_user.id
+    
+    note = db.query(models.Note).join(models.Subject).filter(
+        models.Note.id == note_id,
+        models.Note.subject_id == subject_id,
+        models.Subject.user_id == current_user.id
     ).first()
     
-    if not db_question:
-        raise HTTPException(status_code=404, detail="Question not found")
+    if not note:
+        raise HTTPException(status_code=404, detail="Note not found")
     
-    db.delete(db_question)
+    db.delete(note)
     db.commit()
-    
-    return await get_quizzes_from_subject(subject_id, db, current_user)
+    return {"status": "success", "message": "Note deleted successfully"}
 
 
-@app.delete("/api/subjects/{subject_id}/quizzes/{quiz_id}")
-async def delete_quiz(
-    subject_id: int,
-    quiz_id: int,
+
+#zmiana nazwy uzytkownika
+@app.put("/api/user/username", response_model=schemas.UserResponse)
+async def update_username(
+    user_data: schemas.UserUpdateUsername,
     db: db_deppendency,
     current_user: models.Users = Depends(get_current_user)
 ):
-    quiz = db.query(models.Quiz).join(models.QuizSubject).filter(
-        models.Quiz.id == quiz_id,
-        models.QuizSubject.id == subject_id,
-        models.QuizSubject.user_id == current_user.id
+    
+    user = db.query(models.Users).filter(models.Users.id== current_user.id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    if not utils.verify_password(user_data.password, user.hashed_password):
+        raise HTTPException(status_code=401, detail="Invalid password")
+    
+    existing_user = db.query(models.Users).filter(
+        models.Users.username == user_data.new_username,
+        models.Users.id != user.id
     ).first()
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Username already taken")
     
-    if not quiz:
-        raise HTTPException(status_code=404, detail="Quiz not found")
-    
-    db.delete(quiz)
+    user.username = user_data.new_username
     db.commit()
+    db.refresh(user)
+    return {"status": "success", "message": "Username change successfully"}
+
+#zmiana adresu email
+@app.put("/api/user/email", response_model=schemas.UserResponse)
+async def update_email(
+    user_data: schemas.UserUpdateEmail,
+    db: db_deppendency,
     
-    return {"status": "success", "message": "Quiz deleted"}
+    current_user: models.Users = Depends(get_current_user)
+    
+):
+    
+    user = db.query(models.Users).filter(models.Users.id == current_user.id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    
+    if not utils.verify_password(user_data.password, user.hashed_password):
+        raise HTTPException(status_code=401, detail="Invalid password")
+    
+    existing_user = db.query(models.Users).filter(
+        models.Users.email == user_data.new_email,
+        models.Users.id != user.id
+    ).first()
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    
+    user.email = user_data.new_email
+    db.commit()
+    db.refresh(user)
+    
+    return {"status": "success", "message": "Email change successfully"}
+
+#zmiana hasla
+@app.put("/api/user/password", response_model=schemas.UserResponse)
+async def update_password(
+    user_data: schemas.UserUpdatePassword,
+    db: db_deppendency,
+    current_user: models.Users = Depends(get_current_user)
+):
+    user = db.query(models.Users).filter(models.Users.id == current_user.id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    if not utils.verify_password(user_data.old_password, user.hashed_password):
+        raise HTTPException(status_code=401, detail="Invalid old password")
+    
+    user.hashed_password = utils.hash_password(user_data.new_password)
+    db.commit()
+    db.refresh(user)
+    
+    return {"status": "success", "message": "Password change successfully"}

@@ -1,5 +1,6 @@
 from pydantic import BaseModel, EmailStr, Field, field_validator
 from typing import Optional, List, Literal
+from datetime import datetime
 
 
 # -- User mechanics --
@@ -40,47 +41,92 @@ class UserResponse(BaseModel):
 
 class Token(BaseModel):
     access_token : str
+
+class UserUpdateUsername(BaseModel):
+    
+    password: str
+    new_username: str = Field(..., min_length=5, max_length=20)
+    
+    @field_validator('new_username')
+    def validate_username(cls, v):
+        if len(v) < 8:
+            raise ValueError("Username must be at least 8 characters")
+        return v
+
+
+class UserUpdateEmail(BaseModel):
+    email: EmailStr  # Current email
+    password: str
+    new_email: EmailStr
+
+
+class UserUpdatePassword(BaseModel):
+    email: EmailStr
+    old_password: str
+    new_password: str = Field(..., min_length=8)
+    
+    @field_validator('new_password')
+    def validate_password(cls, v):
+        if len(v) < 8:
+            raise ValueError("Password must be at least 8 characters")
+        if not any(char.isdigit() for char in v):
+            raise ValueError("Password must have at least one number")
+        if not any(char.isupper() for char in v):
+            raise ValueError("Password must have at least one UpperCase letter")
+        return v
+
 # -- topics of flaschards --
 
-class SubjectBase(BaseModel):
-    name: str
+#Głowny subject
 
-class SubjectCreate(SubjectBase):
-    pass
+class SubjectCreate(BaseModel):
+    name: str = Field(..., min_length=1, max_length=100)
 
-class SubjectResponse(SubjectBase):
+class SubjectUpdate(BaseModel):
+    name: str = Field(..., min_length=1, max_length=100)
+
+class SubjectStats(BaseModel):
+    flashcards_count: int = 0
+    quizzes_count: int = 0 
+    notes_count: int = 0
+
+class SubjectResponse(BaseModel):
     id: int
-    
+    name: str
+    created_at: datetime
+    stats: Optional[SubjectStats] = None
+
     class Config:
         from_attributes = True
-
 
 
 
 
 # --flashcards---
 
-class BaseFlashcard(BaseModel):
+class FlashcardCreate(BaseModel):
+    question: str = Field(..., min_length=1)
+    answer: str = Field(..., min_length=1)
+
+class FlashcardUpdate(BaseModel):
+    
+    question: Optional[str] = Field(None, min_length=1)
+    answer: Optional[str] = Field(None, min_length=1)
+
+
+class FlashcardResponse(BaseModel):
+    id: int
     question: str
     answer: str
-
-class CreateFlashcard(BaseFlashcard):
-    subject_id: int 
-
-class UpdateFlashcard(BaseFlashcard):
-    pass
-
-class ResponseFlashcard(BaseFlashcard):
-    id: int
-    user_id: int
-    subject: Optional[SubjectResponse] = None 
+    created_at: datetime
+    subject_id: int
 
     class Config:
         from_attributes = True
 
-class GenerateRequest(BaseModel):
-    subject: str  
-    number_of_flashcards: int  = 5
+class GenerateFlashcardsRequest(BaseModel):
+    topic: str = Field(..., min_length=1)
+    number_of_flashcards: int = Field(default=5, ge=1, le=30)
 
 # --- updates ---
 class UserUpdate(BaseModel):
@@ -91,70 +137,80 @@ class UserUpdate(BaseModel):
 
 
 # --quizzes--
-class QuizAnswerBase(BaseModel):
+class QuizAnswerCreate(BaseModel):
     text: str
     is_correct: bool
 
-class QuizAnswerCreate(QuizAnswerBase):
-    pass
-
-class QuizAnswerUpdate(QuizAnswerBase):
-    pass
-
-class QuizAnswerResponse(QuizAnswerBase):
+class QuizAnswerResponse(BaseModel):
     id: int
-    
+    text: str
+    is_correct: bool
+
     class Config:
         from_attributes = True
 
 
-class QuizQuestionBase(BaseModel):
-    question: str
+class QuizQuestionCreate(BaseModel):
+    question: str = Field(..., min_length=1)
     type: Literal["multiple-choice", "single-choice", "true-false"]
+    answers: List[QuizAnswerCreate] = Field(..., min_items=2)
 
-class QuizQuestionCreate(QuizQuestionBase):
-    answers: List[QuizAnswerCreate]
+class QuizQuestionUpdate(BaseModel):
+    question: Optional[str] = Field(None, min_length=1)
+    type: Optional[Literal["multiple-choice", "single-choice", "true-false"]] = None
+    answers: Optional[List[QuizAnswerCreate]] = Field(None, min_items=2)
 
-class QuizQuestionUpdate(QuizQuestionBase):
-    answers: List[QuizAnswerCreate]
 
-class QuizQuestionResponse(QuizQuestionBase):
+class QuizQuestionResponse(BaseModel):
     id: int
+    question: str
+    type: str
     answers: List[QuizAnswerResponse]
-    
+
     class Config:
         from_attributes = True
-
-class QuizBase(BaseModel):
-    title: str
 
 class QuizCreate(BaseModel):
-    name: str  
-
-class QuizUpdate(QuizBase):
-    pass
-
-class QuizResponse(QuizBase):
-    id: int
-    questions: List[QuizQuestionResponse]
+    title: str = Field(..., min_length=1, max_length=100)
     
-    class Config:
-        from_attributes = True
 
-class QuizSubjectBase(BaseModel):
-    name: str
+class QuizUpdate(BaseModel):
+    title: Optional[str] = Field(None, min_length=1, max_length=100)
 
-class QuizSubjectCreate(QuizSubjectBase):
-    pass
 
-class QuizSubjectResponse(QuizSubjectBase):
+class QuizResponse(BaseModel):
     id: int
-    quizzes: List[QuizResponse]
-    
+    title: str
+    created_at: datetime
+    subject_id: int
+    questions: List[QuizQuestionResponse] = []
+
     class Config:
         from_attributes = True
 
 class GenerateQuizRequest(BaseModel):
-    topic: str
-    number_of_questions: int = 5
+    topic: str = Field(..., min_length=1)
+    number_of_questions: int = Field(default=5, ge=1, le=30)
     question_types: List[Literal["multiple-choice", "single-choice", "true-false"]]
+
+
+# Notes
+
+class NoteCreate(BaseModel):
+    title: str = Field(..., min_length=1 , max_length=30)
+    content: str
+
+class NoteUpdate(BaseModel):
+    title: Optional[str] = Field(None, min_length=1, max_length=30)
+    content: Optional[str]
+
+class NoteResponse(BaseModel):
+    id : int 
+    title : str
+    content : str
+    created_at : datetime
+    updated_at : datetime
+    subject_id : int 
+
+    class Config:
+        from_attibutes = True

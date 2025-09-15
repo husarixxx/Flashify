@@ -6,6 +6,7 @@ from fastapi import Depends, HTTPException, status,Cookie
 from typing import Annotated
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
+from fastapi import Header
 
 
 import models
@@ -53,7 +54,16 @@ def get_token_from_cookie(access_token: str | None = Cookie(default=None)):
         detail="Invalid authorization format in cookie"
     )
 
-def get_current_user(token : Annotated[str, Depends(get_token_from_cookie)], db : Session = Depends(get_db)):
+def get_current_user(
+        token : Annotated[str, Depends(get_token_from_cookie)],
+          db : Session = Depends(get_db)
+          ):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Cannot verify credentials",
+    )
+
+       
 
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
