@@ -77,7 +77,7 @@ async def login(response : Response, db: db_deppendency, login_data: schemas.Use
         key="access_token",
         value=f"Bearer {access_token}",
         httponly=True,
-        samesite='lax',
+        samesite='none',
         secure=True,
     )
     return {"status": "success", "message": "Logged in successfully"}
@@ -249,7 +249,7 @@ async def create_flashcard(
     return new_flashcard
 
 # fiszki za  pomoca Ai
-@app.post("/api/subjects/{subject_id}/flashcards/generate", response_model=List[schemas.FlashcardResponse])
+@app.post("/api/subjects/flashcards/generate", response_model=List[schemas.FlashcardResponse])
 async def generate_flashcards_for_subject(
     subject_data: schemas.SubjectCreate,
     request_data: schemas.GenerateFlashcardsRequest,
