@@ -83,7 +83,7 @@ async def login(response : Response, db: db_deppendency, login_data: schemas.Use
     return {"status": "success", "message": "Logged in successfully"}
 
 #wylogowanie
-@app.post("/logout")
+@app.post("/api/logout")
 async def logout(response: Response):
     response.delete_cookie(
         key="access_token",
@@ -94,7 +94,7 @@ async def logout(response: Response):
     return {"status": "success", "message" : "Logged out successfully"}
 
 #status pokazujacy pozostały czas
-@app.get("/status", response_model=schemas.TokenStatusResponse)
+@app.get("/api/status", response_model=schemas.TokenStatusResponse)
 async def get_token_status(
     token_info: dict = Depends(get_current_user_with_token_info)
 ):
