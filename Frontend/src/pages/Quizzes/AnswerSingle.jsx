@@ -12,7 +12,7 @@ function AnswerSingle({ answer, onClick, isSelected }) {
         checked={isSelected}
         onChange={onClick}
       />
-      {answer}
+      <span className="flex justify-center items-center">{answer}</span>
     </label>
   );
 }

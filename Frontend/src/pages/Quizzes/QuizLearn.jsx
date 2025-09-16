@@ -175,7 +175,7 @@ function QuizLearn() {
               allQuestionsNumber={questions.length}
               answers={currentQuesiton.answers}
             />
-            <div className=" mx-auto flex flex-col justify-between sm:grid  sm:grid-cols-2 sm:grid-rows-2 gap-4 mt-18  max-w-[640px]">
+            <div className=" mx-auto flex flex-col justify-between sm:grid  sm:grid-cols-2 sm:grid-rows-2 gap-4 mt-18  max-w-[640px] min-h-[160px]">
               {currentQuesiton.answers.map((answer, index) =>
                 currentQuesiton.type === "single-choice" ? (
                   <AnswerSingle
@@ -200,6 +200,7 @@ function QuizLearn() {
                   />
                 ) : (
                   <AnswerTrueFalse
+                    key={answer.id}
                     answer={answer.text}
                     onClick={() => handleSingleAnswer(index)}
                     isSelected={
