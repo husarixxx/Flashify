@@ -17,6 +17,7 @@ function QuizEdit() {
   let params = useParams();
   const path = useLocation();
   const subject = params.subject;
+  const quizId = params.quizId;
 
   const { quizzes, setQuizzes } = useQuizzes();
 
@@ -41,7 +42,7 @@ function QuizEdit() {
     }
   }, [subject, quizzes, setQuizzes, get, errorGet]);
 
-  const quiz = quizzes[subject].filter((quiz) => quiz.id === params.quizId)[0];
+  const quiz = quizzes[subject].find((quiz) => quiz.id == quizId);
 
   const { id, title, questions } = quiz;
 
@@ -533,7 +534,7 @@ function QuizEdit() {
       className={`min-h-[100vh] flex flex-col justify-between overflow-hidden `}
     >
       <Header></Header>
-      <div className="p-4 mx-auto mt-10 md:translate-y-[-80px]">
+      <div className="p-4 mx-auto mt-10 ">
         <h2 className="my-4">{title}</h2>
 
         <div className="flex flex-col justify-center md:grid grid-cols-2 xl:grid-cols-3  gap-8 w-[80vw] px-4">
@@ -555,7 +556,11 @@ function QuizEdit() {
           />
 
           <Link to={`${path.pathname}/../learn`}>
-            <MainButton text={"Learn"} styles={"w-[250px] h-[50px]"} />
+            <MainButton
+              text={"Learn"}
+              styles={"w-[250px] h-[50px]"}
+              disabled={questions.length == 0}
+            />
           </Link>
         </div>
       </div>

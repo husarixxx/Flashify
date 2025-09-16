@@ -8,7 +8,8 @@ import Modal from "../../components/Modal";
 import Form from "../../components/Form";
 import { useQuizzes } from "../../context/QuizzesContext";
 import useGet from "../../hooks/useGet";
-import usePut from "../../hooks/usePut";
+import { useSubjects } from "../../context/SubjectsContext";
+import { usePost } from "../../hooks/usePost";
 
 function QuizzesSet() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -21,6 +22,11 @@ function QuizzesSet() {
 
   const { get, error: errorGet } = useGet();
 
+  const { subjects, updateSubjects } = useSubjects();
+  const currentSubjectName = subjects.filter(
+    (subject) => subject.id == params.subject
+  )[0].name;
+
   useEffect(() => {
     if (!(subject in quizzes)) {
       const fetchData = async () => {
@@ -29,6 +35,17 @@ function QuizzesSet() {
           alert(errorGet.detail[0].msg);
           return;
         }
+
+        fetchedData.map((quiz) => {
+          quiz.questions = quiz.questions.map((question) => ({
+            ...question,
+            answers: question.answers.map(({ is_correct, ...rest }) => ({
+              ...rest,
+              isCorrect: is_correct,
+            })),
+          }));
+          return quiz;
+        });
         setQuizzes({ ...quizzes, [subject]: fetchedData });
       };
 
@@ -41,7 +58,7 @@ function QuizzesSet() {
       id: crypto.randomUUID(),
       type: "text",
       value: "",
-      label: "Name",
+      label: "Title",
       onChange: handleOnChange,
     },
     {
@@ -154,18 +171,18 @@ function QuizzesSet() {
     setIsCreateModalOpen(false);
   }
 
-  const { put } = usePut();
+  const { post, error: errorPost, loading: loadingPost } = usePost();
   async function modalCreateOnSubmit(e) {
     e.preventDefault();
     let isRdyToSend = true;
 
-    const nameInput = createQuizInputs.find((input) => input.label === "Name");
+    const nameInput = createQuizInputs.find((input) => input.label === "Title");
 
     if (nameInput.value === "") {
       setCreateQuizInputs((prevInputs) =>
         prevInputs.map((input) => {
-          return input.label === "Name"
-            ? { ...input, error: "Name cannot be empty" }
+          return input.label === "Title"
+            ? { ...input, error: "Title cannot be empty" }
             : input;
         })
       );
@@ -173,7 +190,7 @@ function QuizzesSet() {
     } else {
       setCreateQuizInputs((prevInputs) =>
         prevInputs.map((input) => {
-          return input.label === "Name" ? { ...input, error: "" } : input;
+          return input.label === "Title" ? { ...input, error: "" } : input;
         })
       );
     }
@@ -183,10 +200,11 @@ function QuizzesSet() {
     );
     if (emptyInput.checked) {
       if (isRdyToSend) {
-        const formData = { name: nameInput.value };
+        const formData = { title: nameInput.value };
 
-        const newQuizzes = await put(formData, `subjects/${subject}/quizzes`);
-        setQuizzes(newQuizzes);
+        const newQuiz = await post(formData, `subjects/${subject}/quizzes`);
+        setQuizzes({ ...quizzes, [subject]: [...quizzes[subject], newQuiz] });
+        updateSubjects();
       } else return;
     } else {
       const topicInput = aiCreateInputs.find(
@@ -210,13 +228,28 @@ function QuizzesSet() {
         );
       }
       if (isRdyToSend) {
-        const formData = setAiCreateInputs.reduce((acc, input) => {
+        const requestData = aiCreateInputs.reduce((acc, input) => {
           const key = input.label.toLowerCase().replaceAll(" ", "_");
-          acc[key] = input.error ? "" : input.value;
+
+          if (input.error) return acc;
+
+          if (input.type === "checkbox") {
+            if (!acc.question_types) acc.question_types = [];
+            if (input.checked)
+              acc.question_types.push(
+                input.value
+                  .toLocaleLowerCase()
+                  .replaceAll(" ", "-")
+                  .replaceAll("-or", "")
+              );
+          } else {
+            acc[key] = input.value;
+          }
+
           return acc;
         }, {});
-        formData.number_of_flashcards = Number.parseInt(
-          formData.number_of_flashcards
+        requestData.number_of_questions = Number.parseInt(
+          requestData.number_of_questions
         );
 
         setAiCreateInputs((prevInputs) =>
@@ -224,6 +257,34 @@ function QuizzesSet() {
             return input.label === "Topic" ? { ...input, error: "" } : input;
           })
         );
+        const formData = {
+          quiz_data: { title: nameInput.value },
+          request_data: requestData,
+        };
+
+        const newQuiz = await post(
+          formData,
+          `subjects/${subject}/quizzes/generate`
+        );
+
+        newQuiz.questions = newQuiz.questions.map((question) => ({
+          ...question,
+          answers: question.answers.map(({ is_correct, ...rest }) => ({
+            ...rest,
+            isCorrect: is_correct,
+          })),
+        }));
+        if (errorPost !== null) {
+          alert(errorPost);
+
+          return;
+        }
+        setQuizzes({
+          ...quizzes,
+          [subject]: [...quizzes[subject], newQuiz],
+        });
+
+        updateSubjects();
       } else return;
     }
 
@@ -233,7 +294,7 @@ function QuizzesSet() {
     <div className="min-h-[100vh] flex flex-col justify-between ">
       <Header></Header>
       <div className="mx-4 md:mx-16 lg:mx-24 xl:mx-30 mt-12 2xl:mx-auto 2xl:px-10 ">
-        <h1 className="my-4 ">{subject}</h1>
+        <h1 className="my-4 ">{currentSubjectName}</h1>
         {!(subject in quizzes) ? (
           "loading"
         ) : (
@@ -267,6 +328,7 @@ function QuizzesSet() {
             </>
           }
           modalClose={closeCreateModal}
+          modalLoading={loadingPost}
         >
           <Form
             inputs={createQuizInputs}

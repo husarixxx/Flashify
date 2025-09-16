@@ -17,6 +17,10 @@ function NotesSet() {
 
   const { notes, setNotes } = useNotes();
   const { get, error: errorGet } = useGet();
+  const { subjects, updateSubjects } = useSubjects();
+  const currentSubjectName = subjects.filter(
+    (subject) => subject.id == params.subject
+  )[0].name;
 
   useEffect(() => {
     if (!(subject in notes)) {
@@ -63,7 +67,6 @@ function NotesSet() {
   }
 
   const { post, error: errorPost } = usePost();
-  const { updateSubjects } = useSubjects();
 
   async function modalOnSubmit(e) {
     e.preventDefault();
@@ -89,16 +92,16 @@ function NotesSet() {
     }
 
     if (isRdyToSend) {
-      const formData = { title: titleInput.value, note: "" };
+      const formData = { title: titleInput.value, content: "" };
 
-      const newNotes = await post(formData, `subjects/${subject}/notes`);
+      const newNote = await post(formData, `subjects/${subject}/notes`);
 
       if (errorPost !== null) {
         alert(errorPost.detail[0].msg);
         return;
       }
 
-      setNotes({ ...notes, [subject]: newNotes });
+      setNotes({ ...notes, [subject]: [...notes[subject], newNote] });
       updateSubjects();
     } else return;
 
@@ -109,7 +112,7 @@ function NotesSet() {
     <div className="min-h-[100vh] flex flex-col justify-between ">
       <Header></Header>
       <div className="mx-4 md:mx-16 lg:mx-24 xl:mx-30 mt-12 2xl:mx-auto ">
-        <h1 className="my-4 mx-2 ">{subject}</h1>
+        <h1 className="my-4 mx-2 ">{currentSubjectName}</h1>
         {!(subject in notes) ? (
           "loading"
         ) : (

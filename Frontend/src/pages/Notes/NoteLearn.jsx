@@ -36,12 +36,11 @@ function NoteLearn() {
 
   const { quill, quillRef } = useQuill({ readOnly: true, theme: "bubble" });
   useEffect(() => {
-    let noteData;
     if (subject in notes) {
-      noteData = notes[subject].find((note) => note.id == noteId);
+      const noteData = notes[subject].find((note) => note.id == noteId);
 
       if (quill) {
-        quill.clipboard.dangerouslyPasteHTML(noteData.note);
+        quill.clipboard.dangerouslyPasteHTML(noteData.content);
       }
     }
   }, [quill, notes, noteId, subject]);

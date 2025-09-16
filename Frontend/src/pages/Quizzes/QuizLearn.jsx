@@ -16,6 +16,7 @@ import useGet from "../../hooks/useGet";
 function QuizLearn() {
   let params = useParams();
   const subject = params.subject;
+  const quizId = params.quizId;
 
   const { quizzes, setQuizzes } = useQuizzes();
 
@@ -29,6 +30,17 @@ function QuizLearn() {
           alert(errorGet.detail[0].msg);
           return;
         }
+        fetchedData.map((quiz) => {
+          quiz.questions = quiz.questions.map((question) => ({
+            ...question,
+            answers: question.answers.map(({ is_correct, ...rest }) => ({
+              ...rest,
+              isCorrect: is_correct,
+            })),
+          }));
+          return quiz;
+        });
+
         setQuizzes({ ...quizzes, [subject]: fetchedData });
       };
 
@@ -36,7 +48,7 @@ function QuizLearn() {
     }
   }, [subject, quizzes, setQuizzes, get, errorGet]);
 
-  const quiz = quizzes[subject].filter((quiz) => quiz.id === params.quizId)[0];
+  const quiz = quizzes[subject].find((quiz) => quiz.id == quizId);
   const { title, questions } = quiz;
 
   const [currentQuesiton, setCurrentQuestion] = useState(questions[0]);
@@ -129,7 +141,7 @@ function QuizLearn() {
       className={`min-h-[100vh] flex flex-col justify-between overflow-hidden `}
     >
       <Header></Header>
-      <div className=" mx-6 md:mx-auto translate-y-[-40px] ">
+      <div className="my-4 mx-6 md:mx-auto  ">
         {isSubmited ? (
           <div className="max-w-[750px]">
             <h1>
@@ -163,7 +175,7 @@ function QuizLearn() {
               allQuestionsNumber={questions.length}
               answers={currentQuesiton.answers}
             />
-            <div className="grid sm:grid-cols-2 gap-4 mt-18 h-[200px] sm:h-[100px]">
+            <div className=" mx-auto flex flex-col justify-between sm:grid  sm:grid-cols-2 sm:grid-rows-2 gap-4 mt-18  max-w-[640px]">
               {currentQuesiton.answers.map((answer, index) =>
                 currentQuesiton.type === "single-choice" ? (
                   <AnswerSingle

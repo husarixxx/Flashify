@@ -21,6 +21,7 @@ function Quiz({ title, numOfQuestions, quizData }) {
           <MainButton
             text={"Learn"}
             styles={"w-full min-w-[180px] max-w-[250px]"}
+            disabled={numOfQuestions == 0 ? true : false}
           ></MainButton>
         </Link>
       </div>

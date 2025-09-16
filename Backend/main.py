@@ -435,7 +435,7 @@ async def create_quiz_no_ai(
 
 
 # tworzenie nowego quizu z Ai
-@app.post("/api/subjects/{subject_id}/quizzes/{quiz_id}/generate", response_model=schemas.QuizResponse)
+@app.post("/api/subjects/{subject_id}/quizzes/generate", response_model=schemas.QuizResponse)
 async def create_quiz_with_ai_questions(
     subject_id: int,
     quiz_data: schemas.QuizCreate,

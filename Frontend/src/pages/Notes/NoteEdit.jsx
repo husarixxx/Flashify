@@ -37,9 +37,13 @@ function NoteEdit() {
   }, [errorGet, get, notes, setNotes, subject]);
 
   async function saveNote(content) {
-    const noteTitle = notes[subject].find((note) => note.id === noteId).title;
-    const formData = { id: noteId, title: noteTitle, noteId, note: content };
-    const newNotes = await put(formData, `subjects/${subject}/notes/${noteId}`);
+    const currentNote = notes[subject].find((note) => note.id == noteId);
+    const formData = { title: currentNote.title, content: content };
+    const newNote = await put(formData, `subjects/${subject}/notes/${noteId}`);
+
+    const newNotes = notes[subject].map((note) =>
+      note.id == noteId ? newNote : note
+    );
 
     if (errorPut !== null) {
       alert(errorPut.detail[0].msg);
@@ -57,13 +61,12 @@ function NoteEdit() {
 
   const { quill, quillRef } = useQuill({ readOnly: false, theme: "snow" });
   useEffect(() => {
-    let noteData;
     if (subject in notes) {
-      noteData = notes[subject].find((note) => note.id === noteId);
+      const noteData = notes[subject].find((note) => note.id == noteId);
 
       if (quill) {
         if (quill.getLength() === 1) {
-          quill.clipboard.dangerouslyPasteHTML(noteData.note);
+          quill.clipboard.dangerouslyPasteHTML(noteData.content);
         }
         function handleChange() {
           const content = quill.root.innerHTML;

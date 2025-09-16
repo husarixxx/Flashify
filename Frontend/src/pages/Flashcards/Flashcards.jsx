@@ -159,7 +159,6 @@ function Flashcards() {
             return input.label === "Topic" ? { ...input, error: "" } : input;
           })
         );
-        console.log(requestData);
         const formData = {
           subject_data: { name: nameInput.value },
           request_data: requestData,
@@ -168,7 +167,13 @@ function Flashcards() {
           formData,
           "subjects/flashcards/generate"
         );
-        console.log(newFlashcards);
+
+        if (postError !== null) {
+          alert(postError);
+          console.log(postError);
+
+          return;
+        }
         setFlashcards({
           ...flashcards,
           [newFlashcards[0].subject_id]: newFlashcards,
@@ -176,10 +181,6 @@ function Flashcards() {
 
         updateSubjects();
 
-        if (postError !== null) {
-          alert(postError.detail[0].msg);
-          return;
-        }
         modalClose();
       } else return;
     }
