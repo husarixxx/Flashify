@@ -42,6 +42,12 @@ class UserResponse(BaseModel):
 class Token(BaseModel):
     access_token : str
 
+class TokenStatusResponse(BaseModel):
+    username: str
+    email: EmailStr
+    expires_in_minutes: int
+    is_authenticated: bool
+
 class UserUpdateUsername(BaseModel):
     
     password: str
@@ -55,7 +61,7 @@ class UserUpdateUsername(BaseModel):
 
 
 class UserUpdateEmail(BaseModel):
-    email: EmailStr  # Current email
+    email: EmailStr  
     password: str
     new_email: EmailStr
 
