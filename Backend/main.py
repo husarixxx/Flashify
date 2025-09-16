@@ -491,6 +491,112 @@ async def create_quiz_with_ai_questions(
     db.refresh(quiz)
     return quiz
 
+#dodawanie pytania do quizu
+@app.post("/api/subjects/{subject_id}/quizzes/{quiz_id}/questions")
+async def add_question_to_quiz(
+    subject_id: int,
+    quiz_id: int,
+    question_data: schemas.QuizQuestionCreate,
+    db: db_deppendency,
+    current_user: models.Users = Depends(get_current_user)
+):
+    
+    quiz = db.query(models.Quiz).join(models.Subject).filter(
+        models.Quiz.id == quiz_id,
+        models.Quiz.subject_id == subject_id,
+        models.Subject.user_id == current_user.id
+    ).first()
+    
+    if not quiz:
+        raise HTTPException(status_code=404, detail="Quiz not found")
+    
+
+    new_question = models.QuizQuestion(
+        question=question_data.question,
+        type=question_data.type,
+        quiz_id=quiz_id
+    )
+    db.add(new_question)
+    db.flush()
+    
+    
+    for answer_data in question_data.answers:
+        new_answer = models.QuizAnswer(
+            text=answer_data.text,
+            is_correct=answer_data.is_correct,
+            question_id=new_question.id
+        )
+        db.add(new_answer)
+    
+    db.commit()
+    return {"status": "success", "message": "Question added successfully", "question_id": new_question.id}
+
+#edycja pytania
+@app.put("/api/subjects/{subject_id}/quizzes/{quiz_id}/questions/{question_id}")
+async def update_question_in_quiz(
+    subject_id: int,
+    quiz_id: int,
+    question_id: int,
+    question_data: schemas.QuizQuestionUpdate,
+    db: db_deppendency,
+    current_user: models.Users = Depends(get_current_user)
+):
+    
+    question = db.query(models.QuizQuestion).join(models.Quiz).join(models.Subject).filter(
+        models.QuizQuestion.id == question_id,
+        models.Quiz.id == quiz_id,
+        models.Quiz.subject_id == subject_id,
+        models.Subject.user_id == current_user.id
+    ).first()
+    
+    if not question:
+        raise HTTPException(status_code=404, detail="Question not found")
+    
+    if question_data.question is not None:
+        question.question = question_data.question
+    if question_data.type is not None:
+        question.type = question_data.type
+    
+    if question_data.answers is not None:
+        
+        db.query(models.QuizAnswer).filter(
+            models.QuizAnswer.question_id == question_id
+        ).delete()
+        
+        for answer_data in question_data.answers:
+            new_answer = models.QuizAnswer(
+                text=answer_data.text,
+                is_correct=answer_data.is_correct,
+                question_id=question_id
+            )
+            db.add(new_answer)
+    
+    db.commit()
+    return {"status": "success", "message": "Question updated successfully"}
+
+#usuwanie pytania w quizzie
+@app.delete("/api/subjects/{subject_id}/quizzes/{quiz_id}/questions/{question_id}")
+async def delete_question_from_quiz(
+    subject_id: int,
+    quiz_id: int,
+    question_id: int,
+    db: db_deppendency,
+    current_user: models.Users = Depends(get_current_user)
+):
+    question = db.query(models.QuizQuestion).join(models.Quiz).join(models.Subject).filter(
+        models.QuizQuestion.id == question_id,
+        models.Quiz.id == quiz_id,
+        models.Quiz.subject_id == subject_id,
+        models.Subject.user_id == current_user.id
+    ).first()
+    
+    if not question:
+        raise HTTPException(status_code=404, detail="Question not found")
+    
+
+    db.delete(question)
+    db.commit()
+    return {"status": "success", "message": "Question deleted successfully"}
 
 # --NOTES --
 # wszystkie notatki z danego tematu
