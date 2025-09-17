@@ -19,7 +19,7 @@ function QuizEdit() {
   const subject = params.subject;
   const quizId = params.quizId;
 
-  const { quizzes, setQuizzes } = useQuizzes();
+  const { quizzes, setQuizzes, updateQuizzes } = useQuizzes();
 
   const { get, error: errorGet } = useGet();
   const { post, error: errorPost } = usePost();
@@ -35,6 +35,17 @@ function QuizEdit() {
           alert(errorGet.detail[0].msg);
           return;
         }
+
+        fetchedData.map((quiz) => {
+          quiz.questions = quiz.questions.map((question) => ({
+            ...question,
+            answers: question.answers.map(({ is_correct, ...rest }) => ({
+              ...rest,
+              isCorrect: is_correct,
+            })),
+          }));
+          return quiz;
+        });
         setQuizzes({ ...quizzes, [subject]: fetchedData });
       };
 
@@ -44,7 +55,7 @@ function QuizEdit() {
 
   const quiz = quizzes[subject].find((quiz) => quiz.id == quizId);
 
-  const { id, title, questions } = quiz;
+  const { title, questions } = quiz;
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
@@ -167,58 +178,55 @@ function QuizEdit() {
       validateInputs(bMultiple, setCreateMultipleInputs, "B");
       validateInputs(cMultiple, setCreateMultipleInputs, "C");
       validateInputs(dMultiple, setCreateMultipleInputs, "D");
-    } else {
-      const trueInput = createTrueFalseInputs.find(
-        (input) => input.label === "True" && input.type === "text"
-      );
-      const falseInput = createTrueFalseInputs.find(
-        (input) => input.label === "False" && input.type === "text"
-      );
-      validateInputs(trueInput, setCreateTrueFalseInputs, "True");
-      validateInputs(falseInput, setCreateTrueFalseInputs, "False");
     }
 
     if (isRdyToSend) {
       const body = {
-        id: newFormdata.question.id,
         question: newFormdata.question,
-        type: checkedInput.toLowerCase().replace(" ", "-"),
+
+        type: checkedInput
+          .toLowerCase()
+          .replaceAll(" ", "-")
+          .replace("-or", ""),
         answers:
           checkedInput === "Single choice" || checkedInput === "Multiple choice"
             ? [
-                { text: newFormdata.a, isCorrect: newFormdata.aIsCorrect },
-                { text: newFormdata.b, isCorrect: newFormdata.bIsCorrect },
-                { text: newFormdata.c, isCorrect: newFormdata.cIsCorrect },
-                { text: newFormdata.d, isCorrect: newFormdata.dIsCorrect },
+                { text: newFormdata.a, is_correct: newFormdata.aIsCorrect },
+                { text: newFormdata.b, is_correct: newFormdata.bIsCorrect },
+                { text: newFormdata.c, is_correct: newFormdata.cIsCorrect },
+                { text: newFormdata.d, is_correct: newFormdata.dIsCorrect },
               ]
             : [
                 {
-                  text: newFormdata.true,
-                  isCorrect: newFormdata.trueIsCorrect,
+                  text: "True",
+                  is_correct: newFormdata.trueIsCorrect,
                 },
                 {
-                  text: newFormdata.false,
-                  isCorrect: newFormdata.falseIsCorrect,
+                  text: "False",
+                  is_correct: newFormdata.falseIsCorrect,
                 },
               ],
       };
-      const newQuizzes = await post(
-        body,
-        `subjects/${subject}/quizzes/${quiz.id}/questions`
-      );
+
+      await post(body, `subjects/${subject}/quizzes/${quiz.id}/questions`);
+
       if (errorPost !== null) {
         alert(errorPost.detail[0].msg);
         return;
       }
-      setQuizzes({ ...quizzes, [subject]: newQuizzes });
+      updateQuizzes(subject);
       updateSubjects();
+      setCreateInputs(baseForCreateInputs);
+      setCreateSingleInputs(baseForCreateSingleInputs);
+      setCreateMultipleInputs(baseForCreateMultipleInputs);
+      setCreateTrueFalseInputs(baseForTrueFalseInputs);
     } else {
       return;
     }
     closeCreateModal();
   }
 
-  const [createInputs, setCreateInputs] = useState([
+  const baseForCreateInputs = [
     {
       id: crypto.randomUUID(),
       type: "text",
@@ -250,9 +258,11 @@ function QuizEdit() {
       checked: false,
       onChange: handleCreateRadioOnChange,
     },
-  ]);
+  ];
 
-  const [createSingleInputs, setCreateSingleInputs] = useState([
+  const [createInputs, setCreateInputs] = useState(baseForCreateInputs);
+
+  const baseForCreateSingleInputs = [
     {
       id: crypto.randomUUID(),
       type: "text",
@@ -321,9 +331,12 @@ function QuizEdit() {
       checked: false,
       onChange: handleCreateCorrectRadioSingleOnChange,
     },
-  ]);
+  ];
+  const [createSingleInputs, setCreateSingleInputs] = useState(
+    baseForCreateSingleInputs
+  );
 
-  const [createMultipleInputs, setCreateMultipleInputs] = useState([
+  const baseForCreateMultipleInputs = [
     {
       id: crypto.randomUUID(),
       type: "text",
@@ -392,23 +405,12 @@ function QuizEdit() {
       checked: false,
       onChange: handleCreateCorrectCheckboxMultipleOnChange,
     },
-  ]);
-  const [createTrueFalseInputs, setCreateTrueFalseInputs] = useState([
-    {
-      id: crypto.randomUUID(),
-      type: "text",
-      value: "",
-      label: "True",
-      onChange: handleCreateAnswerTrueFalseOnChange,
-    },
-    {
-      id: crypto.randomUUID(),
-      type: "text",
-      value: "",
-      label: "False",
-      onChange: handleCreateAnswerTrueFalseOnChange,
-    },
+  ];
+  const [createMultipleInputs, setCreateMultipleInputs] = useState(
+    baseForCreateMultipleInputs
+  );
 
+  const baseForTrueFalseInputs = [
     {
       id: crypto.randomUUID(),
       name: "Correct answer",
@@ -427,7 +429,10 @@ function QuizEdit() {
       checked: false,
       onChange: handleCreateCorrectRadioTrueFalseOnChange,
     },
-  ]);
+  ];
+  const [createTrueFalseInputs, setCreateTrueFalseInputs] = useState(
+    baseForTrueFalseInputs
+  );
 
   const [createAdditionalInputs, setCreateAdditionalInputs] =
     useState(createSingleInputs);
@@ -462,13 +467,6 @@ function QuizEdit() {
   }
   function handleCreateAnswerMultipleOnChange(e, id) {
     setCreateMultipleInputs((prevInputs) =>
-      prevInputs.map((input) => {
-        return input.id === id ? { ...input, value: e.target.value } : input;
-      })
-    );
-  }
-  function handleCreateAnswerTrueFalseOnChange(e, id) {
-    setCreateTrueFalseInputs((prevInputs) =>
       prevInputs.map((input) => {
         return input.id === id ? { ...input, value: e.target.value } : input;
       })
@@ -539,13 +537,8 @@ function QuizEdit() {
 
         <div className="flex flex-col justify-center md:grid grid-cols-2 xl:grid-cols-3  gap-8 w-[80vw] px-4">
           {questions.length > 0 &&
-            questions.map((question, index) => (
-              <QuestionEdit
-                key={crypto.randomUUID()}
-                question={question}
-                questionNumber={index + 1}
-                quizId={id}
-              />
+            questions.map((question) => (
+              <QuestionEdit key={crypto.randomUUID()} question={question} />
             ))}
         </div>
         <div className="mt-20 flex flex-col md:flex-row items-center justify-center gap-6">

@@ -179,6 +179,7 @@ function QuizLearn() {
               {currentQuesiton.answers.map((answer, index) =>
                 currentQuesiton.type === "single-choice" ? (
                   <AnswerSingle
+                    key={answer.id}
                     answer={answer.text}
                     onClick={() => handleSingleAnswer(index)}
                     isSelected={

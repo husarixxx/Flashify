@@ -13,14 +13,17 @@ function Authenticate({ children }) {
   useEffect(() => {
     async function getStatus() {
       const status = await get("status");
-      setIsLoggedIn(status.is_authenticated);
-      if (status.is_authenticated) {
-        const fetchedSubjects = await get("subjects/count");
-        setSubjects(fetchedSubjects);
+
+      if (status) {
+        setIsLoggedIn(status.is_authenticated);
+        if (status.is_authenticated) {
+          const fetchedSubjects = await get("subjects/count");
+          setSubjects(fetchedSubjects);
+        }
       }
     }
     getStatus();
-  }, [setIsLoggedIn]);
+  }, [setIsLoggedIn, setSubjects]);
 
   useEffect(() => {
     if (loadingGet) return;

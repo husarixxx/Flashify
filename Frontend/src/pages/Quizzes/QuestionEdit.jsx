@@ -10,14 +10,15 @@ import { useQuizzes } from "../../context/QuizzesContext";
 import Form from "../../components/Form";
 import usePut from "../../hooks/usePut";
 
-function QuestionEdit({ question, quizId }) {
+function QuestionEdit({ question }) {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const { deleteEntity: deleteEntity, error: errorDelete } = useDelete();
 
-  const { quizzes, setQuizzes } = useQuizzes();
+  const { quizzes, setQuizzes, updateQuizzes } = useQuizzes();
 
   let params = useParams();
   const subject = params.subject;
+  const quizId = params.quizId;
 
   const { updateSubjects } = useSubjects();
 
@@ -29,10 +30,10 @@ function QuestionEdit({ question, quizId }) {
   }
   async function handleDelete(e) {
     e.preventDefault();
-    const newQuizzes = await deleteEntity(
+    await deleteEntity(
       `subjects/${subject}/quizzes/${quizId}/questions/${question.id}`
     );
-    setQuizzes({ ...quizzes, [subject]: newQuizzes });
+    updateQuizzes(subject);
     updateSubjects();
 
     if (errorDelete !== null) alert(errorDelete);
@@ -168,20 +169,10 @@ function QuestionEdit({ question, quizId }) {
       validateInputs(bMultiple, setEditMultipleInputs, "B");
       validateInputs(cMultiple, setEditMultipleInputs, "C");
       validateInputs(dMultiple, setEditMultipleInputs, "D");
-    } else {
-      const trueInput = editTrueFalseInputs.find(
-        (input) => input.label === "True" && input.type === "text"
-      );
-      const falseInput = editTrueFalseInputs.find(
-        (input) => input.label === "False" && input.type === "text"
-      );
-      validateInputs(trueInput, setEditTrueFalseInputs, "True");
-      validateInputs(falseInput, setEditTrueFalseInputs, "False");
     }
 
     if (isRdyToSend) {
       const body = {
-        id: question.id,
         question: newFormdata.question,
         type:
           checkedInput === "Single choice" || checkedInput === "Multiple choice"
@@ -191,42 +182,35 @@ function QuestionEdit({ question, quizId }) {
           checkedInput === "Single choice" || checkedInput === "Multiple choice"
             ? [
                 {
-                  id: newFormdata.aId,
                   text: newFormdata.a,
-                  isCorrect: newFormdata.aIsCorrect,
+                  is_correct: newFormdata.aIsCorrect,
                 },
                 {
-                  id: newFormdata.bId,
                   text: newFormdata.b,
-                  isCorrect: newFormdata.bIsCorrect,
+                  is_correct: newFormdata.bIsCorrect,
                 },
                 {
-                  id: newFormdata.cId,
                   text: newFormdata.c,
-                  isCorrect: newFormdata.cIsCorrect,
+                  is_correct: newFormdata.cIsCorrect,
                 },
                 {
-                  id: newFormdata.dId,
                   text: newFormdata.d,
-                  isCorrect: newFormdata.dIsCorrect,
+                  is_correct: newFormdata.dIsCorrect,
                 },
               ]
             : [
                 {
-                  id: newFormdata.trueId,
-
-                  text: newFormdata.true,
-                  isCorrect: newFormdata.trueIsCorrect,
+                  text: "True",
+                  is_correct: newFormdata.trueIsCorrect,
                 },
                 {
-                  id: newFormdata.falseId,
-                  text: newFormdata.false,
-                  isCorrect: newFormdata.falseIsCorrect,
+                  text: "False",
+                  is_correct: newFormdata.falseIsCorrect,
                 },
               ],
       };
 
-      const newQuizzes = await put(
+      await put(
         body,
         `subjects/${subject}/quizzes/${quizId}/questions/${question.id}`
       );
@@ -235,8 +219,8 @@ function QuestionEdit({ question, quizId }) {
         alert(errorPut.detail[0].msg);
         return;
       }
-
-      setQuizzes({ ...quizzes, [subject]: newQuizzes });
+      updateQuizzes(subject);
+      // setQuizzes({ ...quizzes, [subject]: newQuizzes });
       updateSubjects();
     } else {
       return;
@@ -350,18 +334,6 @@ function QuestionEdit({ question, quizId }) {
   const trueFalseLabels = ["True", "False"];
 
   const [editTrueFalseInputs, setEditTrueFalseInputs] = useState([
-    ...trueFalseLabels.map((label, idx) => {
-      return {
-        id:
-          question.answers[idx] != undefined
-            ? question.answers[idx].id
-            : crypto.randomUUID(),
-        type: "text",
-        value: question.type === "true-false" ? question.answers[idx].text : "",
-        label: label,
-        onChange: handleEditAnswerTrueFalseOnChange,
-      };
-    }),
     ...trueFalseLabels.map((label, idx) => {
       return {
         id:

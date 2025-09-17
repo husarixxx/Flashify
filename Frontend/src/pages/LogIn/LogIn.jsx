@@ -110,10 +110,9 @@ function LogIn() {
         } else {
           const dataResponse = await response.json();
           assignError(dataResponse.detail);
-          alert(dataResponse.detail || "Something went wrong. Try again");
         }
       } catch (err) {
-        alert(err.detail[0].msg);
+        console.log(err.detail[0].msg);
       }
     }
   }

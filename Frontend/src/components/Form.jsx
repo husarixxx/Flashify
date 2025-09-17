@@ -41,6 +41,13 @@ function Form({
               type={input.type}
               value={input.value}
               onChange={(e) => input.onChange(e, input.id)}
+              autoComplete={
+                input.type === "email"
+                  ? "email"
+                  : input.type === "password"
+                  ? "current-password"
+                  : ""
+              }
               placeholder={input.type === "email" ? "example@gmail.com" : ""}
               className={`border-b-1 text-sm lg:text-lg border-purple-400 focus:outline-none focus:outline-1 py-1  px-1 text-gray-900 placeholder:text-gray-400 ${
                 input.error ? "border-red-400" : ""
