@@ -70,7 +70,7 @@ async def login(response : Response, db: db_deppendency, login_data: schemas.Use
     if not user or not utils.verify_password(login_data.password, user.hashed_password):
         raise HTTPException(status_code=401, detail="Invalid password or username")
     
-    access_token = create_access_token(data={"sub": user.username})
+    access_token = create_access_token(data={"sub": str(user.id)})
 
 
     response.set_cookie(
@@ -698,7 +698,7 @@ async def delete_note(
 
 
 #zmiana nazwy uzytkownika
-@app.put("/api/user/username", response_model=schemas.UserResponse)
+@app.put("/api/user/username", response_model=schemas.UserUpdate)
 async def update_username(
     user_data: schemas.UserUpdateUsername,
     db: db_deppendency,
@@ -725,7 +725,7 @@ async def update_username(
     return {"status": "success", "message": "Username change successfully"}
 
 #zmiana adresu email
-@app.put("/api/user/email", response_model=schemas.UserResponse)
+@app.put("/api/user/email", response_model=schemas.UserUpdate)
 async def update_email(
     user_data: schemas.UserUpdateEmail,
     db: db_deppendency,
@@ -756,7 +756,7 @@ async def update_email(
     return {"status": "success", "message": "Email change successfully"}
 
 #zmiana hasla
-@app.put("/api/user/password", response_model=schemas.UserResponse)
+@app.put("/api/user/password", response_model=schemas.UserUpdate)
 async def update_password(
     user_data: schemas.UserUpdatePassword,
     db: db_deppendency,

@@ -7,6 +7,7 @@ import { FaFacebook } from "react-icons/fa6";
 import MainButton from "../../components/MainButton";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { GrStatusGood } from "react-icons/gr";
 
 import validator from "validator";
 
@@ -85,7 +86,7 @@ function SignUp() {
       if (input.label === "Email") {
         return validator.isEmail(input.value)
           ? { ...input, error: "" }
-          : { ...input, error: "You have enter valid email" };
+          : { ...input, error: "You have to enter valid email" };
       } else return input;
     });
     const updatedPasswordInputs = updatedEmailInputs.map((input) => {
@@ -159,6 +160,7 @@ function SignUp() {
       ) : (
         <div className="flex flex-col items-center justify-center p-4">
           <h1 className="text-center ">{success}</h1>
+          <GrStatusGood size={100} color="#9333ea" />
           <Link to={"../log-in"}>
             <MainButton text={"Log In"} styles={"px-15 lg:px-20 py-3 my-8"} />
           </Link>

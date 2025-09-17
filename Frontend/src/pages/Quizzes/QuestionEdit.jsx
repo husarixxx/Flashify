@@ -14,7 +14,7 @@ function QuestionEdit({ question }) {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const { deleteEntity: deleteEntity, error: errorDelete } = useDelete();
 
-  const { quizzes, setQuizzes, updateQuizzes } = useQuizzes();
+  const { updateQuizzes } = useQuizzes();
 
   let params = useParams();
   const subject = params.subject;
@@ -386,22 +386,7 @@ function QuestionEdit({ question }) {
       })
     );
   }
-  function handleEditAnswerTrueFalseOnChange(e, id) {
-    setEditTrueFalseInputs((prevInputs) =>
-      prevInputs.map((input) => {
-        return input.id === id ? { ...input, value: e.target.value } : input;
-      })
-    );
-  }
-  // function handleEditCorrectRadioOnChange(e) {
-  //   setEditAdditionalInputs((prevInputs) =>
-  //     prevInputs.map((input) => {
-  //       return input.type === "radio" && input.value === e.target.value
-  //         ? { ...input, checked: e.target.checked }
-  //         : { ...input, checked: false };
-  //     })
-  //   );
-  // }
+
   function handleEditCorrectRadioSingleOnChange(e) {
     setEditSingleInputs((prevInputs) =>
       prevInputs.map((input) => {

@@ -76,15 +76,15 @@ def get_current_user(
     try:
         payload = jwt.decode(token,SECRET_KEY,algorithms=[ALGORITHM])
         
-        username: str = payload.get("sub")
-        if username is None:
+        user_id: str = payload.get("sub")
+        if user_id is None:
             raise credentials_exception
         
     except JWTError:
 
         raise credentials_exception
     
-    user = db.query(models.Users).filter(models.Users.username == username).first()
+    user = db.query(models.Users).filter(models.Users.id == int(user_id)).first()
 
     if user is None :
         raise credentials_exception
@@ -108,10 +108,10 @@ def get_current_user_with_token_info(
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         
-        username: str = payload.get("sub")
+        user_id: str = payload.get("sub")
         exp_timestamp = payload.get("exp")
         
-        if username is None:
+        if user_id is None:
             raise credentials_exception
             
         if exp_timestamp:
@@ -123,7 +123,7 @@ def get_current_user_with_token_info(
     except JWTError:
         raise credentials_exception
     
-    user = db.query(models.Users).filter(models.Users.username == username).first()
+    user = db.query(models.Users).filter(models.Users.id == int(user_id)).first()
 
     if user is None:
         raise credentials_exception

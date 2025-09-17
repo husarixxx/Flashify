@@ -10,14 +10,18 @@ import { useLoggedIn } from "../context/LoggedInContext";
 import flashifyLogo from "../assets/flashify.png";
 import { useState } from "react";
 import UserModal from "./UserModal";
+import { useUser } from "../context/UserContext";
 
-function Header({
-  user = {
-    img: <FaRegUserCircle size={25} />,
-    username: "username",
-  },
-}) {
+function Header() {
+  // {
+  //   user = {
+  //     img: <FaRegUserCircle size={25} />,
+  //     username: "username",
+  //   },
+  // }
   const { isLoggedIn } = useLoggedIn();
+
+  const { user } = useUser();
 
   const icons = [
     {
@@ -96,16 +100,18 @@ function Header({
             className="flex flex-col justify-center items-center hover:cursor-pointer "
             onClick={() => setIsUserModalOpen(!isUserModalOpen)}
           >
-            {user.img}
+            {user ? <user.img size={25} /> : <FaRegUserCircle size={25} />}
             <p className="text-xs lg:text-base hidden lg:block">
-              {user.username}
+              {user ? user.username : "username"}
             </p>
           </button>
           {isUserModalOpen && (
             <UserModal
               modalClose={closeUserModal}
-              userImg={user.img}
-              username={user.username}
+              userImg={
+                user ? <user.img size={25} /> : <FaRegUserCircle size={25} />
+              }
+              username={user ? user.username : "username"}
             />
           )}
         </div>

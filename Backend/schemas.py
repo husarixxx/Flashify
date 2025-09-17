@@ -136,9 +136,8 @@ class GenerateFlashcardsRequest(BaseModel):
 
 # --- updates ---
 class UserUpdate(BaseModel):
-    username: str 
-    email: str 
-    password: str 
+    status: str 
+    message: str 
 
 
 
