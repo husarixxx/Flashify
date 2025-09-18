@@ -179,7 +179,7 @@ function Settings() {
         password: passwordInput.value,
       };
 
-      const newUser = await put(formData, `user/username`);
+      await put(formData, `user/username`);
       if (errorPut !== null) {
         alert(errorPut.detail[0].msg);
         return;
@@ -281,7 +281,7 @@ function Settings() {
         new_email: newEmailInput.value,
       };
 
-      const newUser = await put(formData, `user/email`);
+      await put(formData, `user/email`);
 
       if (errorPut !== null) {
         alert(errorPut.detail[0].msg);
@@ -380,7 +380,7 @@ function Settings() {
         new_password: newPasswordInput.value,
       };
 
-      const newUser = await put(formData, `user/password`);
+      await put(formData, `user/password`);
 
       if (errorPut !== null) {
         alert(errorPut.detail[0].msg);

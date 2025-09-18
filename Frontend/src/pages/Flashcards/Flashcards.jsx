@@ -170,7 +170,6 @@ function Flashcards() {
 
         if (postError !== null) {
           alert(postError);
-          console.log(postError);
 
           return;
         }

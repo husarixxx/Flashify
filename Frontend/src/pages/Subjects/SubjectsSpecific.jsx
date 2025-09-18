@@ -11,36 +11,36 @@ function SubjectsSpecific() {
   const subject = params.subject;
 
   const { subjects } = useSubjects();
-
   const specificSubject = subjects.find(
-    (currSubject) => currSubject.id === subject
+    (currSubject) => currSubject.id == subject
   );
+
   return (
     <div className="min-h-[100vh] flex flex-col justify-between">
       <Header></Header>
       <div className="mx-4 p-4 sm:mx-auto max-w-[1200px] md:translate-y-[-80px]">
-        <h1>{subject}</h1>
+        <h1>{specificSubject.name}</h1>
         <div className="grid grid-cols-1  sm:grid-cols-3  gap-10 sm:gap-15 text-gray-700 ">
           <Link
             to={`/app/flashcards/${subject}`}
             className="flex flex-col justify-center items-center gap-2 border-1 border-gray-200 p-8 sm:w-[180px] sm:h-[180px] rounded-xl shadow-lg hover:text-purple-600  hover:translate-y-1 transition-all"
           >
             <TbCards size={80} />
-            {specificSubject.flashcardsCount + " Flashcards"}
+            {specificSubject.stats.flashcards_count + " Flashcards"}
           </Link>
           <Link
             to={`/app/quizzes/${subject}`}
             className="flex flex-col justify-center items-center gap-2 border-1 border-gray-200 p-8 rounded-xl shadow-lg hover:text-purple-600 hover:translate-y-1 transition-all"
           >
             <MdOutlineQuiz size={80} />
-            {specificSubject.quizzesCount + " Quizzes"}
+            {specificSubject.stats.quizzes_count + " Quizzes"}
           </Link>
           <Link
             to={`/app/notes/${subject}`}
             className="flex flex-col justify-center items-center gap-2 border-1 border-gray-200 p-8 rounded-xl shadow-lg hover:text-purple-600 hover:translate-y-1 transition-all"
           >
             <TbNotes size={80} />
-            {specificSubject.quizzesCount + " Notes"}
+            {specificSubject.stats.quizzes_count + " Notes"}
           </Link>
         </div>
       </div>

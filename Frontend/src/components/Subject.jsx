@@ -12,10 +12,11 @@ function Subjects({ subject, type }) {
           ? `/app/subjects/${subject.id}`
           : `/app/${type.toLowerCase()}/${subject.id}`
       }
+      className="h-full"
     >
-      <Container styles="relative group md:w-[250px] hover:text-white group overflow-hidden">
+      <Container styles="relative group md:w-[250px] lg:w-[260px] hover:text-white group overflow-hidden">
         <div className="relative z-10">
-          <h3 className="group-hover:text-white">{subject.name}</h3>
+          <h3 className="group-hover:text-white truncate">{subject.name}</h3>
 
           {type === "global" ? (
             <>

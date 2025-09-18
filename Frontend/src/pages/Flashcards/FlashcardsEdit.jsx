@@ -42,7 +42,6 @@ function FlashcardsEdit() {
   const subject = params.subject;
 
   const { subjects, updateSubjects } = useSubjects();
-  console.log(subjects);
   const currentSubjectName = subjects.filter(
     (subject) => subject.id == params.subject
   )[0].name;
@@ -164,7 +163,6 @@ function FlashcardsEdit() {
         <h1 className="my-4">{currentSubjectName}</h1>
 
         <div className="flex flex-col justify-center md:grid grid-cols-2 xl:grid-cols-3  gap-5 w-[80vw]">
-          {console.log(flashcards)}
           {flashcards[subject].length > 0 &&
             flashcards[subject].map((flashcard) => (
               <FlashcardEdit
