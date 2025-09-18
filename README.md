@@ -20,9 +20,16 @@ Flashify has 3 main features:
  <img src="https://github.com/tandpfun/skill-icons/blob/main/icons/Figma-Dark.svg" alt="figma" width="45" height="45"/>
  <img src="https://github.com/tandpfun/skill-icons/blob/main/icons/Python-Dark.svg" alt="python" width="45" height="45"/>
  <img src="https://github.com/tandpfun/skill-icons/blob/main/icons/FastAPI.svg" alt="fastapi" width="45" height="45"/>
+ <img src="https://github.com/tandpfun/skill-icons/blob/main/icons/SQLite.svg" alt="sql" width="45" height="45"/>
  <img src="https://github.com/tandpfun/skill-icons/blob/main/icons/Git.svg" alt="git" width="45" height="45"/>
  <img src="https://github.com/tandpfun/skill-icons/blob/main/icons/VSCode-Dark.svg" alt="vsc" width="45" height="45"/>
 </div>
+
+<h2>📸 Screenshots</h2>
+
+ <img src="./assets/flashcards.png" alt="flashcards.png" />
+ <img src="./assets/quizzes.png" alt="quizzes" />
+ <img src="./assets/notes.png" alt="notes" />
 
 <h2>⚙️ Setup guide</h2>
 
@@ -46,6 +53,7 @@ cd ./Flashify
  <h3>Backend</h3>
 
 1. Create environment and install dependencies
+
     **Linux(bash)**
      ```bash
     cd ./Backend
@@ -69,12 +77,12 @@ cd ./Flashify
 
 3. Run server
     ```bash
-    uvicorn backend.main:app --reload
+    uvicorn main:app --reload
     ```
     App will be available at http://127.0.0.1:8000/docs
 
 
-## 👥Team
+<h2>👥 Team</h2>
 
 Frontend - [Dawid Gorszka](https://github.com/dawidtt)
 
