@@ -11,12 +11,9 @@ import validator from "validator";
 import { usePost } from "../../hooks/usePost";
 import { useLoggedIn } from "../../context/LoggedInContext";
 
-function Settings() {
-  // const user = {
-  //   img: <FaRegUserCircle size={80} />,
-  //   username: "username",
-  // };
+// TODO: Uploading image for profile. Currently it's not working
 
+function Settings() {
   const { user, setUser } = useUser();
   const { put, error: errorPut } = usePut();
   const { post } = usePost();

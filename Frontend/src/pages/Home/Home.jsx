@@ -7,6 +7,8 @@ import Streak from "../../components/Streak";
 import Container from "../../components/Container";
 import { FaRegClock } from "react-icons/fa6";
 
+// This page is only to demonstrate how it can look like without actual real data
+
 function Home() {
   const streak = {
     streakNumber: 21,
