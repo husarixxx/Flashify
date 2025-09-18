@@ -1,0 +1,26 @@
+# FastAPI core
+fastapi==0.116.1
+uvicorn==0.15.0
+python-multipart==0.0.20    # do formularzy / uploadu plików
+
+# Data validation
+pydantic==2.11.7
+pydantic-core==2.33.2
+email_validator==2.2.0       # dla EmailStr w rejestracji
+
+# Database
+SQLAlchemy==2.0.42
+
+# Environment variables
+python-dotenv==1.1.1
+
+# Authentication / security
+passlib==1.7.4
+python-jose==3.5.0
+
+# HTTP requests
+requests==2.32.4
+
+# Google AI / Generative API
+google-generativeai==0.8.5
+google-ai-generativelanguage==0.6.15
