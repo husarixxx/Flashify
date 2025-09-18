@@ -1,7 +1,7 @@
 function QuestionLearn({ question, questionNumber, allQuestionsNumber }) {
   return (
     <>
-      <div className="shadow-lg rounded-xl py-6 px-8 sm:px-28 sm:py-8 text-center md:w-[650px] md:h-[250px] flex justify-center items-center flex-col border-1 border-gray-200">
+      <div className="shadow-lg rounded-xl py-6 px-8 sm:px-28 sm:py-8 text-center md:w-[650px] md:h-[250px] flex justify-center items-center flex-col border-1 border-gray-300">
         <p className="text-purple-600">
           Question {questionNumber}/{allQuestionsNumber}
         </p>
