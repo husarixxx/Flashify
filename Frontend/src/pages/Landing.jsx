@@ -15,17 +15,17 @@ function Landing() {
           consistent practice, real results.
         </p>
 
-        <div className="flex flex-col gap-8 items-center my-10 md:flex-row md:justify-between max-w-[1200px] md:mx-auto">
+        <div className="flex flex-col gap-8 items-center my-10 lg:flex-row lg:justify-between max-w-[1800px] lg:mx-auto">
           <LandingCard
-            img="./src/assets/test.png"
+            img="./src/assets/flashcards.png"
             desc="Generate flashcards"
           ></LandingCard>
           <LandingCard
-            img="./src/assets/test.png"
+            img="./src/assets/quizzes.png"
             desc="Generate quizzess"
           ></LandingCard>{" "}
           <LandingCard
-            img="./src/assets/test.png"
+            img="./src/assets/notes.png"
             desc="Create notes"
           ></LandingCard>
         </div>
